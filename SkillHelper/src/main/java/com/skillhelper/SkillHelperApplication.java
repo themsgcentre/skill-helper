@@ -1,4 +1,4 @@
-package com.example.skillhelper;
+package com.skillhelper;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
