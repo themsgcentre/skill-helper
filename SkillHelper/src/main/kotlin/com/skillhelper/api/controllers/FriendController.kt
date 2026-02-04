@@ -1,4 +1,4 @@
-package com.skillhelper.api
+package com.skillhelper.api.controllers
 
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
