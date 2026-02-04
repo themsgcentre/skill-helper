@@ -2,7 +2,9 @@ package com.skillhelper.repository.implementations
 
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.models.SkillDbo
+import org.springframework.stereotype.Service
 
+@Service
 class SkillRepository: ISkillRepository {
     override fun getAllSkills(): List<SkillDbo> {
         TODO("Not yet implemented")

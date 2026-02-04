@@ -2,16 +2,19 @@ package com.skillhelper.feature.implementations
 
 import com.skillhelper.feature.interfaces.ISkillHandler
 import com.skillhelper.feature.models.SkillDto
+import com.skillhelper.repository.interfaces.ISkillRepository
 import org.springframework.stereotype.Service
 
 @Service
-class SkillHandler: ISkillHandler {
+class SkillHandler(val skillRepository: ISkillRepository): ISkillHandler {
     override fun getAllSkills(): List<SkillDto> {
-        TODO("Not yet implemented")
+        return skillRepository
+            .getAllSkills()
+            .map { it.toDto() }
     }
 
     override fun getSkillById(id: Long): SkillDto? {
-        TODO("Not yet implemented")
+        return skillRepository.getSkillById(id)?.toDto()
     }
 
     override fun getSkillsBySearch(searchString: String): List<SkillDto> {
