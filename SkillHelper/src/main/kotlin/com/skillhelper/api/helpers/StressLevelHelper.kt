@@ -1,5 +1,6 @@
 package com.skillhelper.api.helpers
 
 data class StressLevelHelper(
-    val stressLevel: Int,
+    val minLevel: Int,
+    val maxLevel: Int,
 )

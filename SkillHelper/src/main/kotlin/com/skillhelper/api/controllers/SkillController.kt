@@ -18,6 +18,11 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/skill")
 class SkillController(val skillHandler: ISkillHandler) {
+    @GetMapping("/test")
+    fun test(): String {
+        return "string";
+    }
+
     @GetMapping("/getById/{id}")
     fun getById(@PathVariable id: Long): SkillDto? {
         return skillHandler.getSkillById(id);
@@ -35,7 +40,7 @@ class SkillController(val skillHandler: ISkillHandler) {
 
     @GetMapping("/getByStressLevel")
     fun getByStressLevel(@RequestBody stressLevelHelper: StressLevelHelper): List<SkillDto> {
-        return skillHandler.getSkillsByStressLevel(stressLevelHelper.stressLevel)
+        return skillHandler.getSkillsByStressLevel(stressLevelHelper.minLevel, stressLevelHelper.maxLevel)
     }
 
     @PostMapping("/add")

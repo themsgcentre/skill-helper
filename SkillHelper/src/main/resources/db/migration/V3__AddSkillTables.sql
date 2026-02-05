@@ -16,16 +16,16 @@ CREATE TABLE [dbo].[Skill] (
     [Author] [nvarchar](16) NULL,
     [Visibility] [bigint] NOT NULL,
     [ImageSrc] [nvarchar](max) NULL,
-    CONSTRAINT [FK_AUTHOR] FOREIGN KEY ([Author]) REFERENCES [User]([Username]),
-    CONSTRAINT [FK_VISIBILITY] FOREIGN KEY ([Visibility]) REFERENCES [Visibility]([Id])
+    CONSTRAINT [SKILL_FK_AUTHOR] FOREIGN KEY ([Author]) REFERENCES [User]([Username]),
+    CONSTRAINT [SKILL_FK_VISIBILITY] FOREIGN KEY ([Visibility]) REFERENCES [Visibility]([Id])
 );
 
 CREATE TABLE [dbo].[Favorite] (
     [User] [nvarchar](16),
     [Skill] [bigint],
-    CONSTRAINT PK_FAVORITE PRIMARY KEY([User], [Skill]),
-    CONSTRAINT FK_USER FOREIGN KEY ([User]) REFERENCES [User]([Username]),
-    CONSTRAINT FK_SKILL FOREIGN KEY ([Skill]) REFERENCES [Skill]([Id])
+    CONSTRAINT [FAV_PK_FAVORITE] PRIMARY KEY([User], [Skill]),
+    CONSTRAINT [FAV_FK_USER] FOREIGN KEY ([User]) REFERENCES [User]([Username]),
+    CONSTRAINT [FAV_FK_SKILL] FOREIGN KEY ([Skill]) REFERENCES [Skill]([Id])
 );
 
 CREATE TABLE [dbo].[Share] (
@@ -34,8 +34,8 @@ CREATE TABLE [dbo].[Share] (
     [FromUser] [nvarchar](16) NOT NULL,
     [Skill] [bigint] NOT NULL,
     [Read] [tinyint] NOT NULL DEFAULT 0,
-    CONSTRAINT FK_FOR FOREIGN KEY ([ForUser]) REFERENCES [User]([Username]),
-    CONSTRAINT FK_FROM FOREIGN KEY ([FromUser]) REFERENCES [User]([Username]),
-    CONSTRAINT FK_SKILL FOREIGN KEY ([Skill]) REFERENCES [Skill]([Id]),
-    CONSTRAINT FOR_FROM_DIFFER CHECK([ForUser] <> [FromUser])
+    CONSTRAINT [SHARE_FK_FOR] FOREIGN KEY ([ForUser]) REFERENCES [User]([Username]),
+    CONSTRAINT [SHARE_FK_FROM] FOREIGN KEY ([FromUser]) REFERENCES [User]([Username]),
+    CONSTRAINT [SHARE_FK_SKILL] FOREIGN KEY ([Skill]) REFERENCES [Skill]([Id]),
+    CONSTRAINT [SHARE_FOR_FROM_DIFFER] CHECK([ForUser] <> [FromUser])
 );
