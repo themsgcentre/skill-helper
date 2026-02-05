@@ -1,42 +1,50 @@
 package com.skillhelper.api.controllers
 
+import com.skillhelper.api.helpers.BioUpdateHelper
+import com.skillhelper.api.helpers.PasswordUpdaterHelper
+import com.skillhelper.api.helpers.ProfileImageUpdateHelper
+import com.skillhelper.api.helpers.UsernameUpdateHelper
+import com.skillhelper.feature.interfaces.IUserHandler
+import com.skillhelper.feature.models.ProfileDto
+import com.skillhelper.feature.models.UserDto
 import org.springframework.web.bind.annotation.*
 
 
 @RestController
 @RequestMapping("/api/user")
-class UserController {
+class UserController(val userHandler: IUserHandler) {
     @GetMapping("/getProfileByName/{username}")
-    fun getProfileByName(@PathVariable username: String?) {
+    fun getProfileByName(@PathVariable username: String): ProfileDto? {
+        return userHandler.getProfileByName(username);
     }
 
     @DeleteMapping("/delete/{username}")
-    fun deleteUser(@PathVariable username: String?): Boolean {
-        return false
+    fun deleteUser(@PathVariable username: String): Boolean {
+        return userHandler.deleteUser(username);
     }
 
     @PostMapping("/create")
-    fun createUser(): Boolean {
-        return false
+    fun createUser(@RequestBody userDto: UserDto): Boolean {
+        return userHandler.createUser(userDto);
     }
 
     @PutMapping("/update/bio")
-    fun updateBio(): Boolean {
-        return false
+    fun updateBio(@RequestBody updateHelper: BioUpdateHelper): Boolean {
+        return userHandler.updateBio(updateHelper.username, updateHelper.bio);
     }
 
     @PutMapping("/update/picture")
-    fun updateProfilePicture(): Boolean {
-        return false
+    fun updateProfilePicture(@RequestBody updateHelper: ProfileImageUpdateHelper): Boolean {
+        return userHandler.updateProfilePicture(updateHelper.username, updateHelper.imageUrl)
     }
 
     @PutMapping("/update/username")
-    fun updateUsername(): Boolean {
-        return false
+    fun updateUsername(@RequestBody updateHelper: UsernameUpdateHelper): Boolean {
+        return userHandler.updateUsername(updateHelper.username, updateHelper.newUsername)
     }
 
     @PutMapping("/update/password")
-    fun updatePassword(): Boolean {
-        return false
+    fun updatePassword(@RequestBody updateHelper: PasswordUpdaterHelper): Boolean {
+        return userHandler.updatePassword(updateHelper.username, updateHelper.oldPassword, updateHelper.newPassword)
     }
 }
