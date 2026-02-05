@@ -1,7 +1,10 @@
 package com.skillhelper.feature.implementations
 
+import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.SkillDto
+import com.skillhelper.feature.models.UserDto
 import com.skillhelper.repository.models.SkillDbo
+import com.skillhelper.repository.models.UserDbo
 
 fun SkillDbo.toDto(): SkillDto = SkillDto(
     id = this.id,
@@ -21,4 +24,17 @@ fun SkillDto.toDbo(): SkillDbo = SkillDbo(
     author = this.author,
     visibility = this.visibility,
     imageSrc = this.imageSrc
+)
+
+fun UserDto.toDbo(): UserDbo = UserDbo(
+    username = this.username,
+    password = this.password,
+    bio = this.bio,
+    profileImage = this.profileImage,
+)
+
+fun UserDbo.toProfileDto(): ProfileDto = ProfileDto(
+    username = this.username,
+    bio = this.bio,
+    profileImage = this.profileImage,
 )
