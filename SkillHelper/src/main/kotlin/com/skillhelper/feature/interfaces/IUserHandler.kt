@@ -11,4 +11,5 @@ interface IUserHandler {
     fun updateProfilePicture(username: String, imageSrc: String?): Boolean;
     fun updateUsername(username: String, newName: String): Boolean;
     fun updatePassword(username: String, oldPassword: String, newPassword: String): Boolean;
+    fun checkIfUsernameExists(username: String): Boolean;
 }

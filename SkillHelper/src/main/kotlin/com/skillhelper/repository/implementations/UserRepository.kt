@@ -1,17 +1,14 @@
-package com.skillhelper.feature.implementations
+package com.skillhelper.repository.implementations
 
-import com.skillhelper.feature.interfaces.IUserHandler
-import com.skillhelper.feature.models.ProfileDto
-import com.skillhelper.feature.models.UserDto
-import org.springframework.stereotype.Service
+import com.skillhelper.repository.interfaces.IUserRepository
+import com.skillhelper.repository.models.UserDbo
 
-@Service
-class UserHandler: IUserHandler {
-    override fun getProfileByName(username: String): ProfileDto? {
+class UserRepository: IUserRepository {
+    override fun getUserByName(username: String): UserDbo? {
         TODO("Not yet implemented")
     }
 
-    override fun createUser(user: UserDto): Boolean {
+    override fun createUser(user: UserDbo): Boolean {
         TODO("Not yet implemented")
     }
 
@@ -31,15 +28,15 @@ class UserHandler: IUserHandler {
         TODO("Not yet implemented")
     }
 
-    override fun updatePassword(
-        username: String,
-        oldPassword: String,
-        newPassword: String
-    ): Boolean {
+    override fun updatePassword(username: String, newPassword: String): Boolean {
         TODO("Not yet implemented")
     }
 
     override fun checkIfUsernameExists(username: String): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPassword(username: String): String {
         TODO("Not yet implemented")
     }
 }
