@@ -18,7 +18,10 @@ class SkillRepository: ISkillRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getSkillsByStressLevel(level: Int): List<SkillDbo> {
+    override fun getSkillsByStressLevel(
+        minLevel: Int,
+        maxLevel: Int
+    ): List<SkillDbo> {
         TODO("Not yet implemented")
     }
 
@@ -31,6 +34,10 @@ class SkillRepository: ISkillRepository {
     }
 
     override fun deleteSkill(skillId: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun changeVisibility(skillId: Long, visibilityId: Long) {
         TODO("Not yet implemented")
     }
 }
