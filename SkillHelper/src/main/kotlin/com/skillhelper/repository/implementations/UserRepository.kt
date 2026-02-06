@@ -38,7 +38,7 @@ class UserRepository: IUserRepository {
         TODO("Not yet implemented")
     }
 
-    override fun getPassword(username: String): String {
+    override fun getPassword(username: String): String? {
         TODO("Not yet implemented")
     }
 }

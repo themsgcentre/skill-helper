@@ -26,9 +26,9 @@ fun SkillDto.toDbo(): SkillDbo = SkillDbo(
     imageSrc = this.imageSrc
 )
 
-fun UserDto.toDbo(): UserDbo = UserDbo(
+fun UserDto.toDbo(encodedPassword: String): UserDbo = UserDbo(
     username = this.username,
-    password = this.password,
+    password = encodedPassword,
     bio = this.bio,
     profileImage = this.profileImage,
 )

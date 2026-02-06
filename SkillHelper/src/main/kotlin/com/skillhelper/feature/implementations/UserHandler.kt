@@ -5,16 +5,21 @@ import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.UserDto
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
+import org.springframework.security.crypto.password.PasswordEncoder
 
 @Service
-class UserHandler(val userRepository: IUserRepository): IUserHandler {
+class UserHandler(
+    val userRepository: IUserRepository,
+    private val passwordEncoder: PasswordEncoder
+): IUserHandler {
     override fun getProfileByName(username: String): ProfileDto? {
         return userRepository.getUserByName(username)?.toProfileDto();
     }
 
     override fun createUser(user: UserDto) {
         if(!userRepository.checkIfUsernameExists(user.username)){
-            userRepository.createUser(user.toDbo())
+            val hashed = passwordEncoder.encode(user.password)
+            userRepository.createUser(user.toDbo(hashed))
         }
     }
 
@@ -41,8 +46,13 @@ class UserHandler(val userRepository: IUserRepository): IUserHandler {
         oldPassword: String,
         newPassword: String
     ) {
-        if(userRepository.getPassword(username) == oldPassword && oldPassword != newPassword) {
-            userRepository.updatePassword(username, newPassword);
+        if (oldPassword == newPassword) return;
+        if(!userRepository.checkIfUsernameExists(username)) return;
+
+        val storedHash = userRepository.getPassword(username) ?: return
+        if (passwordEncoder.matches(oldPassword, storedHash)) {
+            val newHash = passwordEncoder.encode(newPassword)
+            userRepository.updatePassword(username, newHash)
         }
     }
 

@@ -19,32 +19,37 @@ class UserController(val userHandler: IUserHandler) {
     }
 
     @DeleteMapping("/delete/{username}")
-    fun deleteUser(@PathVariable username: String): Boolean {
-        return userHandler.deleteUser(username);
+    fun deleteUser(@PathVariable username: String) {
+        userHandler.deleteUser(username);
     }
 
     @PostMapping("/create")
-    fun createUser(@RequestBody userDto: UserDto): Boolean {
-        return userHandler.createUser(userDto);
+    fun createUser(@RequestBody userDto: UserDto) {
+        userHandler.createUser(userDto);
     }
 
     @PutMapping("/update/bio")
-    fun updateBio(@RequestBody updateHelper: BioUpdateHelper): Boolean {
-        return userHandler.updateBio(updateHelper.username, updateHelper.bio);
+    fun updateBio(@RequestBody updateHelper: BioUpdateHelper) {
+        userHandler.updateBio(updateHelper.username, updateHelper.bio);
     }
 
     @PutMapping("/update/picture")
-    fun updateProfilePicture(@RequestBody updateHelper: ProfileImageUpdateHelper): Boolean {
-        return userHandler.updateProfilePicture(updateHelper.username, updateHelper.imageUrl)
+    fun updateProfilePicture(@RequestBody updateHelper: ProfileImageUpdateHelper) {
+        userHandler.updateProfilePicture(updateHelper.username, updateHelper.imageUrl)
     }
 
     @PutMapping("/update/username")
-    fun updateUsername(@RequestBody updateHelper: UsernameUpdateHelper): Boolean {
-        return userHandler.updateUsername(updateHelper.username, updateHelper.newUsername)
+    fun updateUsername(@RequestBody updateHelper: UsernameUpdateHelper) {
+        userHandler.updateUsername(updateHelper.username, updateHelper.newUsername)
     }
 
     @PutMapping("/update/password")
-    fun updatePassword(@RequestBody updateHelper: PasswordUpdaterHelper): Boolean {
-        return userHandler.updatePassword(updateHelper.username, updateHelper.oldPassword, updateHelper.newPassword)
+    fun updatePassword(@RequestBody updateHelper: PasswordUpdaterHelper) {
+        userHandler.updatePassword(updateHelper.username, updateHelper.oldPassword, updateHelper.newPassword)
+    }
+
+    @GetMapping("/checkIfUsernameExists({username})")
+    fun checkIfUsernameExists(@PathVariable username: String): Boolean {
+        return userHandler.checkIfUsernameExists(username);
     }
 }
