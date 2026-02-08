@@ -1,17 +1,43 @@
 package com.skillhelper.repository.implementations
 
+import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import com.skillhelper.repository.models.UserDbo
+import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
 
 @Service
-class UserRepository: IUserRepository {
+class UserRepository(
+    jdbc: JdbcClient
+): IUserRepository, BaseRepository(jdbc, "[User]") {
     override fun getUserByName(username: String): UserDbo? {
         TODO("Not yet implemented")
     }
 
     override fun createUser(user: UserDbo) {
-        TODO("Not yet implemented")
+        val sql = """
+        INSERT INTO dbo.$tableName (
+            Username,
+            Password,
+            ProfileImage,
+            Bio
+        )
+        VALUES (
+            :username,
+            :password,
+            :profileImage,
+            :bio
+        );
+        """.trimIndent()
+
+        val params = mapOf(
+            "username" to user.username,
+            "password" to user.password,
+            "profileImage" to user.profileImage,
+            "bio" to user.bio
+        )
+
+        execute(sql, params);
     }
 
     override fun deleteUser(username: String) {
@@ -35,7 +61,7 @@ class UserRepository: IUserRepository {
     }
 
     override fun checkIfUsernameExists(username: String): Boolean {
-        TODO("Not yet implemented")
+        return false;
     }
 
     override fun getPassword(username: String): String? {
