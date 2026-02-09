@@ -10,4 +10,5 @@ interface IUserRepository {
     fun updateUsername(username: String, newName: String);
     fun updatePassword(username: String, newPassword: String);
     fun getPassword(username: String): String?;
+    fun userExists(username: String): Boolean;
 }

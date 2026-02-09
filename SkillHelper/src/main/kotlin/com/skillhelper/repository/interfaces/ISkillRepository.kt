@@ -13,4 +13,5 @@ interface ISkillRepository {
     fun updateSkill(skill: SkillDbo);
     fun deleteSkill(skillId: Long);
     fun changeVisibility(skillId: Long, visibilityId: Long );
+    fun skillExists(skillId: Long): Boolean;
 }

@@ -148,4 +148,23 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
 
         execute(sql, params);
     }
+
+    override fun skillExists(skillId: Long): Boolean {
+        val sql = """
+        SELECT CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM dbo.$tableName
+                WHERE Id = :skillId
+            )
+            THEN 1 ELSE 0
+        END
+        """.trimIndent()
+
+        val params = mapOf(
+            "skillId" to skillId
+        )
+
+        return query<Int>(sql, params).first() == 1;
+    }
 }

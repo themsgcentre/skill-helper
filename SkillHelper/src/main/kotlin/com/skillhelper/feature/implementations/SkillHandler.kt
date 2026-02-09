@@ -6,12 +6,14 @@ import com.skillhelper.repository.implementations.FavoriteRepository
 import com.skillhelper.repository.implementations.VisibilityRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
+import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 
 @Service
 class SkillHandler(
     val skillRepository: ISkillRepository,
     val favoriteRepository: IFavoriteRepository,
+    val userRepository: IUserRepository,
 ): ISkillHandler {
     override fun getAllSkills(): List<SkillDto> {
         return skillRepository
@@ -31,12 +33,13 @@ class SkillHandler(
         return skillRepository.getSkillsByStressLevel(minLevel, maxLevel).map { it.toDto() }
     }
 
-    // TODO: check if author exists when not null for foreign key constraint
     override fun addSkill(skill: SkillDto) {
+        if(skill.author != null && !userRepository.userExists(skill.author)) return;
         skillRepository.addSkill(skill.toDbo())
     }
 
     override fun updateSkill(skill: SkillDto) {
+        if(skill.author != null && !userRepository.userExists(skill.author)) return;
         skillRepository.updateSkill(skill.toDbo())
     }
 
@@ -44,8 +47,8 @@ class SkillHandler(
         skillRepository.deleteSkill(skillId)
     }
 
-    // TODO: check if skills and user exists bc of foreign key constraint!!
     override fun addFavorite(username: String, skillId: Long) {
+        if(!userRepository.userExists(username) || !skillRepository.skillExists(skillId)) return;
         favoriteRepository.addFavorite(username, skillId)
     }
 
@@ -56,5 +59,4 @@ class SkillHandler(
     override fun changeVisibility(skillId: Long, visibility: Long) {
         skillRepository.changeVisibility(skillId, visibility)
     }
-
 }

@@ -50,6 +50,6 @@ class UserController(val userHandler: IUserHandler) {
 
     @GetMapping("/checkIfUsernameExists({username})")
     fun checkIfUsernameExists(@PathVariable username: String): Boolean {
-        return userHandler.usernameExists(username);
+        return userHandler.userExists(username);
     }
 }

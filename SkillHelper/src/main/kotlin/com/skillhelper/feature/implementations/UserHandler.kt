@@ -17,10 +17,9 @@ class UserHandler(
     }
 
     override fun createUser(user: UserDto) {
-        if(!usernameExists(user.username)){
-            val hashed = passwordEncoder.encode(user.password)
-            userRepository.createUser(user.toDbo(hashed))
-        }
+        if(userExists(user.username)) return;
+        val hashed = passwordEncoder.encode(user.password)
+        userRepository.createUser(user.toDbo(hashed))
     }
 
     override fun deleteUser(username: String) {
@@ -36,9 +35,8 @@ class UserHandler(
     }
 
     override fun updateUsername(username: String, newName: String) {
-        if(!usernameExists(username) && username != newName) {
-            userRepository.updateUsername(username, newName);
-        }
+        if(userExists(username) || username == newName) return;
+        userRepository.updateUsername(username, newName)
     }
 
     override fun updatePassword(
@@ -46,9 +44,7 @@ class UserHandler(
         oldPassword: String,
         newPassword: String
     ) {
-        if (oldPassword == newPassword) return;
-        if(!usernameExists(username)) return;
-
+        if (oldPassword == newPassword || !userRepository.userExists(username)) return;
         val storedHash = userRepository.getPassword(username) ?: return
         if (passwordEncoder.matches(oldPassword, storedHash)) {
             val newHash = passwordEncoder.encode(newPassword)
@@ -56,7 +52,7 @@ class UserHandler(
         }
     }
 
-    override fun usernameExists(username: String): Boolean {
-        return userRepository.getUserByName(username) != null;
+    override fun userExists(username: String): Boolean {
+        return userRepository.userExists(username);
     }
 }

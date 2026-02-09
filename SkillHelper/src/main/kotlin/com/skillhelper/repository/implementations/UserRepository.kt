@@ -134,4 +134,24 @@ class UserRepository(
 
         return query<String>(sql, params).firstOrNull();
     }
+
+    override fun userExists(username: String): Boolean {
+        val sql = """
+        SELECT CASE 
+            WHEN EXISTS (
+                SELECT 1
+                FROM dbo.$tableName
+                WHERE Username = :username
+            )
+            THEN 1 ELSE 0
+        END
+        """.trimIndent()
+
+        val params = mapOf(
+            "username" to username
+        )
+
+        val result = query<Int>(sql, params).first();
+        return (result == 1);
+    }
 }
