@@ -52,7 +52,7 @@ class UserRepository(
     override fun deleteUser(username: String) {
         val sql = """
         DELETE from dbo.$tableName
-        WHERE username = :username;
+        WHERE Username = :username;
         """.trimIndent();
 
         val params = mapOf(
