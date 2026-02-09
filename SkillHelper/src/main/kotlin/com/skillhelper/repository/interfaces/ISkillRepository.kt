@@ -9,7 +9,7 @@ interface ISkillRepository {
     fun getSkillById(id: Long) : SkillDbo?;
     fun getSkillsBySearch(searchString: String) : List<SkillDbo>;
     fun getSkillsByStressLevel(minLevel: Int, maxLevel: Int) : List<SkillDbo>;
-    fun addSkill(skill: SkillDbo);
+    fun addSkill(skill: SkillDbo): Long;
     fun updateSkill(skill: SkillDbo);
     fun deleteSkill(skillId: Long);
     fun changeVisibility(skillId: Long, visibilityId: Long );
