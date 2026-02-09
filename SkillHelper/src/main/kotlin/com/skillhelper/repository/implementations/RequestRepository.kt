@@ -30,7 +30,7 @@ class RequestRepository(jdbc: JdbcClient): IRequestRepository, BaseRepository(jd
     override fun removeRequest(username: String, request: String) {
         val sql = """
         DELETE from dbo.$tableName
-        WHERE User = :username and Request = :request;
+        WHERE User = :username AND Request = :request;
         """.trimIndent();
 
         val params = mapOf(

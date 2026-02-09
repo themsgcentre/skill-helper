@@ -18,7 +18,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
 
     override fun getSkillById(id: Long): SkillDbo? {
         val sql = """
-        SELECT (Id, Name, Description, StressLevel, Author, Visibility, ImageSrc) from dbo.$tableName
+        SELECT * from dbo.$tableName
         WHERE Id = :id;
         """.trimIndent();
 
@@ -31,15 +31,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
 
     override fun getSkillsBySearch(searchString: String): List<SkillDbo> {
         val sql = """
-        SELECT DISTINCT
-            (Id,
-            Name,
-            Description,
-            StressLeve,
-            Author,
-            Visibility,
-            ImageSrc)
-        FROM dbo.$tableName
+        SELECT DISTINCT * FROM dbo.$tableName
         WHERE
             Name        LIKE :pattern
             OR Description LIKE :pattern

@@ -18,9 +18,9 @@ class ShareController(val shareHandler: IShareHandler) {
         shareHandler.readShare(shareId);
     }
 
-    @DeleteMapping("/deleteMessages/{username}")
-    fun deleteMessages(@PathVariable username: String) {
-        shareHandler.deleteAll(username);
+    @DeleteMapping("/deleteAllForUser/{username}")
+    fun deleteAllForUser(@PathVariable username: String) {
+        shareHandler.deleteAllForUser(username);
     }
 
     @GetMapping("/getAll/{username}")

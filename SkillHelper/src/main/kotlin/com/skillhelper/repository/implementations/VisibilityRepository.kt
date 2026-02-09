@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class VisibilityRepository(jdbc: JdbcClient): IVisibilityRepository, BaseRepository(jdbc, "[Visibility]") {
     override fun getAllVisibilityLevels(): List<VisibilityDbo> {
         val sql = """
-        SELECT (Id, Description) from dbo.$tableName;
+        SELECT * from dbo.$tableName;
         """.trimIndent();
 
         return query<VisibilityDbo>(sql);

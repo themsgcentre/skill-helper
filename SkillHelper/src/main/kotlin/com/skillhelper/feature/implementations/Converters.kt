@@ -3,8 +3,11 @@ package com.skillhelper.feature.implementations
 import com.skillhelper.feature.models.FriendDto
 import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.RequestDto
+import com.skillhelper.feature.models.ShareCreationDto
+import com.skillhelper.feature.models.ShareDto
 import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.feature.models.UserDto
+import com.skillhelper.repository.models.ShareDbo
 import com.skillhelper.repository.models.SkillDbo
 import com.skillhelper.repository.models.UserDbo
 
@@ -49,4 +52,22 @@ fun String.toRequestDto(imageSrc: String?): RequestDto = RequestDto(
 fun String.toFriendDto(imageSrc: String?): FriendDto = FriendDto(
     username = this,
     profileImage = imageSrc,
+)
+
+fun ShareCreationDto.toDbo(): ShareDbo = ShareDbo(
+    id = 0,
+    forUser = this.to,
+    fromUser = this.from,
+    skill = this.skillId,
+    read = false,
+    dateShared = this.dateShared
+)
+
+fun ShareDbo.toDto(profileImg: String?, skillImg: String?): ShareDto = ShareDto(
+    id = this.id,
+    from = this.fromUser,
+    skillId = this.skill,
+    dateShared = this.dateShared,
+    fromProfileImg = profileImg,
+    skillImg = skillImg,
 )

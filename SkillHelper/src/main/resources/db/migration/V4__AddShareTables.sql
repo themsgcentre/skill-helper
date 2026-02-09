@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[Share] (
     [ForUser] [nvarchar](16) NOT NULL,
     [FromUser] [nvarchar](16) NOT NULL,
     [Skill] [bigint] NOT NULL,
-    [Date] [DATE] NOT NULL,
+    [DateShared] [DATE] NOT NULL,
     [Read] [tinyint] NOT NULL DEFAULT 0,
     CONSTRAINT [SHARE_FK_FOR] FOREIGN KEY ([ForUser]) REFERENCES [User]([Username]),
     CONSTRAINT [SHARE_FK_FROM] FOREIGN KEY ([FromUser]) REFERENCES [User]([Username]),

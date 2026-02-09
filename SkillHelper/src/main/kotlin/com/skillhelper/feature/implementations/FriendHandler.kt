@@ -19,28 +19,28 @@ class FriendHandler(
         val friendsOfRequester = requestRepository.getRequests(requestFrom);
 
         if(!friendsOfSender.contains(requestFrom)) {
-            friendRepository.addFriend(username, requestFrom)
+            friendRepository.addFriend(username, requestFrom);
         }
 
         if(friendsOfRequester.contains(username)) {
-            friendRepository.addFriend(requestFrom, username)
+            friendRepository.addFriend(requestFrom, username);
         }
 
-        requestRepository.removeRequest(username, requestFrom)
-        requestRepository.removeRequest(requestFrom, username)
+        requestRepository.removeRequest(username, requestFrom);
+        requestRepository.removeRequest(requestFrom, username);
     }
 
     override fun removeFriend(username: String, friend: String) {
-        friendRepository.removeFriend(username, friend)
-        friendRepository.removeFriend(friend, username)
+        friendRepository.removeFriend(username, friend);
+        friendRepository.removeFriend(friend, username);
     }
 
     override fun addRequest(username: String, requestFrom: String) {
-        requestRepository.addRequest(username, requestFrom)
+        requestRepository.addRequest(username, requestFrom);
     }
 
     override fun removeRequest(username: String, requestFrom: String) {
-        requestRepository.removeRequest(username, requestFrom)
+        requestRepository.removeRequest(username, requestFrom);
     }
 
     override fun getFriends(username: String): List<FriendDto> {
@@ -48,7 +48,7 @@ class FriendHandler(
 
         return friendNames.map { friendUsername ->
             val user = userRepository.getUserByName(friendUsername);
-            friendUsername.toFriendDto(user?.profileImage)
+            friendUsername.toFriendDto(user?.profileImage);
         }
     }
 
@@ -56,8 +56,8 @@ class FriendHandler(
         val requestNames = requestRepository.getRequests(username)
 
         return requestNames.map { requestUsername ->
-            val user = userRepository.getUserByName(requestUsername)
-            requestUsername.toRequestDto(user?.profileImage)
+            val user = userRepository.getUserByName(requestUsername);
+            requestUsername.toRequestDto(user?.profileImage);
         }
     }
 

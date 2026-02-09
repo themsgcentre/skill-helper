@@ -31,7 +31,7 @@ class FriendRepository(jdbc: JdbcClient): IFriendRepository, BaseRepository(jdbc
     override fun removeFriend(username: String, friend: String) {
         val sql = """
         DELETE from dbo.$tableName
-        WHERE User = :username and Friend = :friend;
+        WHERE User = :username AND Friend = :friend;
         """.trimIndent();
 
         val params = mapOf(

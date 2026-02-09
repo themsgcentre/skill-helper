@@ -6,7 +6,7 @@ import com.skillhelper.feature.models.ShareDto
 interface IShareHandler {
     fun addShare(share: ShareCreationDto);
     fun readShare(shareId: Long);
-    fun deleteAll(username: String);
+    fun deleteAllForUser(username: String);
     fun deleteShare(shareId: Long);
     fun getAll(username: String): List<ShareDto>;
 }
