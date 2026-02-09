@@ -1,27 +1,35 @@
 package com.skillhelper.api.controllers
 
+import com.skillhelper.feature.interfaces.IShareHandler
+import com.skillhelper.feature.models.ShareCreationDto
+import com.skillhelper.feature.models.ShareDto
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/share")
-class ShareController {
+class ShareController(val shareHandler: IShareHandler) {
     @PostMapping("/add")
-    fun addShare() {
+    fun addShare(@RequestBody share: ShareCreationDto) {
+        shareHandler.addShare(share);
     }
 
-    @PutMapping("/read")
-    fun readShare() {
+    @PutMapping("/read/{shareId}")
+    fun readShare(@PathVariable shareId: Long) {
+        shareHandler.readShare(shareId);
     }
 
     @DeleteMapping("/deleteMessages/{username}")
-    fun deleteMessages(@PathVariable username: String?) {
+    fun deleteMessages(@PathVariable username: String) {
+        shareHandler.deleteAll(username);
     }
 
     @GetMapping("/getAll/{username}")
-    fun getAll(@PathVariable username: String?) {
+    fun getAll(@PathVariable username: String): List<ShareDto> {
+        return shareHandler.getAll(username);
     }
 
-    @GetMapping("/getById/{id}")
-    fun getById(@PathVariable id: Long) {
+    @GetMapping("/delete/{shareId}")
+    fun getById(@PathVariable shareId: Long) {
+        return shareHandler.deleteShare(shareId);
     }
 }
