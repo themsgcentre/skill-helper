@@ -11,7 +11,16 @@ class UserRepository(
     jdbc: JdbcClient
 ): IUserRepository, BaseRepository(jdbc, "[User]") {
     override fun getUserByName(username: String): UserDbo? {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT * from dbo.$tableName
+        WHERE Username = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+        );
+
+        return query<UserDbo>(sql, params).firstOrNull();
     }
 
     override fun createUser(user: UserDbo) {
@@ -37,34 +46,92 @@ class UserRepository(
             "bio" to user.bio
         )
 
-        execute(sql, params);
+        insert(sql, params);
     }
 
     override fun deleteUser(username: String) {
-        TODO("Not yet implemented")
+        val sql = """
+        DELETE from dbo.$tableName
+        WHERE username = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+        );
+
+        execute(sql, params);
     }
 
     override fun updateBio(username: String, bio: String) {
-        TODO("Not yet implemented")
+        val sql = """
+        UPDATE dbo.$tableName
+        SET Bio = :bio
+        WHERE Username = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+            "bio" to bio
+        );
+
+        execute(sql, params);
     }
 
     override fun updateProfilePicture(username: String, imageSrc: String?) {
-        TODO("Not yet implemented")
+        val sql = """
+        UPDATE dbo.$tableName
+        SET ProfileImage = :imageSrc
+        WHERE Username = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+            "imageSrc" to imageSrc
+        );
+
+        execute(sql, params);
     }
 
     override fun updateUsername(username: String, newName: String) {
-        TODO("Not yet implemented")
+        val sql = """
+        UPDATE dbo.$tableName
+        SET Username = :newName
+        WHERE Username = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+            "newName" to newName
+        );
+
+        execute(sql, params);
     }
 
     override fun updatePassword(username: String, newPassword: String) {
-        TODO("Not yet implemented")
-    }
+        val sql = """
+        UPDATE dbo.$tableName
+        SET Password = :newPassword
+        WHERE Username = :username;
+        """.trimIndent();
 
-    override fun checkIfUsernameExists(username: String): Boolean {
-        return false;
+        val params = mapOf(
+            "username" to username,
+            "newPassword" to newPassword
+        );
+
+        execute(sql, params);
     }
 
     override fun getPassword(username: String): String? {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT (Password) from dbo.$tableName
+        WHERE Username = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+        );
+
+        return query<String>(sql, params).firstOrNull();
     }
 }
