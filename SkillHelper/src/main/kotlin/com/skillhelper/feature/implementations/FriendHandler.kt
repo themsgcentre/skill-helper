@@ -1,14 +1,18 @@
 package com.skillhelper.feature.implementations
 
 import com.skillhelper.feature.interfaces.IFriendHandler
+import com.skillhelper.feature.models.FriendDto
+import com.skillhelper.feature.models.RequestDto
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
+import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 
 @Service
 class FriendHandler(
     val friendRepository: IFriendRepository,
-    val requestRepository: IRequestRepository
+    val requestRepository: IRequestRepository,
+    val userRepository: IUserRepository,
 ): IFriendHandler {
     override fun acceptRequest(username: String, requestFrom: String) {
         val friendsOfSender = friendRepository.getFriends(username);
@@ -39,12 +43,22 @@ class FriendHandler(
         requestRepository.removeRequest(username, requestFrom)
     }
 
-    override fun getFriends(username: String): List<String> {
-        return friendRepository.getFriends(username);
+    override fun getFriends(username: String): List<FriendDto> {
+        val friendNames = friendRepository.getFriends(username);
+
+        return friendNames.map { friendUsername ->
+            val user = userRepository.getUserByName(friendUsername);
+            friendUsername.toFriendDto(user?.profileImage)
+        }
     }
 
-    override fun getRequests(username: String): List<String> {
-        return requestRepository.getRequests(username);
+    override fun getRequests(username: String): List<RequestDto> {
+        val requestNames = requestRepository.getRequests(username)
+
+        return requestNames.map { requestUsername ->
+            val user = userRepository.getUserByName(requestUsername)
+            requestUsername.toRequestDto(user?.profileImage)
+        }
     }
 
 }

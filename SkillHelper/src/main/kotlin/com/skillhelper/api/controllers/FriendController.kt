@@ -4,6 +4,8 @@ import com.skillhelper.api.helpers.FriendHelper
 import com.skillhelper.api.helpers.RequestHelper
 import com.skillhelper.api.helpers.UsernameHelper
 import com.skillhelper.feature.interfaces.IFriendHandler
+import com.skillhelper.feature.models.FriendDto
+import com.skillhelper.feature.models.RequestDto
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -15,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/friend")
 class FriendController(val friendHandler: IFriendHandler) {
     @GetMapping("/getFriends")
-    fun getFriends(@RequestBody helper: UsernameHelper): List<String> {
+    fun getFriends(@RequestBody helper: UsernameHelper): List<FriendDto> {
         return friendHandler.getFriends(helper.username);
     }
 
     @GetMapping("/getRequests")
-    fun getRequests(@RequestBody helper: UsernameHelper): List<String> {
+    fun getRequests(@RequestBody helper: UsernameHelper): List<RequestDto> {
         return friendHandler.getRequests(helper.username);
     }
 
