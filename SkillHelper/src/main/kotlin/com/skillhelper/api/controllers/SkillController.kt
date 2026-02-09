@@ -18,11 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/skill")
 class SkillController(val skillHandler: ISkillHandler) {
-    @GetMapping("/test")
-    fun test(): String {
-        return "string";
-    }
-
     @GetMapping("/getById/{id}")
     fun getById(@PathVariable id: Long): SkillDto? {
         return skillHandler.getSkillById(id);

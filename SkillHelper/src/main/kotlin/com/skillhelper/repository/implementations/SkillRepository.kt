@@ -9,22 +9,65 @@ import org.springframework.stereotype.Service
 @Service
 class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(jdbcClient, "[Skill]") {
     override fun getAllSkills(): List<SkillDbo> {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT (Id, Name, Description, StressLevel, Author, Visibility, ImageSrc) from dbo.$tableName
+        """.trimIndent();
+
+        return query<SkillDbo>(sql);
     }
 
     override fun getSkillById(id: Long): SkillDbo? {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT (Id, Name, Description, StressLevel, Author, Visibility, ImageSrc) from dbo.$tableName
+        WHERE Id = :id;
+        """.trimIndent();
+
+        val params = mapOf(
+            "id" to id,
+        );
+
+        return query<SkillDbo>(sql, params).firstOrNull();
     }
 
     override fun getSkillsBySearch(searchString: String): List<SkillDbo> {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT DISTINCT
+            (Id,
+            Name,
+            Description,
+            StressLeve,
+            Author,
+            Visibility,
+            ImageSrc)
+        FROM dbo.$tableName
+        WHERE
+            Name        LIKE :pattern
+            OR Description LIKE :pattern
+            OR Author      LIKE :pattern
+        """.trimIndent()
+
+        val params = mapOf(
+            "pattern" to searchString
+        )
+
+        return query<SkillDbo>(sql, params)
     }
 
     override fun getSkillsByStressLevel(
         minLevel: Int,
         maxLevel: Int
     ): List<SkillDbo> {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT * from dbo.$tableName
+        WHERE StressLevel >= :minLevel AND StressLevel <= :maxLevel;
+        """.trimIndent();
+
+        val params = mapOf(
+            "minLevel" to minLevel,
+            "maxLevel" to maxLevel,
+        );
+
+        return query<SkillDbo>(sql, params);
     }
 
     override fun addSkill(skill: SkillDbo): Long {
