@@ -33,9 +33,9 @@ class SkillHandler(
         return skillRepository.getSkillsByStressLevel(minLevel, maxLevel).map { it.toDto() }
     }
 
-    override fun addSkill(skill: SkillDto) {
-        if(skill.author != null && !userRepository.userExists(skill.author)) return;
-        skillRepository.addSkill(skill.toDbo())
+    override fun addSkill(skill: SkillDto): Long {
+        if(skill.author != null && !userRepository.userExists(skill.author)) return -1;
+        return skillRepository.addSkill(skill.toDbo())
     }
 
     override fun updateSkill(skill: SkillDto) {

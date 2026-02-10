@@ -7,7 +7,7 @@ interface ISkillHandler {
     fun getSkillById(id: Long) : SkillDto?;
     fun getSkillsBySearch(searchString: String) : List<SkillDto>;
     fun getSkillsByStressLevel(minLevel: Int, maxLevel: Int) : List<SkillDto>;
-    fun addSkill(skill: SkillDto);
+    fun addSkill(skill: SkillDto): Long;
     fun updateSkill(skill: SkillDto);
     fun deleteSkill(skillId: Long);
     fun addFavorite(username: String, skillId: Long);
