@@ -11,7 +11,7 @@ import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class AcceptRequestTests {
+class AddRequestTests {
     private lateinit var friendRepository: IFriendRepository;
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
@@ -44,86 +44,82 @@ class AcceptRequestTests {
 
         every {
             userRepository.userExists(requestFrom)
-        } returns true;
+        } returns true
     }
 
     @Test
-    fun acceptRequest_CallsRemoveOnRequestRepositoryForBothDirections() {
-        handler.acceptRequest(username, requestFrom);
-
-        verify(exactly = 1) { requestRepository.removeRequest(username, requestFrom) }
-        verify(exactly = 1) { requestRepository.removeRequest(requestFrom, username) }
-    }
-
-    @Test
-    fun acceptRequest_NeitherAreFriends_CallsAddOnBothOnRepository() {
-        handler.acceptRequest(username, requestFrom);
-
-        verify(exactly = 1) { friendRepository.addFriend(username, requestFrom) }
-        verify(exactly = 1) { friendRepository.addFriend(requestFrom, username) }
-    }
-
-    @Test
-    fun acceptRequest_RequesterNotFriendsWithReceiver_CallsAddFriendOnRepository() {
+    fun addRequest_UsersAreFriendsAlreadyOnReceiverSide_DoesNotCallRequestRepository() {
         every {
             friendRepository.getFriends(username)
         } returns listOf(requestFrom)
 
-        handler.acceptRequest(username, requestFrom);
-        verify(exactly = 1) { friendRepository.addFriend(requestFrom, username) }
+        handler.addRequest(username, requestFrom)
+
+        verify { requestRepository wasNot Called }
     }
 
     @Test
-    fun acceptRequest_ReceiverNotFriendsWithRequester_CallsAddFriendOnRepository() {
+    fun addRequest_UsersAreFriendsAlreadyOnRequesterSide_DoesNotCallRequestRepository() {
         every {
             friendRepository.getFriends(requestFrom)
         } returns listOf(username)
 
-        handler.acceptRequest(username, requestFrom);
-        verify(exactly = 1) { friendRepository.addFriend(username, requestFrom) }
+        handler.addRequest(username, requestFrom)
+
+        verify { requestRepository wasNot Called }
     }
 
     @Test
-    fun acceptRequest_UsersAreFriendsAlready_DoesNotCallAddFriendOnRepository() {
-        every {
-            friendRepository.getFriends(requestFrom)
-        } returns listOf(username)
-
-        every {
-            friendRepository.getFriends(username)
-        } returns listOf(requestFrom)
-
-        handler.acceptRequest(username, requestFrom);
-        verify(exactly = 0) { friendRepository.addFriend(any(), any()) }
-    }
-
-    @Test
-    fun acceptRequest_ReceiverDoesNotExist_DoesNotCallFriendOrRequestRepository() {
+    fun addRequest_ReceiverDoesNotExist_DoesNotCallRequestOrFriendRepository() {
         every {
             userRepository.userExists(username)
         } returns false
 
-        handler.acceptRequest(username, requestFrom);
+        handler.addRequest(username, requestFrom)
 
         verify { friendRepository wasNot Called }
         verify { requestRepository wasNot Called }
     }
 
     @Test
-    fun acceptRequest_RequesterDoesNotExist_DoesNotCallFriendOrRequestRepository() {
+    fun addRequest_RequesterDoesNotExist_DoesNotCallRequestOrFriendRepository() {
         every {
             userRepository.userExists(requestFrom)
         } returns false
 
-        handler.acceptRequest(username, requestFrom);
+        handler.addRequest(username, requestFrom)
 
         verify { friendRepository wasNot Called }
         verify { requestRepository wasNot Called }
     }
 
     @Test
-    fun acceptRequest_UsernamesAreEqual_DoesNotCallRepositories() {
-        handler.acceptRequest(username, username);
+    fun addRequest_RequestAlreadyExists_DoesNotCallAddOnRepository() {
+        every {
+            requestRepository.getRequests(username)
+        } returns listOf(requestFrom)
+
+        handler.addRequest(username, requestFrom)
+
+        verify(exactly = 0){ requestRepository.addRequest(any(), any()) }
+    }
+
+    @Test
+    fun addRequest_ReceiverHasSentRequestToRequester_AddsFriendAndDoesNotCallAddRequestOnRepository() {
+        every {
+            requestRepository.getRequests(requestFrom)
+        } returns listOf(username)
+
+        handler.addRequest(username, requestFrom)
+
+        verify(exactly = 1) { friendRepository.addFriend(username, requestFrom) }
+        verify(exactly = 1) { friendRepository.addFriend(requestFrom, username) }
+        verify(exactly = 0) { requestRepository.addRequest(any(), any()) }
+    }
+
+    @Test
+    fun addRequest_BothUsernamesAreEqual_DoesNotCallRepositories() {
+        handler.addRequest(username, username)
 
         verify { friendRepository wasNot Called }
         verify { requestRepository wasNot Called }

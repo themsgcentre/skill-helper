@@ -15,6 +15,8 @@ class FriendHandler(
     val userRepository: IUserRepository,
 ): IFriendHandler {
     override fun acceptRequest(username: String, requestFrom: String) {
+        if(!userRepository.userExists(username) || !userRepository.userExists(requestFrom) || username == requestFrom) return;
+
         val friendsOfReceiver = friendRepository.getFriends(username);
         val friendsOfRequester = friendRepository.getFriends(requestFrom);
 
@@ -36,6 +38,17 @@ class FriendHandler(
     }
 
     override fun addRequest(username: String, requestFrom: String) {
+        if(!userRepository.userExists(username) || !userRepository.userExists(requestFrom) || username == requestFrom) return;
+        if(friendRepository.getFriends(username).contains(requestFrom) || friendRepository.getFriends(requestFrom).contains(username)) return;
+
+        if(requestRepository.getRequests(username).contains(requestFrom)) return;
+
+        if(requestRepository.getRequests(requestFrom).contains(username)) {
+            friendRepository.addFriend(username, requestFrom);
+            friendRepository.addFriend(requestFrom, username);
+            return;
+        }
+
         requestRepository.addRequest(username, requestFrom);
     }
 
