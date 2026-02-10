@@ -15,14 +15,14 @@ class FriendHandler(
     val userRepository: IUserRepository,
 ): IFriendHandler {
     override fun acceptRequest(username: String, requestFrom: String) {
-        val friendsOfSender = friendRepository.getFriends(username);
-        val friendsOfRequester = requestRepository.getRequests(requestFrom);
+        val friendsOfReceiver = friendRepository.getFriends(username);
+        val friendsOfRequester = friendRepository.getFriends(requestFrom);
 
-        if(!friendsOfSender.contains(requestFrom)) {
+        if(!friendsOfReceiver.contains(requestFrom)) {
             friendRepository.addFriend(username, requestFrom);
         }
 
-        if(friendsOfRequester.contains(username)) {
+        if(!friendsOfRequester.contains(username)) {
             friendRepository.addFriend(requestFrom, username);
         }
 

@@ -24,7 +24,7 @@ class UpdateBioTests {
     }
 
     @Test
-    fun updateUser_CallsRepository() {
+    fun updateUser_CallsUpdateOnRepository() {
         val bio = "test bio"
         handler.updateBio(username, bio)
 

@@ -61,7 +61,7 @@ class GetProfileByNameTests {
     }
 
     @Test
-    fun getProfileByName_CallsRepository() {
+    fun getProfileByName_CallsGetOnRepository() {
         every {
             repository.getUserByName(username)
         } returns null

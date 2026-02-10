@@ -31,7 +31,7 @@ class UpdateUsernameTests {
     }
 
     @Test
-    fun updateUsername_NameAvailableAndNotOldName_CallsRepository() {
+    fun updateUsername_NameAvailableAndNotOldName_CallsUpdateOnRepository() {
         handler.updateUsername(oldName, newName)
         verify(exactly = 1) { repository.updateUsername(oldName, newName) }
     }

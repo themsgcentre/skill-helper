@@ -24,7 +24,7 @@ class UpdateProfilePictureTests {
     }
 
     @Test
-    fun updateProfilePicture_CallsRepository() {
+    fun updateProfilePicture_CallsUpdateOnRepository() {
         val imageSrc = "test src";
         handler.updateProfilePicture(username, imageSrc);
 

@@ -28,7 +28,7 @@ class UsernameExistsTests {
     }
 
     @Test
-    fun userExists_CallsRepository() {
+    fun userExists_CallsUserExistsOnRepository() {
         handler.userExists(username)
         verify(exactly = 1) { repository.userExists(username) }
     }

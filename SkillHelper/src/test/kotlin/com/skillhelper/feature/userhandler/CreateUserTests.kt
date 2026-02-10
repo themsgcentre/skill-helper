@@ -46,7 +46,7 @@ class CreateUserTests {
     }
 
     @Test
-    fun createUser_UserDoesNotExist_CallsRepository() {
+    fun createUser_UserDoesNotExist_CallsCreateOnRepository() {
         every {
             repository.userExists(username)
         } returns false

@@ -24,7 +24,7 @@ class DeleteUserTests {
     }
 
     @Test
-    fun deleteUser_CallsRepository() {
+    fun deleteUser_CallsDeleteOnRepository() {
         handler.deleteUser(username)
         verify(exactly = 1) { repository.deleteUser(username) }
     }
