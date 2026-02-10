@@ -9,7 +9,7 @@ interface IUserHandler {
     fun deleteUser(username: String);
     fun updateBio(username: String, bio: String);
     fun updateProfilePicture(username: String, imageSrc: String?);
-    fun updateUsername(username: String, newName: String);
+    fun updateUsername(oldName: String, newName: String);
     fun updatePassword(username: String, oldPassword: String, newPassword: String);
     fun userExists(username: String): Boolean;
 }

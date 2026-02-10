@@ -41,6 +41,9 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-sqlserver")
     runtimeOnly("com.microsoft.sqlserver:mssql-jdbc")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.+")
+    testImplementation("io.mockk:mockk:1.13.+")
 }
 
 kotlin {

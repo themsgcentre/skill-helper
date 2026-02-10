@@ -17,7 +17,7 @@ class UserHandler(
     }
 
     override fun createUser(user: UserDto) {
-        if(userExists(user.username)) return;
+        if(userRepository.userExists(user.username)) return;
         val hashed = passwordEncoder.encode(user.password)
         userRepository.createUser(user.toDbo(hashed))
     }
@@ -34,9 +34,9 @@ class UserHandler(
         userRepository.updateProfilePicture(username, imageSrc);
     }
 
-    override fun updateUsername(username: String, newName: String) {
-        if(userExists(username) || username == newName) return;
-        userRepository.updateUsername(username, newName)
+    override fun updateUsername(oldName: String, newName: String) {
+        if(userRepository.userExists(newName) || oldName == newName) return;
+        userRepository.updateUsername(oldName, newName)
     }
 
     override fun updatePassword(
@@ -53,6 +53,6 @@ class UserHandler(
     }
 
     override fun userExists(username: String): Boolean {
-        return userRepository.userExists(username);
+        return userRepository.userExists(username)
     }
 }
