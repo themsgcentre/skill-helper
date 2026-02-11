@@ -6,6 +6,7 @@ import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository
+import com.skillhelper.repository.interfaces.IVisibilityRepository
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
@@ -18,6 +19,7 @@ class AddSkillTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
+    private lateinit var visibilityRepository: IVisibilityRepository;
     private lateinit var handler: SkillHandler;
     private lateinit var mockSkill: SkillDto;
 
@@ -26,7 +28,8 @@ class AddSkillTests {
         userRepository = mockk(relaxed = true)
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository)
+        visibilityRepository = mockk(relaxed = true)
+        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
 
         mockSkill = SkillDto(1, "skill 1", "description 1", 1, "test", 2, "src")
     }

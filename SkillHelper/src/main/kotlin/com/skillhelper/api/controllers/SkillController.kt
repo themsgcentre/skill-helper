@@ -5,6 +5,7 @@ import com.skillhelper.api.helpers.SearchStringHelper
 import com.skillhelper.api.helpers.StressLevelHelper
 import com.skillhelper.feature.interfaces.ISkillHandler
 import com.skillhelper.feature.models.SkillDto
+import com.skillhelper.feature.models.VisibilityDto
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -66,5 +67,10 @@ class SkillController(val skillHandler: ISkillHandler) {
     @PutMapping("/changeVisibility/{skillId}/{visibilityId}")
     fun changeVisibility(@PathVariable skillId: Long, @PathVariable visibilityId: Long) {
         skillHandler.changeVisibility(skillId, visibilityId)
+    }
+
+    @GetMapping("/getVisibilities")
+    fun getVisibilities(): List<VisibilityDto> {
+        return skillHandler.getVisibilities();
     }
 }

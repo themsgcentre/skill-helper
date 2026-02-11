@@ -7,9 +7,11 @@ import com.skillhelper.feature.models.ShareCreationDto
 import com.skillhelper.feature.models.ShareDto
 import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.feature.models.UserDto
+import com.skillhelper.feature.models.VisibilityDto
 import com.skillhelper.repository.models.ShareDbo
 import com.skillhelper.repository.models.SkillDbo
 import com.skillhelper.repository.models.UserDbo
+import com.skillhelper.repository.models.VisibilityDbo
 
 fun SkillDbo.toDto(): SkillDto = SkillDto(
     id = this.id,
@@ -70,4 +72,9 @@ fun ShareDbo.toDto(profileImg: String?, skillImg: String?): ShareDto = ShareDto(
     dateShared = this.dateShared,
     fromProfileImg = profileImg,
     skillImg = skillImg,
+)
+
+fun VisibilityDbo.toDto(): VisibilityDto = VisibilityDto(
+    id = this.id,
+    text = this.name
 )

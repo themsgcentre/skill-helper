@@ -5,6 +5,7 @@ import com.skillhelper.feature.implementations.toDto
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository
+import com.skillhelper.repository.interfaces.IVisibilityRepository
 import com.skillhelper.repository.models.SkillDbo
 import io.mockk.every
 import io.mockk.mockk
@@ -16,6 +17,7 @@ class GetSkillByIdTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
+    private lateinit var visibilityRepository: IVisibilityRepository;
     private lateinit var handler: SkillHandler;
 
     @BeforeEach
@@ -23,7 +25,8 @@ class GetSkillByIdTests {
         userRepository = mockk(relaxed = true)
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository)
+        visibilityRepository = mockk(relaxed = true)
+        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
     }
 
     @Test

@@ -15,15 +15,4 @@ class VisibilityRepository(jdbc: JdbcClient): IVisibilityRepository, BaseReposit
 
         return query<VisibilityDbo>(sql);
     }
-
-    override fun getVisibilityString(id: Long): String {
-        val sql = """
-        SELECT (Description) from dbo.$tableName
-        WHERE Id = $id;
-        """.trimIndent();
-
-        val params = mapOf("id" to id);
-
-        return query<String>(sql, params).firstOrNull() ?: "";
-    }
 }

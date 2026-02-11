@@ -1,6 +1,7 @@
 package com.skillhelper.feature.interfaces
 
 import com.skillhelper.feature.models.SkillDto
+import com.skillhelper.feature.models.VisibilityDto
 
 interface ISkillHandler {
     fun getAllSkills() : List<SkillDto>;
@@ -13,4 +14,5 @@ interface ISkillHandler {
     fun addFavorite(username: String, skillId: Long);
     fun removeFavorite(username: String, skillId: Long);
     fun changeVisibility(skillId: Long, visibility: Long);
+    fun getVisibilities() : List<VisibilityDto>;
 }

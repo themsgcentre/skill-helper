@@ -1,25 +1,26 @@
 package com.skillhelper.feature.skillhandler
 
 import com.skillhelper.feature.implementations.SkillHandler
-import com.skillhelper.feature.implementations.toDto
+import com.skillhelper.feature.implementations.toDbo
+import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import com.skillhelper.repository.interfaces.IVisibilityRepository
-import com.skillhelper.repository.models.SkillDbo
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions.assertThat
+import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class GetSkillsBySearchTests {
+class UpdateSkillTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
     private lateinit var visibilityRepository: IVisibilityRepository;
     private lateinit var handler: SkillHandler;
-    private lateinit var mockSkills: List<SkillDbo>
+    private lateinit var mockSkill: SkillDto;
 
     @BeforeEach
     fun setUp() {
@@ -29,32 +30,37 @@ class GetSkillsBySearchTests {
         visibilityRepository = mockk(relaxed = true)
         handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
 
-        mockSkills = listOf(
-            SkillDbo(1, "skill 1", "description 1", 1, null, 1, null),
-            SkillDbo(2, "skill 2", "description 2", 1, "test", 2, "src"),
-        )
+        mockSkill = SkillDto(1, "skill 1", "description 1", 1, "test", 2, "src")
     }
 
     @Test
-    fun getSkillsBySearch_NoSkills_ReturnsEmptyList() {
+    fun updateSkill_AuthorDoesNotExist_DoesNotCallUpdateSkillOnRepository() {
         every {
-            skillRepository.getSkillsBySearch(any())
-        } returns emptyList()
+            userRepository.userExists("test")
+        } returns false
 
-        val actual = handler.getSkillsBySearch("test")
+        handler.updateSkill(mockSkill)
 
-        assertThat(actual).isEmpty()
+        verify { skillRepository wasNot Called }
     }
 
     @Test
-    fun getAllSkillsBySearch_HasSkills_ReturnsCorrectList() {
+    fun updateSkill_AuthorExists_CallsUpdateSkillOnRepository() {
         every {
-            skillRepository.getSkillsBySearch(any())
-        } returns mockSkills
+            userRepository.userExists("test")
+        } returns true
 
-        val actual = handler.getSkillsBySearch("test")
-        val expected = mockSkills.map{skill -> skill.toDto()}
+        handler.updateSkill(mockSkill)
 
-        assertThat(actual).isEqualTo(expected)
+        verify(exactly = 1) { skillRepository.updateSkill(mockSkill.toDbo()) }
+    }
+
+    @Test
+    fun updateSkill_AuthorIsNull_CallsUpdateSkillOnRepository() {
+        mockSkill = mockSkill.copy(author = null)
+
+        handler.updateSkill(mockSkill)
+
+        verify(exactly = 1) { skillRepository.updateSkill(mockSkill.toDbo()) }
     }
 }

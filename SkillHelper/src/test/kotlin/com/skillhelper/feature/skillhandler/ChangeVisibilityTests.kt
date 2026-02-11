@@ -5,12 +5,13 @@ import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import com.skillhelper.repository.interfaces.IVisibilityRepository
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class RemoveFavoriteTests {
+class ChangeVisibilityTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
@@ -23,13 +24,16 @@ class RemoveFavoriteTests {
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
         visibilityRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository,visibilityRepository)
+        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
     }
 
     @Test
-    fun removeFavorite_CallsRemoveFavoriteOnRepository() {
-        handler.removeFavorite("test", 1)
+    fun changeVisibility_CallsChangeVisibilityOnRepository() {
+        val skillId = 1L;
+        val visibilityId = 1L;
 
-        verify(exactly = 1) { favoriteRepository.removeFavorite("test", 1) }
+        handler.changeVisibility(skillId, visibilityId);
+
+        verify(exactly = 1) { skillRepository.changeVisibility(skillId, visibilityId) }
     }
 }
