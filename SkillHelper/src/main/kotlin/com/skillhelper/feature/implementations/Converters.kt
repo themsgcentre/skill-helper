@@ -76,5 +76,5 @@ fun ShareDbo.toDto(profileImg: String?, skillImg: String?): ShareDto = ShareDto(
 
 fun VisibilityDbo.toDto(): VisibilityDto = VisibilityDto(
     id = this.id,
-    text = this.name
+    text = this.description
 )
