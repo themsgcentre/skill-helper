@@ -15,6 +15,7 @@ class ShareHandler(
     val userRepository: IUserRepository,
 ): IShareHandler {
     override fun addShare(share: ShareCreationDto) {
+        if(!skillRepository.skillExists(share.skillId) || !userRepository.userExists(share.to) || !userRepository.userExists(share.from)) return;
         shareRepository.addShare(share.toDbo());
     }
 
@@ -31,9 +32,7 @@ class ShareHandler(
     }
 
     override fun getAll(username: String): List<ShareDto> {
-        val shareDbos = shareRepository.getAllForUser(username);
-
-        return shareDbos.map{ dbo ->
+        return shareRepository.getAllForUser(username).map{ dbo ->
             val profileImg = userRepository.getUserByName(dbo.fromUser)?.profileImage;
             val shareImg = skillRepository.getSkillById(dbo.skill)?.imageSrc
 
