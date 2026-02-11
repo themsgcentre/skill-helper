@@ -6,6 +6,6 @@ data class SkillDto(
     val description: String,
     val stressLevel: Int,
     val author: String?,
-    val visibility: Int,
+    val visibility: Long,
     val imageSrc: String?
 )

@@ -24,7 +24,7 @@ class UserRepositoryTests {
     lateinit var jdbc: JdbcClient
 
     @BeforeEach
-    fun setup() {
+    fun setUp() {
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
 

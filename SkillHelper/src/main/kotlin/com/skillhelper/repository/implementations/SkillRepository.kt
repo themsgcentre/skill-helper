@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service
 class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(jdbcClient, "[Skill]") {
     override fun getAllSkills(): List<SkillDbo> {
         val sql = """
-        SELECT (Id, Name, Description, StressLevel, Author, Visibility, ImageSrc) from dbo.$tableName
+        SELECT * from dbo.$tableName
         """.trimIndent();
 
         return query<SkillDbo>(sql);
@@ -39,7 +39,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
         """.trimIndent()
 
         val params = mapOf(
-            "pattern" to searchString
+            "pattern" to "%$searchString%"
         )
 
         return query<SkillDbo>(sql, params)
@@ -72,6 +72,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
             Visibility,
             ImageSrc
         )
+        OUTPUT INSERTED.Id
         VALUES (
             :name,
             :description,
@@ -137,7 +138,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
     override fun changeVisibility(skillId: Long, visibilityId: Long) {
         val sql = """
         UPDATE dbo.$tableName
-        SET Visibility =:visibility,
+        SET Visibility = :visibility
         WHERE Id = :skillId;
         """.trimIndent();
 

@@ -17,7 +17,8 @@ CREATE TABLE [dbo].[Skill] (
     [Visibility] [bigint] NOT NULL,
     [ImageSrc] [nvarchar](max) NULL,
     CONSTRAINT [SKILL_FK_AUTHOR] FOREIGN KEY ([Author]) REFERENCES [User]([Username]),
-    CONSTRAINT [SKILL_FK_VISIBILITY] FOREIGN KEY ([Visibility]) REFERENCES [Visibility]([Id])
+    CONSTRAINT [SKILL_FK_VISIBILITY] FOREIGN KEY ([Visibility]) REFERENCES [Visibility]([Id]),
+    CONSTRAINT [SKILL_STRESSLEVEL_RANGE] CHECK(StressLevel >= 0 AND StressLevel <= 100)
 );
 
 CREATE TABLE [dbo].[Favorite] (

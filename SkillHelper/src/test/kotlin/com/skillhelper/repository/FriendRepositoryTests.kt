@@ -1,5 +1,6 @@
 package com.skillhelper.repository
 
+import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.FriendRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -24,7 +25,7 @@ class FriendRepositoryTests {
     lateinit var jdbc: JdbcClient
 
     @BeforeEach
-    fun setup() {
+    fun setUp() {
         jdbc.sql("""DELETE FROM dbo.[Friend];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
@@ -40,8 +41,8 @@ class FriendRepositoryTests {
         val username = "username"
         val friends = listOf("friend1", "friend2", "friend3")
 
-        insertUser(username)
-        friends.forEach { insertUser(it) }
+        insertUser(jdbc, username)
+        friends.forEach { insertUser(jdbc, it) }
 
         friends.forEach { f ->
             jdbc.sql(
@@ -65,8 +66,8 @@ class FriendRepositoryTests {
         val username = "user1"
         val friend = "user2"
 
-        insertUser(username)
-        insertUser(friend)
+        insertUser(jdbc, username)
+        insertUser(jdbc,friend)
 
         repository.addFriend(username, friend)
 
@@ -79,8 +80,8 @@ class FriendRepositoryTests {
         val username = "user1"
         val friend = "user2"
 
-        insertUser(username)
-        insertUser(friend)
+        insertUser(jdbc, username)
+        insertUser(jdbc, friend)
 
         repository.addFriend(username, friend)
 
@@ -93,7 +94,7 @@ class FriendRepositoryTests {
         val username = "missingUser"
         val friend = "existingFriend"
 
-        insertUser(friend)
+        insertUser(jdbc, friend)
 
         assertThatThrownBy {
             repository.addFriend(username, friend)
@@ -105,7 +106,7 @@ class FriendRepositoryTests {
         val username = "existingUser"
         val friend = "missingFriend"
 
-        insertUser(username)
+        insertUser(jdbc, username)
 
         assertThatThrownBy {
             repository.addFriend(username, friend)
@@ -117,8 +118,8 @@ class FriendRepositoryTests {
         val username = "user1"
         val friend = "user2"
 
-        insertUser(username)
-        insertUser(friend)
+        insertUser(jdbc, username)
+        insertUser(jdbc, friend)
 
         repository.addFriend(username, friend)
 
@@ -133,8 +134,8 @@ class FriendRepositoryTests {
         val username = "user1"
         val friend = "user2"
 
-        insertUser(username)
-        insertUser(friend)
+        insertUser(jdbc, username)
+        insertUser(jdbc, friend)
 
         repository.removeFriend(username, friend)
 
@@ -142,17 +143,4 @@ class FriendRepositoryTests {
         assertThat(actual).isEmpty()
     }
 
-    private fun insertUser(username: String) {
-        jdbc.sql(
-            """
-            INSERT INTO dbo.[User] (Username, Password, ProfileImage, Bio)
-            VALUES (:u, :p, :img, :bio);
-            """.trimIndent()
-        )
-            .param("u", username)
-            .param("p", "pw")
-            .param("img", null)
-            .param("bio", "")
-            .update()
-    }
 }

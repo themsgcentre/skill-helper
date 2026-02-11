@@ -1,5 +1,6 @@
 package com.skillhelper.repository
 
+import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.RequestRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -25,7 +26,7 @@ class RequestRepositoryTests {
     lateinit var jdbc: JdbcClient
 
     @BeforeEach
-    fun setup() {
+    fun setUp() {
         jdbc.sql("""DELETE FROM dbo.[Request];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
@@ -41,8 +42,8 @@ class RequestRepositoryTests {
         val username = "username"
         val requests = listOf("req1", "req2", "req3")
 
-        insertUser(username)
-        requests.forEach { insertUser(it) }
+        insertUser(jdbc, username)
+        requests.forEach { insertUser(jdbc, it) }
 
         requests.forEach { r ->
             jdbc.sql(
@@ -66,8 +67,8 @@ class RequestRepositoryTests {
         val username = "user1"
         val request = "user2"
 
-        insertUser(username)
-        insertUser(request)
+        insertUser(jdbc, username)
+        insertUser(jdbc, request)
 
         repository.addRequest(username, request)
 
@@ -80,8 +81,8 @@ class RequestRepositoryTests {
         val username = "user1"
         val request = "user2"
 
-        insertUser(username)
-        insertUser(request)
+        insertUser(jdbc, username)
+        insertUser(jdbc, request)
 
         repository.addRequest(username, request)
 
@@ -94,7 +95,7 @@ class RequestRepositoryTests {
         val username = "missingUser"
         val request = "existingReq"
 
-        insertUser(request)
+        insertUser(jdbc, request)
 
         assertThatThrownBy {
             repository.addRequest(username, request)
@@ -106,7 +107,7 @@ class RequestRepositoryTests {
         val username = "missingUser"
         val request = "missingReq"
 
-        insertUser(username)
+        insertUser(jdbc, username)
 
         assertThatThrownBy {
             repository.addRequest(username, request)
@@ -118,8 +119,8 @@ class RequestRepositoryTests {
         val username = "user1"
         val request = "user2"
 
-        insertUser(username)
-        insertUser(request)
+        insertUser(jdbc, username)
+        insertUser(jdbc, request)
 
         repository.addRequest(username, request)
 
@@ -134,8 +135,8 @@ class RequestRepositoryTests {
         val username = "user1"
         val request = "user2"
 
-        insertUser(username)
-        insertUser(request)
+        insertUser(jdbc, username)
+        insertUser(jdbc, request)
 
         repository.removeRequest(username, request)
 
@@ -143,17 +144,4 @@ class RequestRepositoryTests {
         assertThat(actual).isEmpty()
     }
 
-    private fun insertUser(username: String) {
-        jdbc.sql(
-            """
-            INSERT INTO dbo.[User] (Username, Password, ProfileImage, Bio)
-            VALUES (:u, :p, :img, :bio);
-            """.trimIndent()
-        )
-            .param("u", username)
-            .param("p", "pw")
-            .param("img", null)
-            .param("bio", "")
-            .update()
-    }
 }
