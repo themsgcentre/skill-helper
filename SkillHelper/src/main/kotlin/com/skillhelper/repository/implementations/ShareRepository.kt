@@ -35,15 +35,16 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
         execute(sql, params);
     }
 
-    override fun addShare(shareDbo: ShareDbo) {
+    override fun addShare(shareDbo: ShareDbo): Long {
         val sql = """
         INSERT INTO dbo.$tableName (
             ForUser,
             FromUser,
             Skill,
             DateShared,
-            Read
+            [Read]
         )
+        OUTPUT INSERTED.Id
         VALUES (
             :forUser,
             :fromUser,
@@ -58,16 +59,16 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
             "fromUser" to shareDbo.fromUser,
             "skill" to shareDbo.skill,
             "dateShared" to shareDbo.dateShared,
-            "read" to shareDbo.read
+            "read" to if (shareDbo.read) 1 else 0
         )
 
-        insert(sql, params);
+        return insert(sql, params);
     }
 
     override fun readShare(shareId: Long) {
         val sql = """
         UPDATE dbo.$tableName
-        SET Read = 1
+        SET [Read] = 1
         WHERE Id = :shareId;
         """.trimIndent();
 
@@ -81,7 +82,7 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
     override fun getAllForUser(username: String): List<ShareDbo> {
         val sql = """
         SELECT * from dbo.$tableName
-        WHERE Username = :username;
+        WHERE ForUser = :username;
         """.trimIndent();
 
         val params = mapOf(

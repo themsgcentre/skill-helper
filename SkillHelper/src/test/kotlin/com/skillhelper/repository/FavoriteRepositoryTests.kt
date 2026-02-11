@@ -1,9 +1,8 @@
 package com.skillhelper.repository
 
-import com.skillhelper.repository.helpers.insertSkill
+import com.skillhelper.repository.helpers.insertSkillDummy
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.FavoriteRepository
-import com.skillhelper.repository.models.SkillDbo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -53,8 +52,8 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skill1 = insertSkill(jdbc, SkillDbo(0, "first", "", 5, null, 1, ""))
-        val skill2 = insertSkill(jdbc, SkillDbo(0, "second", "", 5, null, 2, ""))
+        val skill1 = insertSkillDummy(jdbc, "first")
+        val skill2 = insertSkillDummy(jdbc, "second")
 
         jdbc.sql("""
             INSERT INTO dbo.[Favorite] ([User], Skill)
@@ -82,7 +81,7 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = insertSkill(jdbc, SkillDbo(0, "first", "", 5, null, 1, ""))
+        val skillId = insertSkillDummy(jdbc, "first")
 
         repository.addFavorite(username, skillId)
 
@@ -93,7 +92,7 @@ class FavoriteRepositoryTests {
 
     @Test
     fun addFavorite_UserDoesNotExist_ThrowsForeignKeyException() {
-        val skillId = insertSkill(jdbc, SkillDbo(0, "first", "", 5, null, 1, ""))
+        val skillId = insertSkillDummy(jdbc, "first")
 
         assertThatThrownBy {
             repository.addFavorite("missingUser", skillId)
@@ -115,7 +114,7 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = insertSkill(jdbc, SkillDbo(0, "first", "", 5, null, 1, ""))
+        val skillId = insertSkillDummy(jdbc, "first")
 
         repository.addFavorite(username, skillId)
 
@@ -130,7 +129,7 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = insertSkill(jdbc, SkillDbo(0, "first", "", 5, null, 1, ""))
+        val skillId = insertSkillDummy(jdbc, "first")
 
         repository.addFavorite(username, skillId)
 
