@@ -10,8 +10,8 @@ class RequestRepository(jdbc: JdbcClient): IRequestRepository, BaseRepository(jd
     override fun addRequest(username: String, request: String) {
         val sql = """
         INSERT INTO dbo.$tableName(
-            User,
-            Request
+            [User],
+            [Request]
         )
         VALUES (
             :username,
@@ -30,7 +30,7 @@ class RequestRepository(jdbc: JdbcClient): IRequestRepository, BaseRepository(jd
     override fun removeRequest(username: String, request: String) {
         val sql = """
         DELETE from dbo.$tableName
-        WHERE User = :username AND Request = :request;
+        WHERE [User] = :username AND Request = :request;
         """.trimIndent();
 
         val params = mapOf(
@@ -44,7 +44,7 @@ class RequestRepository(jdbc: JdbcClient): IRequestRepository, BaseRepository(jd
     override fun getRequests(username: String): List<String> {
         val sql = """
         SELECT (Request) from dbo.$tableName
-        WHERE Username = :username;
+        WHERE [User] = :username;
         """.trimIndent();
 
         val params = mapOf(

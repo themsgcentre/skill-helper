@@ -11,8 +11,8 @@ class FriendRepository(jdbc: JdbcClient): IFriendRepository, BaseRepository(jdbc
     override fun addFriend(username: String, friend: String) {
         val sql = """
         INSERT INTO dbo.$tableName(
-            User,
-            Friend
+            [User],
+            [Friend]
         )
         VALUES (
             :username,
@@ -31,7 +31,7 @@ class FriendRepository(jdbc: JdbcClient): IFriendRepository, BaseRepository(jdbc
     override fun removeFriend(username: String, friend: String) {
         val sql = """
         DELETE from dbo.$tableName
-        WHERE User = :username AND Friend = :friend;
+        WHERE [User] = :username AND Friend = :friend;
         """.trimIndent();
 
         val params = mapOf(
@@ -45,7 +45,7 @@ class FriendRepository(jdbc: JdbcClient): IFriendRepository, BaseRepository(jdbc
     override fun getFriends(username: String): List<String> {
         val sql = """
         SELECT (Friend) from dbo.$tableName
-        WHERE Username = :username;
+        WHERE [User] = :username;
         """.trimIndent();
 
         val params = mapOf(
