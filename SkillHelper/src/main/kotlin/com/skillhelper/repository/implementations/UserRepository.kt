@@ -46,7 +46,7 @@ class UserRepository(
             "bio" to user.bio
         )
 
-        insert(sql, params);
+        execute(sql, params);
     }
 
     override fun deleteUser(username: String) {

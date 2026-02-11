@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=SkillDb.Test;encrypt=true;trustServerCertificate=true
+    username: sa
+    password: Skill_sql_123!
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: true
+    table: schema_history
+    out-of-order: false
