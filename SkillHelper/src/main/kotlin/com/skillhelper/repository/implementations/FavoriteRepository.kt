@@ -11,8 +11,8 @@ class FavoriteRepository(jdbc: JdbcClient): IFavoriteRepository, BaseRepository(
     override fun addFavorite(username: String, skillId: Long) {
         val sql = """
         INSERT INTO dbo.$tableName(
-            User,
-            Skill
+            [User],
+            [Skill]
         )
         VALUES (
             :username,
@@ -31,7 +31,7 @@ class FavoriteRepository(jdbc: JdbcClient): IFavoriteRepository, BaseRepository(
     override fun removeFavorite(username: String, skillId: Long) {
         val sql = """
         DELETE from dbo.$tableName
-        WHERE User = :username AND Skill = :skillId;
+        WHERE [User] = :username AND [Skill] = :skillId;
         """.trimIndent();
 
         val params = mapOf(
@@ -44,8 +44,8 @@ class FavoriteRepository(jdbc: JdbcClient): IFavoriteRepository, BaseRepository(
 
     override fun getFavorites(username: String): List<Long> {
         val sql = """
-        SELECT (Skill) from dbo.$tableName
-        WHERE Username = :username;
+        SELECT [Skill] from dbo.$tableName
+        WHERE [User] = :username;
         """.trimIndent();
 
         val params = mapOf(
