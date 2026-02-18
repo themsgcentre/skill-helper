@@ -19,12 +19,14 @@ class EntryHandler(
         return entryRepository.getEntryById(id)?.toDto()
     }
 
-    override fun addEntry(entryDto: EntryDto) {
-        if(!userRepository.userExists(entryDto.username)) return;
-        entryRepository.addEntry(entryDto.toDbo())
+    override fun addEntry(entryDto: EntryDto): Long {
+        if(!userRepository.userExists(entryDto.username)) return -1;
+        return entryRepository.addEntry(entryDto.toDbo())
     }
 
     override fun updateEntry(entryDto: EntryDto) {
+        val entry = entryRepository.getEntryById(entryDto.id);
+        if(entry != null && entry.username != entryDto.username) return;
         entryRepository.updateEntry(entryDto.toDbo())
     }
 

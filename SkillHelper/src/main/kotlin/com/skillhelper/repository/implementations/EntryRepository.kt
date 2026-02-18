@@ -9,22 +9,88 @@ import org.springframework.stereotype.Service
 @Service
 class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, "[Entry]") {
     override fun getEntries(username: String): List<EntryDbo> {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT * from dbo.$tableName
+        WHERE [Username] = :username;
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to username,
+        );
+
+        return query<EntryDbo>(sql, params);
     }
 
     override fun getEntryById(id: Long): EntryDbo? {
-        TODO("Not yet implemented")
+        val sql = """
+        SELECT * from dbo.$tableName
+        WHERE [Id] = :id;
+        """.trimIndent();
+
+        val params = mapOf(
+            "id" to id,
+        );
+
+        return query<EntryDbo>(sql, params).firstOrNull();
     }
 
-    override fun addEntry(entry: EntryDbo) {
-        TODO("Not yet implemented")
+    override fun addEntry(entry: EntryDbo): Long {
+        val sql = """
+        INSERT INTO dbo.$tableName(
+            [Username],
+            [Text],
+            [StressLevel],
+            [Time]
+        )
+        VALUES (
+            :username,
+            :text,
+            :stressLevel,
+            :time
+        );
+        """.trimIndent();
+
+        val params = mapOf(
+            "username" to entry.username,
+            "text" to entry.text,
+            "stressLevel" to entry.stressLevel,
+            "time" to entry.time,
+        );
+
+        return insert(sql, params);
     }
 
     override fun updateEntry(entry: EntryDbo) {
-        TODO("Not yet implemented")
+        val sql = """
+        UPDATE dbo.$tableName
+        SET 
+            Text = :text,
+            StressLevel = :stressLevel,
+            Time = :time,
+            
+        WHERE Id = :id;
+        """.trimIndent();
+
+        val params = mapOf(
+            "id" to entry.id,
+            "text" to entry.text,
+            "stressLevel" to entry.stressLevel,
+            "time" to entry.time,
+        );
+
+        execute(sql, params);
     }
 
     override fun deleteEntry(id: Long) {
-        TODO("Not yet implemented")
+        val sql = """
+        DELETE from dbo.$tableName
+        WHERE [Id] = :id;
+        """.trimIndent();
+
+        val params = mapOf(
+            "id" to id
+        );
+
+        execute(sql, params);
     }
 }
