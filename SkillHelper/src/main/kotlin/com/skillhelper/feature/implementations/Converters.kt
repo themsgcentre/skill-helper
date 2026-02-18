@@ -1,5 +1,6 @@
 package com.skillhelper.feature.implementations
 
+import com.skillhelper.feature.models.EntryDto
 import com.skillhelper.feature.models.FriendDto
 import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.RequestDto
@@ -8,6 +9,7 @@ import com.skillhelper.feature.models.ShareDto
 import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.feature.models.UserDto
 import com.skillhelper.feature.models.VisibilityDto
+import com.skillhelper.repository.models.EntryDbo
 import com.skillhelper.repository.models.ShareDbo
 import com.skillhelper.repository.models.SkillDbo
 import com.skillhelper.repository.models.UserDbo
@@ -77,4 +79,20 @@ fun ShareDbo.toDto(profileImg: String?, skillImg: String?): ShareDto = ShareDto(
 fun VisibilityDbo.toDto(): VisibilityDto = VisibilityDto(
     id = this.id,
     text = this.description
+)
+
+fun EntryDbo.toDto(): EntryDto = EntryDto(
+    id = this.id,
+    username = this.username,
+    time = this.time,
+    text = this.text,
+    stressLevel = this.stressLevel,
+)
+
+fun EntryDto.toDbo(): EntryDbo = EntryDbo(
+    id = this.id,
+    username = this.username,
+    time = this.time,
+    text = this.text,
+    stressLevel = this.stressLevel,
 )

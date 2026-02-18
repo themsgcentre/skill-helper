@@ -2,27 +2,33 @@ package com.skillhelper.feature.implementations
 
 import com.skillhelper.feature.interfaces.IEntryHandler
 import com.skillhelper.feature.models.EntryDto
+import com.skillhelper.repository.interfaces.IEntryRepository
+import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 
 @Service
-class EntryHandler: IEntryHandler {
+class EntryHandler(
+    val entryRepository: IEntryRepository,
+    val userRepository: IUserRepository,
+): IEntryHandler {
     override fun getEntries(username: String): List<EntryDto> {
-        TODO("Not yet implemented")
+        return entryRepository.getEntries(username).map { it.toDto() }
     }
 
     override fun getEntryById(id: Long): EntryDto? {
-        TODO("Not yet implemented")
+        return entryRepository.getEntryById(id)?.toDto()
     }
 
     override fun addEntry(entryDto: EntryDto) {
-        TODO("Not yet implemented")
+        if(!userRepository.userExists(entryDto.username)) return;
+        entryRepository.addEntry(entryDto.toDbo())
     }
 
     override fun updateEntry(entryDto: EntryDto) {
-        TODO("Not yet implemented")
+        entryRepository.updateEntry(entryDto.toDbo())
     }
 
     override fun deleteEntry(id: Long) {
-        TODO("Not yet implemented")
+        entryRepository.deleteEntry(id)
     }
 }

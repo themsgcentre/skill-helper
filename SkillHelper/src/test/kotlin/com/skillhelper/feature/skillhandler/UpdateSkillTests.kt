@@ -63,4 +63,26 @@ class UpdateSkillTests {
 
         verify(exactly = 1) { skillRepository.updateSkill(mockSkill.toDbo()) }
     }
+
+    @Test
+    fun addSkill_SkillBelowRange_DoesNotCallAddSkillOnRepository() {
+        every {
+            userRepository.userExists("test")
+        } returns true
+
+        handler.updateSkill(mockSkill.copy(stressLevel = -2))
+
+        verify { skillRepository wasNot Called }
+    }
+
+    @Test
+    fun addSkill_SkillAboveRange_DoesNotCallAddSkillOnRepository() {
+        every {
+            userRepository.userExists("test")
+        } returns true
+
+        handler.updateSkill(mockSkill.copy(stressLevel = 102))
+
+        verify { skillRepository wasNot Called }
+    }
 }

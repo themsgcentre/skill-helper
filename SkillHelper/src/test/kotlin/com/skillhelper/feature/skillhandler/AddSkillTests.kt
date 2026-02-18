@@ -58,6 +58,28 @@ class AddSkillTests {
     }
 
     @Test
+    fun addSkill_SkillBelowRange_DoesNotCallAddSkillOnRepository() {
+        every {
+            userRepository.userExists("test")
+        } returns true
+
+        handler.addSkill(mockSkill.copy(stressLevel = -2))
+
+        verify { skillRepository wasNot Called }
+    }
+
+    @Test
+    fun addSkill_SkillAboveRange_DoesNotCallAddSkillOnRepository() {
+        every {
+            userRepository.userExists("test")
+        } returns true
+
+        handler.addSkill(mockSkill.copy(stressLevel = 102))
+
+        verify { skillRepository wasNot Called }
+    }
+
+    @Test
     fun addSkill_AuthorExists_CallsAddSkillOnRepository() {
         every {
             userRepository.userExists("test")
