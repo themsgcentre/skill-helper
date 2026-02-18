@@ -1,0 +1,34 @@
+<div class="navigation-container">
+  <app-navigation-button 
+    [iconSize]="24" 
+    iconSelected="bi-search-heart-fill"
+    iconUnselected="bi-search"
+    [selected]="selectedPath === 'explore'"
+    (clicked)="selectPath('explore')"
+    >
+  </app-navigation-button>
+  <app-navigation-button 
+    [iconSize]="24" 
+    iconSelected="bi-heart-fill"
+    iconUnselected="bi-heart"
+    [selected]="selectedPath === 'favorites'"
+    (clicked)="selectPath('favorites')"
+    >
+  </app-navigation-button>
+  <app-navigation-button 
+    [iconSize]="24" 
+    iconSelected="bi-chat-fill"
+    iconUnselected="bi-chat"
+    [selected]="selectedPath === 'shares'"
+    (clicked)="selectPath('shares')"
+    >
+  </app-navigation-button>
+  <app-navigation-button 
+    [iconSize]="24" 
+    iconSelected="bi-person-fill"
+    iconUnselected="bi-person"
+    [selected]="selectedPath === 'user'"
+    (clicked)="selectPath('user')"
+    >
+  </app-navigation-button>
+</div>
