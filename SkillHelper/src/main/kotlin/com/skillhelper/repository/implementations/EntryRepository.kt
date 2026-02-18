@@ -42,6 +42,7 @@ class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, 
             [StressLevel],
             [Time]
         )
+        OUTPUT Inserted.Id
         VALUES (
             :username,
             :text,
@@ -66,8 +67,7 @@ class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, 
         SET 
             Text = :text,
             StressLevel = :stressLevel,
-            Time = :time,
-            
+            Time = :time 
         WHERE Id = :id;
         """.trimIndent();
 

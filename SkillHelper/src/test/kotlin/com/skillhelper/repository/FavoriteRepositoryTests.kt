@@ -5,6 +5,7 @@ import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.FavoriteRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -26,6 +27,13 @@ class FavoriteRepositoryTests {
 
     @BeforeEach
     fun setUp() {
+        jdbc.sql("""DELETE FROM dbo.[Favorite];""").update()
+        jdbc.sql("""DELETE FROM dbo.[Skill];""").update()
+        jdbc.sql("""DELETE FROM dbo.[User];""").update()
+    }
+
+    @AfterAll
+    fun tearDown() {
         jdbc.sql("""DELETE FROM dbo.[Favorite];""").update()
         jdbc.sql("""DELETE FROM dbo.[Skill];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()

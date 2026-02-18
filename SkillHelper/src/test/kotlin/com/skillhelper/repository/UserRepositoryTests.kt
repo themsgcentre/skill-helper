@@ -4,6 +4,7 @@ import com.skillhelper.repository.implementations.UserRepository
 import com.skillhelper.repository.models.UserDbo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -25,6 +26,11 @@ class UserRepositoryTests {
 
     @BeforeEach
     fun setUp() {
+        jdbc.sql("""DELETE FROM dbo.[User];""").update()
+    }
+
+    @AfterAll
+    fun tearDown() {
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
 

@@ -4,6 +4,7 @@ import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.FriendRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -26,6 +27,12 @@ class FriendRepositoryTests {
 
     @BeforeEach
     fun setUp() {
+        jdbc.sql("""DELETE FROM dbo.[Friend];""").update()
+        jdbc.sql("""DELETE FROM dbo.[User];""").update()
+    }
+
+    @AfterAll
+    fun tearDown() {
         jdbc.sql("""DELETE FROM dbo.[Friend];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
