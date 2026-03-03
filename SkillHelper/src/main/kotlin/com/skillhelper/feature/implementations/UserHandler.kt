@@ -2,6 +2,8 @@ package com.skillhelper.feature.implementations
 
 import com.skillhelper.domain.entities.Username
 import com.skillhelper.feature.interfaces.IUserHandler
+import com.skillhelper.feature.mappers.toDomain
+import com.skillhelper.feature.mappers.toProfileDto
 import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.UserDto
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -20,28 +22,28 @@ class UserHandler(
     override fun createUser(user: UserDto) {
         if(userRepository.userExists(Username(user.username))) return;
         val hashed = passwordEncoder.encode(user.password)
-        userRepository.createUser(user.toDbo(hashed))
+        userRepository.createUser(user.toDomain(hashed))
     }
 
-    override fun deleteUser(username: String) {
+    override fun deleteUser(username: Username) {
         userRepository.deleteUser(username)
     }
 
-    override fun updateBio(username: String, bio: String) {
+    override fun updateBio(username: Username, bio: String) {
         userRepository.updateBio(username, bio);
     }
 
-    override fun updateProfilePicture(username: String, imageSrc: String?) {
+    override fun updateProfilePicture(username: Username, imageSrc: String?) {
         userRepository.updateProfilePicture(username, imageSrc);
     }
 
-    override fun updateUsername(oldName: String, newName: String) {
+    override fun updateUsername(oldName: Username, newName: Username) {
         if(userRepository.userExists(newName) || oldName == newName) return;
         userRepository.updateUsername(oldName, newName)
     }
 
     override fun updatePassword(
-        username: String,
+        username: Username,
         oldPassword: String,
         newPassword: String
     ) {
@@ -53,7 +55,13 @@ class UserHandler(
         }
     }
 
-    override fun userExists(username: String): Boolean {
+    override fun userExists(username: Username): Boolean {
         return userRepository.userExists(username)
+    }
+
+    override fun login(username: Username, password: String): Boolean {
+        val hashed = passwordEncoder.encode(password)
+        val storedHash = userRepository.getPassword(username)
+        return hashed == storedHash
     }
 }

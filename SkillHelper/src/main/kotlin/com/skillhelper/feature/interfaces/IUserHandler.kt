@@ -13,5 +13,5 @@ interface IUserHandler {
     fun updateUsername(oldName: Username, newName: Username);
     fun updatePassword(username: Username, oldPassword: String, newPassword: String);
     fun userExists(username: Username): Boolean;
-    fun login(username: Username, password: String);
+    fun login(username: Username, password: String): Boolean;
 }

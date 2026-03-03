@@ -1,6 +1,9 @@
 package com.skillhelper.feature.implementations
 
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.feature.interfaces.IFriendHandler
+import com.skillhelper.feature.mappers.toFriendDto
+import com.skillhelper.feature.mappers.toRequestDto
 import com.skillhelper.feature.models.FriendDto
 import com.skillhelper.feature.models.RequestDto
 import com.skillhelper.repository.interfaces.IFriendRepository
@@ -14,7 +17,7 @@ class FriendHandler(
     val requestRepository: IRequestRepository,
     val userRepository: IUserRepository,
 ): IFriendHandler {
-    override fun acceptRequest(username: String, requestFrom: String) {
+    override fun acceptRequest(username: Username, requestFrom: Username) {
         if(!userRepository.userExists(username) || !userRepository.userExists(requestFrom) || username == requestFrom) return;
 
         val friendsOfReceiver = friendRepository.getFriends(username);
@@ -32,12 +35,12 @@ class FriendHandler(
         requestRepository.removeRequest(requestFrom, username);
     }
 
-    override fun removeFriend(username: String, friend: String) {
+    override fun removeFriend(username: Username, friend: Username) {
         friendRepository.removeFriend(username, friend);
         friendRepository.removeFriend(friend, username);
     }
 
-    override fun addRequest(username: String, requestFrom: String) {
+    override fun addRequest(username: Username, requestFrom: Username) {
         if(!userRepository.userExists(username) || !userRepository.userExists(requestFrom) || username == requestFrom) return;
         if(friendRepository.getFriends(username).contains(requestFrom) || friendRepository.getFriends(requestFrom).contains(username)) return;
 
@@ -52,25 +55,25 @@ class FriendHandler(
         requestRepository.addRequest(username, requestFrom);
     }
 
-    override fun removeRequest(username: String, requestFrom: String) {
+    override fun removeRequest(username: Username, requestFrom: Username) {
         requestRepository.removeRequest(username, requestFrom);
     }
 
-    override fun getFriends(username: String): List<FriendDto> {
+    override fun getFriends(username: Username): List<FriendDto> {
         val friendNames = friendRepository.getFriends(username);
 
         return friendNames.map { friendUsername ->
             val user = userRepository.getUserByName(friendUsername);
-            friendUsername.toFriendDto(user?.profileImage);
+            friendUsername.toFriendDto(user?.profile?.profileImage);
         }
     }
 
-    override fun getRequests(username: String): List<RequestDto> {
+    override fun getRequests(username: Username): List<RequestDto> {
         val requestNames = requestRepository.getRequests(username)
 
         return requestNames.map { requestUsername ->
             val user = userRepository.getUserByName(requestUsername);
-            requestUsername.toRequestDto(user?.profileImage);
+            requestUsername.toRequestDto(user?.profile?.profileImage);
         }
     }
 

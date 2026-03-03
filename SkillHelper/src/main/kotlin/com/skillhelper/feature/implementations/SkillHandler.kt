@@ -1,9 +1,14 @@
 package com.skillhelper.feature.implementations
 
+import com.skillhelper.domain.entities.SkillId
+import com.skillhelper.domain.entities.StressLevel
+import com.skillhelper.domain.entities.Username
+import com.skillhelper.domain.entities.Visibility
 import com.skillhelper.feature.interfaces.ISkillHandler
+import com.skillhelper.feature.mappers.toDomain
+import com.skillhelper.feature.mappers.toDto
 import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.feature.models.VisibilityDto
-import com.skillhelper.repository.implementations.FavoriteRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -14,7 +19,6 @@ class SkillHandler(
     val skillRepository: ISkillRepository,
     val favoriteRepository: IFavoriteRepository,
     val userRepository: IUserRepository,
-    val visibilityRepository: IVisibilityRepository
 ): ISkillHandler {
     override fun getAllSkills(): List<SkillDto> {
         return skillRepository
@@ -22,7 +26,7 @@ class SkillHandler(
             .map { it.toDto() }
     }
 
-    override fun getSkillById(id: Long): SkillDto? {
+    override fun getSkillById(id: SkillId): SkillDto? {
         return skillRepository.getSkillById(id)?.toDto()
     }
 
@@ -30,40 +34,40 @@ class SkillHandler(
         return skillRepository.getSkillsBySearch(searchString).map { it.toDto() }
     }
 
-    override fun getSkillsByStressLevel(minLevel: Int, maxLevel: Int): List<SkillDto> {
+    override fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel): List<SkillDto> {
         return skillRepository.getSkillsByStressLevel(minLevel, maxLevel).map { it.toDto() }
     }
 
-    override fun addSkill(skill: SkillDto): Long {
-        if(skill.author != null && !userRepository.userExists(skill.author)) return -1;
-        if(skill.stressLevel !in 0..100) return -1;
-        return skillRepository.addSkill(skill.toDbo())
+    override fun addSkill(skill: SkillDto): SkillId {
+        if(skill.author != null && !userRepository.userExists(Username(skill.author))) return SkillId(-1) ;
+        if(skill.stressLevel !in 0..100) return SkillId(-1);
+        return skillRepository.addSkill(skill.toDomain())
     }
 
     override fun updateSkill(skill: SkillDto) {
-        if(skill.author != null && !userRepository.userExists(skill.author)) return;
+        if(skill.author != null && !userRepository.userExists(Username(skill.author))) return;
         if(skill.stressLevel !in 0..100) return;
-        skillRepository.updateSkill(skill.toDbo())
+        skillRepository.updateSkill(skill.toDomain())
     }
 
-    override fun deleteSkill(skillId: Long) {
+    override fun deleteSkill(skillId: SkillId) {
         skillRepository.deleteSkill(skillId)
     }
 
-    override fun addFavorite(username: String, skillId: Long) {
+    override fun addFavorite(username: Username, skillId: SkillId) {
         if(!userRepository.userExists(username) || !skillRepository.skillExists(skillId)) return;
         favoriteRepository.addFavorite(username, skillId)
     }
 
-    override fun removeFavorite(username: String, skillId: Long) {
+    override fun removeFavorite(username: Username, skillId: SkillId) {
         favoriteRepository.removeFavorite(username, skillId)
     }
 
-    override fun changeVisibility(skillId: Long, visibility: Long) {
+    override fun changeVisibility(skillId: SkillId, visibility: Visibility) {
         skillRepository.changeVisibility(skillId, visibility)
     }
 
     override fun getVisibilities(): List<VisibilityDto> {
-        return visibilityRepository.getAllVisibilityLevels().map { it.toDto() }
+        return Visibility.entries.map { it.toDto() }
     }
 }
