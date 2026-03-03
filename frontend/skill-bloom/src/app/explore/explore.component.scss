@@ -1,0 +1,47 @@
+@import '../styles/colors.scss';
+@import '../styles/font-weights.scss';
+@import '../styles/sizes.scss';
+
+.explore-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 20px;
+
+    .title {
+        font-size: $title-medium;
+        margin-bottom: 0px;
+    }
+
+    .filter-container {
+        width: 90%;
+        align-self: center;
+    }
+
+    .input-container {
+        height: 42px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 90%;
+
+        .input-field {
+            width: 86%;
+        }
+
+        .search-button {
+            width: 13%;
+            height: 100%;
+            display: flex;
+            background-color: $skill-slateblue;
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+        }
+    }
+
+    .results-container {
+        margin-top: 20px;
+    }
+}

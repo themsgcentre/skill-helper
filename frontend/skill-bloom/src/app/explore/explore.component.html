@@ -1,3 +1,13 @@
-<p>
-  explore works!
-</p>
+<div class="explore-container">
+  <div class="title"> Skill Explorer: </div>
+  <div class="filter-container">
+    <app-filter></app-filter>
+  </div>
+  <div class="input-container">
+    <input class="input-field" type="text" placeholder="Suche nach Skills..." [(ngModel)]="searchString"/>
+    <div class="search-button" (click)="onSearch()"> Suchen </div>
+  </div>
+  <div class="results-container">
+    Hier stehen dann die Ergebnisse
+  </div>
+</div>

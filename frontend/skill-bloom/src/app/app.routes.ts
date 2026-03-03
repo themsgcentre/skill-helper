@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { ExploreComponent } from './explore/explore.component';
 import { SharesComponent } from './shares/shares.component';
 import { FavoritesComponent } from './favorites/favorites.component';
-import { UserComponent } from './user/user.component';
+import { UserPageComponent } from './user/user-page/user-page.component';
 
 export const routes: Routes = [
   {
@@ -24,6 +24,6 @@ export const routes: Routes = [
   },
   {
     path: 'user',
-    component: UserComponent
+    component: UserPageComponent
   }
 ];
