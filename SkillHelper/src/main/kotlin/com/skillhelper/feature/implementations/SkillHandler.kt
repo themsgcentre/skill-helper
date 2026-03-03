@@ -4,11 +4,9 @@ import com.skillhelper.feature.interfaces.ISkillHandler
 import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.feature.models.VisibilityDto
 import com.skillhelper.repository.implementations.FavoriteRepository
-import com.skillhelper.repository.implementations.VisibilityRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.interfaces.IVisibilityRepository
 import org.springframework.stereotype.Service
 
 @Service

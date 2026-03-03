@@ -1,14 +1,16 @@
 package com.skillhelper.repository.interfaces
-import com.skillhelper.repository.models.UserDbo
+
+import com.skillhelper.domain.entities.User
+import com.skillhelper.domain.entities.Username
 
 interface IUserRepository {
-    fun getUserByName(username: String): UserDbo?;
-    fun createUser(user: UserDbo);
-    fun deleteUser(username: String);
-    fun updateBio(username: String, bio: String);
-    fun updateProfilePicture(username: String, imageSrc: String?);
-    fun updateUsername(username: String, newName: String);
-    fun updatePassword(username: String, newPassword: String);
-    fun getPassword(username: String): String?;
-    fun userExists(username: String): Boolean;
+    fun getUserByName(username: Username): User?;
+    fun createUser(user: User);
+    fun deleteUser(username: Username);
+    fun updateBio(username: Username, bio: String);
+    fun updateProfilePicture(username: Username, imageSrc: String?);
+    fun updateUsername(username: Username, newName: Username);
+    fun updatePassword(username: Username, newPassword: String);
+    fun getPassword(username: Username): String?;
+    fun userExists(username: Username): Boolean;
 }

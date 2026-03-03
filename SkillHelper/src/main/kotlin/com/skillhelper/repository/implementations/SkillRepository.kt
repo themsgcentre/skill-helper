@@ -2,34 +2,40 @@ package com.skillhelper.repository.implementations
 
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
+import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.SkillDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
+import com.skillhelper.domain.entities.Skill
+import com.skillhelper.domain.entities.SkillId
+import com.skillhelper.domain.entities.StressLevel
+import com.skillhelper.domain.entities.Visibility
 
 @Service
 class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(jdbcClient, "[Skill]") {
-    override fun getAllSkills(): List<SkillDbo> {
+    override fun getAllSkills(): List<Skill> {
         val sql = """
         SELECT * from dbo.$tableName
         """.trimIndent();
 
-        return query<SkillDbo>(sql);
+        return query<SkillDbo>(sql)
+            .map { it.toDomain() }
     }
 
-    override fun getSkillById(id: Long): SkillDbo? {
+    override fun getSkillById(id: SkillId): Skill? {
         val sql = """
         SELECT * from dbo.$tableName
         WHERE Id = :id;
         """.trimIndent();
 
         val params = mapOf(
-            "id" to id,
+            "id" to id.value,
         );
 
-        return query<SkillDbo>(sql, params).firstOrNull();
+        return query<SkillDbo>(sql, params).firstOrNull()?.toDomain();
     }
 
-    override fun getSkillsBySearch(searchString: String): List<SkillDbo> {
+    override fun getSkillsBySearch(searchString: String): List<Skill> {
         val sql = """
         SELECT DISTINCT * FROM dbo.$tableName
         WHERE
@@ -43,26 +49,28 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
         )
 
         return query<SkillDbo>(sql, params)
+            .map { it.toDomain() }
     }
 
     override fun getSkillsByStressLevel(
-        minLevel: Int,
-        maxLevel: Int
-    ): List<SkillDbo> {
+        minLevel: StressLevel,
+        maxLevel: StressLevel,
+    ): List<Skill> {
         val sql = """
         SELECT * from dbo.$tableName
         WHERE StressLevel >= :minLevel AND StressLevel <= :maxLevel;
         """.trimIndent();
 
         val params = mapOf(
-            "minLevel" to minLevel,
-            "maxLevel" to maxLevel,
+            "minLevel" to minLevel.value,
+            "maxLevel" to maxLevel.value,
         );
 
-        return query<SkillDbo>(sql, params);
+        return query<SkillDbo>(sql, params)
+            .map { it.toDomain() };
     }
 
-    override fun addSkill(skill: SkillDbo): Long {
+    override fun addSkill(skill: Skill): SkillId {
         val sql = """
         INSERT INTO dbo.$tableName (
             Name,
@@ -86,16 +94,16 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
         val params = mapOf(
             "name" to skill.name,
             "description" to skill.description,
-            "stressLevel" to skill.stressLevel,
-            "author" to skill.author,
-            "visibility" to skill.visibility,
+            "stressLevel" to skill.stressLevel.value,
+            "author" to skill.author?.value,
+            "visibility" to skill.visibility.id,
             "imageSrc" to skill.imageSrc
         )
 
-        return insert(sql, params);
+        return SkillId(insert(sql, params));
     }
 
-    override fun updateSkill(skill: SkillDbo) {
+    override fun updateSkill(skill: Skill) {
         val sql = """
         UPDATE dbo.$tableName
         SET 
@@ -110,32 +118,32 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "skillId" to skill.id,
+            "skillId" to skill.id?.value,
             "name" to skill.name,
             "description" to skill.description,
-            "stressLevel" to skill.stressLevel,
-            "author" to skill.author,
-            "visibility" to skill.visibility,
+            "stressLevel" to skill.stressLevel.value,
+            "author" to skill.author?.value,
+            "visibility" to skill.visibility.id,
             "imageSrc" to skill.imageSrc
         );
 
         execute(sql, params);
     }
 
-    override fun deleteSkill(skillId: Long) {
+    override fun deleteSkill(skillId: SkillId) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE Id = :skillId;
         """.trimIndent();
 
         val params = mapOf(
-            "skillId" to skillId
+            "skillId" to skillId.value
         );
 
         execute(sql, params);
     }
 
-    override fun changeVisibility(skillId: Long, visibilityId: Long) {
+    override fun changeVisibility(skillId: SkillId, visibility: Visibility) {
         val sql = """
         UPDATE dbo.$tableName
         SET Visibility = :visibility
@@ -144,13 +152,13 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
 
         val params = mapOf(
             "skillId" to skillId,
-            "visibility" to visibilityId,
+            "visibility" to visibility.id,
         );
 
         execute(sql, params);
     }
 
-    override fun skillExists(skillId: Long): Boolean {
+    override fun skillExists(skillId: SkillId): Boolean {
         val sql = """
         SELECT CASE
             WHEN EXISTS (
@@ -163,7 +171,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
         """.trimIndent()
 
         val params = mapOf(
-            "skillId" to skillId
+            "skillId" to skillId.value
         )
 
         return query<Int>(sql, params).first() == 1;

@@ -1,40 +1,46 @@
 package com.skillhelper.repository.implementations
 
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IEntryRepository
+import com.skillhelper.repository.mappers.toDomain
+import com.skillhelper.domain.entities.Entry
+import com.skillhelper.domain.entities.EntryId
 import com.skillhelper.repository.models.EntryDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
 
 @Service
 class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, "[Entry]") {
-    override fun getEntries(username: String): List<EntryDbo> {
+    override fun getEntries(username: Username): List<Entry> {
         val sql = """
         SELECT * from dbo.$tableName
         WHERE [Username] = :username;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
-        return query<EntryDbo>(sql, params);
+        return query<EntryDbo>(sql, params).map {
+            it.toDomain()
+        };
     }
 
-    override fun getEntryById(id: Long): EntryDbo? {
+    override fun getEntryById(id: EntryId): Entry? {
         val sql = """
         SELECT * from dbo.$tableName
         WHERE [Id] = :id;
         """.trimIndent();
 
         val params = mapOf(
-            "id" to id,
+            "id" to id.value,
         );
 
-        return query<EntryDbo>(sql, params).firstOrNull();
+        return query<EntryDbo>(sql, params).firstOrNull()?.toDomain();
     }
 
-    override fun addEntry(entry: EntryDbo): Long {
+    override fun addEntry(entry: Entry): EntryId {
         val sql = """
         INSERT INTO dbo.$tableName(
             [Username],
@@ -52,16 +58,16 @@ class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, 
         """.trimIndent();
 
         val params = mapOf(
-            "username" to entry.username,
+            "username" to entry.user.value,
             "text" to entry.text,
-            "stressLevel" to entry.stressLevel,
+            "stressLevel" to entry.stressLevel.value,
             "time" to entry.time,
         );
 
-        return insert(sql, params);
+        return EntryId(insert(sql, params));
     }
 
-    override fun updateEntry(entry: EntryDbo) {
+    override fun updateEntry(entry: Entry) {
         val sql = """
         UPDATE dbo.$tableName
         SET 
@@ -72,23 +78,23 @@ class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, 
         """.trimIndent();
 
         val params = mapOf(
-            "id" to entry.id,
+            "id" to entry.id?.value,
             "text" to entry.text,
-            "stressLevel" to entry.stressLevel,
+            "stressLevel" to entry.stressLevel.value,
             "time" to entry.time,
         );
 
         execute(sql, params);
     }
 
-    override fun deleteEntry(id: Long) {
+    override fun deleteEntry(id: EntryId) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE [Id] = :id;
         """.trimIndent();
 
         val params = mapOf(
-            "id" to id
+            "id" to id.value
         );
 
         execute(sql, params);

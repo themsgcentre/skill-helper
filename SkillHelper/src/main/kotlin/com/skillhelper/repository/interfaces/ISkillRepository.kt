@@ -1,17 +1,19 @@
 package com.skillhelper.repository.interfaces
 
 
-import com.skillhelper.repository.models.SkillDbo
-import com.skillhelper.repository.models.VisibilityDbo
+import com.skillhelper.domain.entities.Skill
+import com.skillhelper.domain.entities.SkillId
+import com.skillhelper.domain.entities.StressLevel
+import com.skillhelper.domain.entities.Visibility
 
 interface ISkillRepository {
-    fun getAllSkills() : List<SkillDbo>;
-    fun getSkillById(id: Long) : SkillDbo?;
-    fun getSkillsBySearch(searchString: String) : List<SkillDbo>;
-    fun getSkillsByStressLevel(minLevel: Int, maxLevel: Int) : List<SkillDbo>;
-    fun addSkill(skill: SkillDbo): Long;
-    fun updateSkill(skill: SkillDbo);
-    fun deleteSkill(skillId: Long);
-    fun changeVisibility(skillId: Long, visibilityId: Long );
-    fun skillExists(skillId: Long): Boolean;
+    fun getAllSkills() : List<Skill>;
+    fun getSkillById(id: SkillId) : Skill?;
+    fun getSkillsBySearch(searchString: String) : List<Skill>;
+    fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel) : List<Skill>;
+    fun addSkill(skill: Skill): SkillId;
+    fun updateSkill(skill: Skill);
+    fun deleteSkill(skillId: SkillId);
+    fun changeVisibility(skillId: SkillId, visibility: Visibility );
+    fun skillExists(skillId: SkillId): Boolean;
 }

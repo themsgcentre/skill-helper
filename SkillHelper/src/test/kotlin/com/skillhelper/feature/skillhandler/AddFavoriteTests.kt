@@ -5,7 +5,6 @@ import com.skillhelper.feature.models.SkillDto
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.interfaces.IVisibilityRepository
 import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk

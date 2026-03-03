@@ -1,7 +1,9 @@
 package com.skillhelper.repository.interfaces
 
+import com.skillhelper.domain.entities.Username
+
 interface IRequestRepository {
-    fun addRequest(username: String, request: String);
-    fun removeRequest(username: String, request: String);
-    fun getRequests(username: String): List<String>;
+    fun addRequest(username: Username, request: Username);
+    fun removeRequest(username: Username, request: Username);
+    fun getRequests(username: Username): List<Username>;
 }

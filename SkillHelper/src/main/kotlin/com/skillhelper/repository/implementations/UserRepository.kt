@@ -1,7 +1,10 @@
 package com.skillhelper.repository.implementations
 
+import com.skillhelper.domain.entities.User
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IUserRepository
+import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.UserDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
@@ -10,7 +13,7 @@ import org.springframework.stereotype.Service
 class UserRepository(
     jdbc: JdbcClient
 ): IUserRepository, BaseRepository(jdbc, "[User]") {
-    override fun getUserByName(username: String): UserDbo? {
+    override fun getUserByName(username: Username): User? {
         val sql = """
         SELECT * from dbo.$tableName
         WHERE Username = :username;
@@ -20,10 +23,10 @@ class UserRepository(
             "username" to username,
         );
 
-        return query<UserDbo>(sql, params).firstOrNull();
+        return query<UserDbo>(sql, params).firstOrNull()?.toDomain();
     }
 
-    override fun createUser(user: UserDbo) {
+    override fun createUser(user: User) {
         val sql = """
         INSERT INTO dbo.$tableName (
             Username,
@@ -40,29 +43,29 @@ class UserRepository(
         """.trimIndent()
 
         val params = mapOf(
-            "username" to user.username,
+            "username" to user.username.value,
             "password" to user.password,
-            "profileImage" to user.profileImage,
-            "bio" to user.bio
+            "profileImage" to user.profile.profileImage,
+            "bio" to user.profile.bio
         )
 
         execute(sql, params);
     }
 
-    override fun deleteUser(username: String) {
+    override fun deleteUser(username: Username) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE Username = :username;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
         execute(sql, params);
     }
 
-    override fun updateBio(username: String, bio: String) {
+    override fun updateBio(username: Username, bio: String) {
         val sql = """
         UPDATE dbo.$tableName
         SET Bio = :bio
@@ -70,14 +73,14 @@ class UserRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
             "bio" to bio
         );
 
         execute(sql, params);
     }
 
-    override fun updateProfilePicture(username: String, imageSrc: String?) {
+    override fun updateProfilePicture(username: Username, imageSrc: String?) {
         val sql = """
         UPDATE dbo.$tableName
         SET ProfileImage = :imageSrc
@@ -85,14 +88,14 @@ class UserRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
             "imageSrc" to imageSrc
         );
 
         execute(sql, params);
     }
 
-    override fun updateUsername(username: String, newName: String) {
+    override fun updateUsername(username: Username, newName: Username) {
         val sql = """
         UPDATE dbo.$tableName
         SET Username = :newName
@@ -100,14 +103,14 @@ class UserRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
-            "newName" to newName
+            "username" to username.value,
+            "newName" to newName.value
         );
 
         execute(sql, params);
     }
 
-    override fun updatePassword(username: String, newPassword: String) {
+    override fun updatePassword(username: Username, newPassword: String) {
         val sql = """
         UPDATE dbo.$tableName
         SET Password = :newPassword
@@ -115,27 +118,27 @@ class UserRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
             "newPassword" to newPassword
         );
 
         execute(sql, params);
     }
 
-    override fun getPassword(username: String): String? {
+    override fun getPassword(username: Username): String? {
         val sql = """
         SELECT (Password) from dbo.$tableName
         WHERE Username = :username;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
         return query<String>(sql, params).firstOrNull();
     }
 
-    override fun userExists(username: String): Boolean {
+    override fun userExists(username: Username): Boolean {
         val sql = """
         SELECT CASE 
             WHEN EXISTS (
@@ -148,7 +151,7 @@ class UserRepository(
         """.trimIndent()
 
         val params = mapOf(
-            "username" to username
+            "username" to username.value
         )
 
         val result = query<Int>(sql, params).first();

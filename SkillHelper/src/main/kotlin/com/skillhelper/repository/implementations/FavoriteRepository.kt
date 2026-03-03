@@ -1,5 +1,7 @@
 package com.skillhelper.repository.implementations
 
+import com.skillhelper.domain.entities.SkillId
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.models.UserDbo
@@ -8,7 +10,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class FavoriteRepository(jdbc: JdbcClient): IFavoriteRepository, BaseRepository(jdbc, "[Favorite]") {
-    override fun addFavorite(username: String, skillId: Long) {
+    override fun addFavorite(username: Username, skillId: SkillId) {
         val sql = """
         INSERT INTO dbo.$tableName(
             [User],
@@ -21,37 +23,39 @@ class FavoriteRepository(jdbc: JdbcClient): IFavoriteRepository, BaseRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
-            "skillId" to skillId
+            "username" to username.value,
+            "skillId" to skillId.value
         );
 
         execute(sql, params);
     }
 
-    override fun removeFavorite(username: String, skillId: Long) {
+    override fun removeFavorite(username: Username, skillId: SkillId) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE [User] = :username AND [Skill] = :skillId;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
-            "skillId" to skillId
+            "username" to username.value,
+            "skillId" to skillId.value
         );
 
         execute(sql, params);
     }
 
-    override fun getFavorites(username: String): List<Long> {
+    override fun getFavorites(username: Username): List<SkillId> {
         val sql = """
         SELECT [Skill] from dbo.$tableName
         WHERE [User] = :username;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
-        return query<Long>(sql, params);
+        return query<Long>(sql, params).map {
+            SkillId(it)
+        };
     }
 }

@@ -1,10 +1,14 @@
 package com.skillhelper.repository
 
+import com.skillhelper.domain.entities.Skill
+import com.skillhelper.domain.entities.SkillId
+import com.skillhelper.domain.entities.StressLevel
+import com.skillhelper.domain.entities.Username
+import com.skillhelper.domain.entities.Visibility
 import com.skillhelper.repository.helpers.getMaxVisibilityId
 import com.skillhelper.repository.helpers.insertSkill
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.SkillRepository
-import com.skillhelper.repository.models.SkillDbo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterAll
@@ -49,23 +53,21 @@ class SkillRepositoryTests {
     fun getAllSkills_HasSkills_ReturnsCorrectList() {
         val author = "author1"
         insertUser(jdbc, author)
-        val skill1 = SkillDbo(
-            id = 0,
+        val skill1 = Skill(
             name = "skill 1",
             description = "desc 1",
-            stressLevel = 1,
-            author = author,
-            visibility = 1,
+            stressLevel = StressLevel(1),
+            author = Username(author),
+            visibility = Visibility.PUBLIC,
             imageSrc = "src1"
         )
 
-        val skill2 = SkillDbo(
-            id = 0,
+        val skill2 = Skill(
             name = "skill 2",
             description = "desc 2",
-            stressLevel = 3,
+            stressLevel = StressLevel(3),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PUBLIC,
             imageSrc = null
         )
 
@@ -94,13 +96,12 @@ class SkillRepositoryTests {
         val author = "author1"
         insertUser(jdbc, author)
 
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
             name = "skill 1",
             description = "desc 1",
-            stressLevel = 2,
-            author = author,
-            visibility = 1,
+            stressLevel = StressLevel(2),
+            author = Username(author),
+            visibility = Visibility.PUBLIC,
             imageSrc = "img1"
         )
 
@@ -115,19 +116,45 @@ class SkillRepositoryTests {
 
     @Test
     fun getSkillById_IdDoesNotExist_ReturnsNull() {
-        val actual = repository.getSkillById(9999L)
+        val actual = repository.getSkillById(SkillId(9999L))
 
         assertThat(actual).isNull()
     }
 
     @Test
     fun getSkillsBySearch_PartialMatch_ReturnsMatchingSkills() {
-        val author = "author1"
-        insertUser(jdbc, author)
+        val author = Username("author1")
+        insertUser(jdbc, author.value)
 
-        val s1 = SkillDbo(0, "first", "a description", 1, author, 1, null)
-        val s2 = SkillDbo(0, "second", "similar to first", 2, null, 1, null)
-        val s3 = SkillDbo(0, "third", "nothing to see here", 3, null, 1, null)
+        val s1 = Skill(
+            id = null,
+            name = "first",
+            description = "a description",
+            stressLevel = StressLevel(1),
+            author = author,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
+
+        val s2 = Skill(
+            id = null,
+            name = "second",
+            description = "similar to first",
+            stressLevel = StressLevel(2),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
+
+        val s3 = Skill(
+            id = null,
+            name = "third",
+            description = "nothing to see here",
+            stressLevel = StressLevel(3),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
 
         val id1 = insertSkill(jdbc, s1)
         val id2 = insertSkill(jdbc, s2)
@@ -145,7 +172,16 @@ class SkillRepositoryTests {
 
     @Test
     fun getSkillsBySearch_NoMatch_ReturnsEmptyList() {
-        val s1 = SkillDbo(0, "test", "test", 1, null, 1, null)
+        val s1 = Skill(
+            id = null,
+            name = "test",
+            description = "test",
+            stressLevel = StressLevel(1),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
+
         insertSkill(jdbc, s1)
 
         val actual = repository.getSkillsBySearch("no result")
@@ -155,15 +191,44 @@ class SkillRepositoryTests {
 
     @Test
     fun getSkillsByStressLevel_InRange_ReturnsMatchingSkills() {
-        val s1 = SkillDbo(0, "first", "desc", 0, null, 1, null)
-        val s2 = SkillDbo(0, "second", "desc", 30, null, 1, null)
-        val s3 = SkillDbo(0, "third", "desc", 50, null, 1, null)
+        val s1 = Skill(
+            id = null,
+            name = "first",
+            description = "desc",
+            stressLevel = StressLevel(0),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
+
+        val s2 = Skill(
+            id = null,
+            name = "second",
+            description = "desc",
+            stressLevel = StressLevel(30),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
+
+        val s3 = Skill(
+            id = null,
+            name = "third",
+            description = "desc",
+            stressLevel = StressLevel(50),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
 
         val id1 = insertSkill(jdbc, s1)
         val id2 = insertSkill(jdbc, s2)
         insertSkill(jdbc, s3)
 
-        val actual = repository.getSkillsByStressLevel(0, 35)
+        val actual = repository.getSkillsByStressLevel(
+            StressLevel(0),
+            StressLevel(35)
+        )
 
         val expected = listOf(
             s1.copy(id = id1),
@@ -175,30 +240,45 @@ class SkillRepositoryTests {
 
     @Test
     fun getSkillsByStressLevel_NoMatch_ReturnsEmptyList() {
-        val s1 = SkillDbo(0, "first", "desc", 50, null, 1, null)
+        val s1 = Skill(
+            id = null,
+            name = "first",
+            description = "desc",
+            stressLevel = StressLevel(50),
+            author = null,
+            visibility = Visibility.PRIVATE,
+            imageSrc = null
+        )
+
         insertSkill(jdbc, s1)
 
-        val actual = repository.getSkillsByStressLevel(10, 30)
+        val actual = repository.getSkillsByStressLevel(
+            StressLevel(10),
+            StressLevel(30)
+        )
 
         assertThat(actual).isEmpty()
     }
 
     @Test
     fun addSkill_AuthorNull_InsertsSkill() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "first",
             description = "desc",
-            stressLevel = 1,
+            stressLevel = StressLevel(1),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = "src"
         )
 
         val newId = repository.addSkill(skill)
 
         val actual = repository.getAllSkills()
-        assertThat(actual).contains(skill.copy(id = newId))
+
+        assertThat(actual).contains(
+            skill.copy(id = newId)
+        )
     }
 
     @Test
@@ -207,13 +287,13 @@ class SkillRepositoryTests {
         insertUser(jdbc, author)
 
 
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "second",
             description = "desc",
-            stressLevel = 2,
-            author = author,
-            visibility = 1,
+            stressLevel = StressLevel(1),
+            author = Username(author),
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
@@ -225,34 +305,13 @@ class SkillRepositoryTests {
 
     @Test
     fun addSkill_AuthorDoesNotExist_ThrowsForeignKeyException() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "third",
             description = "desc",
-            stressLevel = 3,
-            author = "missingUser",
-            visibility = 1,
-            imageSrc = null
-        )
-
-        assertThatThrownBy { repository.addSkill(skill) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun addSkill_VisibilityDoesNotExist_ThrowsForeignKeyException() {
-        val author = "author1"
-        insertUser(jdbc, author)
-
-        val invalidVisibility = getMaxVisibilityId(jdbc) + 1;
-
-        val skill = SkillDbo(
-            id = 0,
-            name = "fourth",
-            description = "desc",
-            stressLevel = 4,
-            author = author,
-            visibility = invalidVisibility,
+            stressLevel = StressLevel(3),
+            author = Username("missingUser"),
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
@@ -262,13 +321,13 @@ class SkillRepositoryTests {
 
     @Test
     fun addSkill_StressLevelBelowZero_ThrowsDataIntegrityViolation() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "first",
             description = "desc",
-            stressLevel = -1,
+            stressLevel = StressLevel(-1),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
@@ -278,13 +337,13 @@ class SkillRepositoryTests {
 
     @Test
     fun addSkill_StressLevelAboveHundred_ThrowsDataIntegrityViolation() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "second",
             description = "desc",
-            stressLevel = 101,
+            stressLevel = StressLevel(101),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
@@ -297,16 +356,16 @@ class SkillRepositoryTests {
         val author = "author1"
         insertUser(jdbc, author)
 
-        val original = SkillDbo(0, "first", "desc", 1, null, 1, null)
+        val original = Skill(null, "first", "desc", StressLevel(20), null, Username(author), visibility = Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
-        val updated = SkillDbo(
+        val updated = Skill(
             id = id,
             name = "updated",
             description = "new desc",
-            stressLevel = 50,
-            author = author,
-            visibility = 1,
+            stressLevel = StressLevel(50),
+            author = Username(author),
+            visibility = Visibility.PRIVATE,
             imageSrc = "img"
         )
 
@@ -319,26 +378,12 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_AuthorDoesNotExist_ThrowsForeignKeyException() {
-        val original = SkillDbo(0, "first", "desc", 1, null, 1, null)
+        val original = Skill(null, "first", "desc", StressLevel(1), null, null, Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val invalid = original.copy(
             id = id,
-            author = "missingUser"
-        )
-
-        assertThatThrownBy { repository.updateSkill(invalid) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun updateSkill_VisibilityDoesNotExist_ThrowsForeignKeyException() {
-        val original = SkillDbo(0, "first", "desc", 1, null, 1, null)
-        val id = insertSkill(jdbc, original)
-
-        val invalid = original.copy(
-            id = id,
-            visibility = getMaxVisibilityId(jdbc) + 1
+            author = Username("missingUser")
         )
 
         assertThatThrownBy { repository.updateSkill(invalid) }
@@ -347,12 +392,12 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_StressLevelBelowZero_ThrowsException() {
-        val original = SkillDbo(0, "first", "desc", 1, null, 1, null)
+        val original = Skill(null, "first", "desc", StressLevel(1), null, null, Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val invalid = original.copy(
             id = id,
-            stressLevel = -1
+            stressLevel = StressLevel(-1)
         )
 
         assertThatThrownBy { repository.updateSkill(invalid) }
@@ -361,12 +406,12 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_StressLevelAboveHundred_ThrowsException() {
-        val original = SkillDbo(0, "first", "desc", 1, null, 1, null)
+        val original = Skill(null, "first", "desc", StressLevel(1), null, null, Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val invalid = original.copy(
             id = id,
-            stressLevel = 101
+            stressLevel = StressLevel(101)
         )
 
         assertThatThrownBy { repository.updateSkill(invalid) }
@@ -375,13 +420,13 @@ class SkillRepositoryTests {
 
     @Test
     fun deleteSkill_ExistingId_RemovesSkill() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "first",
             description = "desc",
-            stressLevel = 1,
+            stressLevel = StressLevel(1),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
@@ -396,19 +441,19 @@ class SkillRepositoryTests {
 
     @Test
     fun deleteSkill_IdDoesNotExist_DoesNothing() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "first",
             description = "desc",
-            stressLevel = 1,
+            stressLevel = StressLevel(1),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
         val id = insertSkill(jdbc, skill)
 
-        repository.deleteSkill(9999L)
+        repository.deleteSkill(SkillId(9999L))
 
         val actual = repository.getSkillById(id)
 
@@ -417,53 +462,34 @@ class SkillRepositoryTests {
 
     @Test
     fun changeVisibility_ValidVisibility_UpdatesSkill() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "first",
             description = "desc",
-            stressLevel = 1,
+            stressLevel = StressLevel(1),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
         val id = insertSkill(jdbc, skill)
 
-        repository.changeVisibility(id, 2)
+        repository.changeVisibility(id, Visibility.FRIENDS_ONLY)
 
         val actual = repository.getSkillById(id)
 
-        assertThat(actual!!.visibility).isEqualTo(2)
-    }
-
-    @Test
-    fun changeVisibility_InvalidVisibility_ThrowsForeignKeyException() {
-        val skill = SkillDbo(
-            id = 0,
-            name = "first",
-            description = "desc",
-            stressLevel = 1,
-            author = null,
-            visibility = 1,
-            imageSrc = null
-        )
-
-        val id = insertSkill(jdbc, skill)
-
-        assertThatThrownBy {
-            repository.changeVisibility(id, getMaxVisibilityId(jdbc) + 1)
-        }.isInstanceOf(DataIntegrityViolationException::class.java)
+        assertThat(actual!!.visibility).isEqualTo(Visibility.FRIENDS_ONLY)
     }
 
     @Test
     fun skillExists_SkillExists_ReturnsTrue() {
-        val skill = SkillDbo(
-            id = 0,
+        val skill = Skill(
+            id = null,
             name = "first",
             description = "desc",
-            stressLevel = 1,
+            stressLevel = StressLevel(50),
             author = null,
-            visibility = 1,
+            visibility = Visibility.PRIVATE,
             imageSrc = null
         )
 
@@ -476,7 +502,7 @@ class SkillRepositoryTests {
 
     @Test
     fun skillExists_SkillDoesNotExist_ReturnsFalse() {
-        val actual = repository.skillExists(9999L)
+        val actual = repository.skillExists(SkillId(9999L))
 
         assertThat(actual).isFalse()
     }

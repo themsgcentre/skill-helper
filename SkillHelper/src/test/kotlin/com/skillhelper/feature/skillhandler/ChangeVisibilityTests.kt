@@ -4,7 +4,6 @@ import com.skillhelper.feature.implementations.SkillHandler
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.interfaces.IVisibilityRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

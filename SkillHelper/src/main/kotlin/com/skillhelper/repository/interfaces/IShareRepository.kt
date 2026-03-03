@@ -1,12 +1,13 @@
 package com.skillhelper.repository.interfaces
 
-import com.skillhelper.feature.models.ShareDto
-import com.skillhelper.repository.models.ShareDbo
+import com.skillhelper.domain.entities.Share
+import com.skillhelper.domain.entities.ShareId
+import com.skillhelper.domain.entities.Username
 
 interface IShareRepository {
-    fun deleteShare(shareId: Long);
-    fun deleteAllForUser(username: String);
-    fun addShare(shareDbo: ShareDbo): Long;
-    fun readShare(shareId: Long);
-    fun getAllForUser(username: String): List<ShareDbo>;
+    fun deleteShare(shareId: ShareId);
+    fun deleteAllForUser(username: Username);
+    fun addShare(share: Share): ShareId;
+    fun readShare(shareId: ShareId);
+    fun getAllForUser(username: Username): List<Share>;
 }

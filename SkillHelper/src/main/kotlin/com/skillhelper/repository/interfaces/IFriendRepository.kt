@@ -1,7 +1,9 @@
 package com.skillhelper.repository.interfaces
 
+import com.skillhelper.domain.entities.Username
+
 interface IFriendRepository {
-    fun addFriend(username: String, friend: String);
-    fun removeFriend(username: String, friend: String);
-    fun getFriends(username: String): List<String>;
+    fun addFriend(username: Username, friend: Username);
+    fun removeFriend(username: Username, friend: Username);
+    fun getFriends(username: Username): List<Username>;
 }

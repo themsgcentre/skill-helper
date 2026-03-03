@@ -1,5 +1,6 @@
 package com.skillhelper.repository.implementations
 
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.models.UserDbo
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class FriendRepository(jdbc: JdbcClient): IFriendRepository, BaseRepository(jdbc, "[Friend]") {
-    override fun addFriend(username: String, friend: String) {
+    override fun addFriend(username: Username, friend: Username) {
         val sql = """
         INSERT INTO dbo.$tableName(
             [User],
@@ -21,38 +22,40 @@ class FriendRepository(jdbc: JdbcClient): IFriendRepository, BaseRepository(jdbc
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
-            "friend" to friend
+            "username" to username.value,
+            "friend" to friend.value
         );
 
         execute(sql, params);
     }
 
-    override fun removeFriend(username: String, friend: String) {
+    override fun removeFriend(username: Username, friend: Username) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE [User] = :username AND Friend = :friend;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
-            "friend" to friend
+            "username" to username.value,
+            "friend" to friend.value
         );
 
         execute(sql, params);
     }
 
-    override fun getFriends(username: String): List<String> {
+    override fun getFriends(username: Username): List<Username> {
         val sql = """
         SELECT (Friend) from dbo.$tableName
         WHERE [User] = :username;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
-        return query<String>(sql, params);
+        return query<String>(sql, params).map {
+            Username(it)
+        };
     }
 
 }

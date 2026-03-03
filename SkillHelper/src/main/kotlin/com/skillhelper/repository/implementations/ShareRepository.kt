@@ -1,7 +1,11 @@
 package com.skillhelper.repository.implementations
 
+import com.skillhelper.domain.entities.Share
+import com.skillhelper.domain.entities.ShareId
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IShareRepository
+import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.ShareDbo
 import com.skillhelper.repository.models.UserDbo
 import org.springframework.jdbc.core.simple.JdbcClient
@@ -9,33 +13,33 @@ import org.springframework.stereotype.Service
 
 @Service
 class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, "[Share]") {
-    override fun deleteShare(shareId: Long) {
+    override fun deleteShare(shareId: ShareId) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE Id = :shareId;
         """.trimIndent();
 
         val params = mapOf(
-            "shareId" to shareId
+            "shareId" to shareId.value
         );
 
         execute(sql, params);
     }
 
-    override fun deleteAllForUser(username: String) {
+    override fun deleteAllForUser(username: Username) {
         val sql = """
         DELETE from dbo.$tableName
         WHERE ForUser = :username;
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username
+            "username" to username.value
         );
 
         execute(sql, params);
     }
 
-    override fun addShare(shareDbo: ShareDbo): Long {
+    override fun addShare(share: Share): ShareId {
         val sql = """
         INSERT INTO dbo.$tableName (
             ForUser,
@@ -55,17 +59,17 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
         """.trimIndent()
 
         val params = mapOf(
-            "forUser" to shareDbo.forUser,
-            "fromUser" to shareDbo.fromUser,
-            "skill" to shareDbo.skill,
-            "dateShared" to shareDbo.dateShared,
-            "read" to if (shareDbo.read) 1 else 0
+            "forUser" to share.forUser.value,
+            "fromUser" to share.fromUser.value,
+            "skill" to share.skill.value,
+            "dateShared" to share.dateShared,
+            "read" to if (share.isRead()) 1 else 0
         )
 
-        return insert(sql, params);
+        return ShareId(insert(sql, params));
     }
 
-    override fun readShare(shareId: Long) {
+    override fun readShare(shareId: ShareId) {
         val sql = """
         UPDATE dbo.$tableName
         SET [Read] = 1
@@ -73,13 +77,13 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
         """.trimIndent();
 
         val params = mapOf(
-            "shareId" to shareId,
+            "shareId" to shareId.value,
         );
 
         execute(sql, params);
     }
 
-    override fun getAllForUser(username: String): List<ShareDbo> {
+    override fun getAllForUser(username: Username): List<Share> {
         val sql = """
         SELECT * from dbo.$tableName
         WHERE ForUser = :username;
@@ -89,6 +93,6 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
             "username" to username,
         );
 
-        return query<ShareDbo>(sql, params);
+        return query<ShareDbo>(sql, params).map { it.toDomain() };
     }
 }
