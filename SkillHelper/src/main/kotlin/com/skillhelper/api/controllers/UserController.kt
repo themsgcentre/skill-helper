@@ -4,9 +4,9 @@ import com.skillhelper.api.helpers.BioUpdateHelper
 import com.skillhelper.api.helpers.PasswordUpdaterHelper
 import com.skillhelper.api.helpers.ProfileImageUpdateHelper
 import com.skillhelper.api.helpers.UsernameUpdateHelper
-import com.skillhelper.feature.interfaces.IUserHandler
-import com.skillhelper.feature.models.ProfileDto
-import com.skillhelper.feature.models.UserDto
+import com.skillhelper.application.interfaces.IUserHandler
+import com.skillhelper.application.models.ProfileDto
+import com.skillhelper.application.models.UserDto
 import org.springframework.web.bind.annotation.*
 
 

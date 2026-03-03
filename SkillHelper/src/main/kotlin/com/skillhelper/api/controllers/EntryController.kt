@@ -1,7 +1,7 @@
 package com.skillhelper.api.controllers
 
-import com.skillhelper.feature.interfaces.IEntryHandler
-import com.skillhelper.feature.models.EntryDto
+import com.skillhelper.application.interfaces.IEntryHandler
+import com.skillhelper.application.models.EntryDto
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

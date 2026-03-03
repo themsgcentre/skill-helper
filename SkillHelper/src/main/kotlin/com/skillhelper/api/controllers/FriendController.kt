@@ -3,9 +3,9 @@ package com.skillhelper.api.controllers
 import com.skillhelper.api.helpers.FriendHelper
 import com.skillhelper.api.helpers.RequestHelper
 import com.skillhelper.api.helpers.UsernameHelper
-import com.skillhelper.feature.interfaces.IFriendHandler
-import com.skillhelper.feature.models.FriendDto
-import com.skillhelper.feature.models.RequestDto
+import com.skillhelper.application.interfaces.IFriendHandler
+import com.skillhelper.application.models.FriendDto
+import com.skillhelper.application.models.RequestDto
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
