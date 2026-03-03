@@ -1,15 +1,17 @@
 package com.skillhelper.feature.interfaces
 
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.UserDto
 
 interface IUserHandler {
-    fun getProfileByName(username: String): ProfileDto?;
+    fun getProfileByName(username: Username): ProfileDto?;
     fun createUser(user: UserDto);
-    fun deleteUser(username: String);
-    fun updateBio(username: String, bio: String);
-    fun updateProfilePicture(username: String, imageSrc: String?);
-    fun updateUsername(oldName: String, newName: String);
-    fun updatePassword(username: String, oldPassword: String, newPassword: String);
-    fun userExists(username: String): Boolean;
+    fun deleteUser(username: Username);
+    fun updateBio(username: Username, bio: String);
+    fun updateProfilePicture(username: Username, imageSrc: String?);
+    fun updateUsername(oldName: Username, newName: Username);
+    fun updatePassword(username: Username, oldPassword: String, newPassword: String);
+    fun userExists(username: Username): Boolean;
+    fun login(username: Username, password: String);
 }

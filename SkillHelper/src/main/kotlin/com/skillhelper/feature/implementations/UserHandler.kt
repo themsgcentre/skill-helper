@@ -1,5 +1,6 @@
 package com.skillhelper.feature.implementations
 
+import com.skillhelper.domain.entities.Username
 import com.skillhelper.feature.interfaces.IUserHandler
 import com.skillhelper.feature.models.ProfileDto
 import com.skillhelper.feature.models.UserDto
@@ -12,12 +13,12 @@ class UserHandler(
     val userRepository: IUserRepository,
     private val passwordEncoder: PasswordEncoder
 ): IUserHandler {
-    override fun getProfileByName(username: String): ProfileDto? {
+    override fun getProfileByName(username: Username): ProfileDto? {
         return userRepository.getUserByName(username)?.toProfileDto();
     }
 
     override fun createUser(user: UserDto) {
-        if(userRepository.userExists(user.username)) return;
+        if(userRepository.userExists(Username(user.username))) return;
         val hashed = passwordEncoder.encode(user.password)
         userRepository.createUser(user.toDbo(hashed))
     }
