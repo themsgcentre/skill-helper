@@ -10,6 +10,7 @@ import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.throwables.EntryAccessDeniedException
 
 @Service
 class EntryHandler(
@@ -21,8 +22,10 @@ class EntryHandler(
         return entryRepository.getEntries(username)
     }
 
-    override fun getEntryById(id: EntryId): Entry {
-        return entryRepository.getEntryById(id) ?: throw EntryNotFoundException()
+    override fun getEntryById(username: Username, id: EntryId): Entry {
+        val entry = entryRepository.getEntryById(id) ?: throw EntryNotFoundException()
+        if(entry.user != username) throw EntryAccessDeniedException();
+        return entry;
     }
 
     override fun addEntry(entry: Entry): EntryId {
@@ -30,13 +33,16 @@ class EntryHandler(
         return entryRepository.addEntry(entry)
     }
 
-    override fun updateEntry(entry: Entry) {
+    override fun updateEntry(username: Username, entry: Entry) {
         val originalEntry = entryRepository.getEntryById(entry.id!!) ?: throw EntryNotFoundException();
+        if(entry.user != username) throw EntryAccessDeniedException();
         if(entry.user != originalEntry.user) throw InvalidEntryOperationException()
         entryRepository.updateEntry(entry)
     }
 
-    override fun deleteEntry(id: EntryId) {
+    override fun deleteEntry(username: Username, id: EntryId) {
+        val entry = entryRepository.getEntryById(id) ?: throw EntryNotFoundException()
+        if(entry.user != username) throw EntryAccessDeniedException();
         entryRepository.deleteEntry(id)
     }
 }

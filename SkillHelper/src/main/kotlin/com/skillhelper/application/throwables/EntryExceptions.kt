@@ -5,3 +5,6 @@ class EntryNotFoundException :
 
 class InvalidEntryOperationException :
     DomainException("Invalid Operation on entry. Author cannot be changed.")
+
+class EntryAccessDeniedException :
+    DomainException("Entry access denied.")
