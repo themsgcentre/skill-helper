@@ -2,8 +2,8 @@ package com.skillhelper.application.implementations
 
 import com.skillhelper.domain.entities.Username
 import com.skillhelper.application.interfaces.IFriendHandler
-import com.skillhelper.application.mappers.toFriendDto
-import com.skillhelper.application.mappers.toRequestDto
+import com.skillhelper.api.mappers.toFriendDto
+import com.skillhelper.api.mappers.toRequestDto
 import com.skillhelper.application.models.FriendDto
 import com.skillhelper.application.models.RequestDto
 import com.skillhelper.repository.interfaces.IFriendRepository

@@ -3,8 +3,8 @@ package com.skillhelper.application.implementations
 import com.skillhelper.domain.entities.EntryId
 import com.skillhelper.domain.entities.Username
 import com.skillhelper.application.interfaces.IEntryHandler
-import com.skillhelper.application.mappers.toDomain
-import com.skillhelper.application.mappers.toDto
+import com.skillhelper.api.mappers.toDomain
+import com.skillhelper.api.mappers.toDto
 import com.skillhelper.application.models.EntryDto
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository

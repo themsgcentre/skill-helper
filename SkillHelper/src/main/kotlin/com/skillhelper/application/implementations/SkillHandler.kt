@@ -5,8 +5,8 @@ import com.skillhelper.domain.entities.StressLevel
 import com.skillhelper.domain.entities.Username
 import com.skillhelper.domain.entities.Visibility
 import com.skillhelper.application.interfaces.ISkillHandler
-import com.skillhelper.application.mappers.toDomain
-import com.skillhelper.application.mappers.toDto
+import com.skillhelper.api.mappers.toDomain
+import com.skillhelper.api.mappers.toDto
 import com.skillhelper.application.models.SkillDto
 import com.skillhelper.application.models.VisibilityDto
 import com.skillhelper.repository.interfaces.IFavoriteRepository

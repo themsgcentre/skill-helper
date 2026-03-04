@@ -4,8 +4,8 @@ import com.skillhelper.domain.entities.ShareId
 import com.skillhelper.domain.entities.SkillId
 import com.skillhelper.domain.entities.Username
 import com.skillhelper.application.interfaces.IShareHandler
-import com.skillhelper.application.mappers.toDomain
-import com.skillhelper.application.mappers.toDto
+import com.skillhelper.api.mappers.toDomain
+import com.skillhelper.api.mappers.toDto
 import com.skillhelper.application.models.ShareCreationDto
 import com.skillhelper.application.models.ShareDto
 import com.skillhelper.repository.interfaces.IShareRepository

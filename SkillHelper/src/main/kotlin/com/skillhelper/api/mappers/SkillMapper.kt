@@ -1,4 +1,4 @@
-package com.skillhelper.application.mappers
+package com.skillhelper.api.mappers
 
 import com.skillhelper.domain.entities.Skill
 import com.skillhelper.domain.entities.SkillId
