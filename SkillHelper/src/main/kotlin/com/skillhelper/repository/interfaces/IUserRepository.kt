@@ -1,7 +1,7 @@
 package com.skillhelper.repository.interfaces
 
-import com.skillhelper.domain.entities.User
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 
 interface IUserRepository {
     fun getUserByName(username: Username): User?;

@@ -1,10 +1,10 @@
 package com.skillhelper.repository.interfaces
 
 
-import com.skillhelper.domain.entities.Skill
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Visibility
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Visibility
 
 interface ISkillRepository {
     fun getAllSkills() : List<Skill>;

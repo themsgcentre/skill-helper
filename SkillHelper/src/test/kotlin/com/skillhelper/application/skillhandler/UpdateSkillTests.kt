@@ -2,7 +2,7 @@ package com.skillhelper.application.skillhandler
 
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.application.models.SkillDto
+import com.skillhelper.api.models.SkillDto
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IUserRepository

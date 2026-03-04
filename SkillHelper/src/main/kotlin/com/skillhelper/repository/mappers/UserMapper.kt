@@ -1,8 +1,8 @@
 package com.skillhelper.repository.mappers
 
-import com.skillhelper.domain.entities.Profile
-import com.skillhelper.domain.entities.User
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.models.UserDbo
 
 fun UserDbo.toDomain(): User =

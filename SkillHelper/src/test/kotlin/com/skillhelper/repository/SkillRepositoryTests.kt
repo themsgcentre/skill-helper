@@ -1,11 +1,10 @@
 package com.skillhelper.repository
 
-import com.skillhelper.domain.entities.Skill
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.domain.entities.Visibility
-import com.skillhelper.repository.helpers.getMaxVisibilityId
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
+import com.skillhelper.application.entities.Visibility
 import com.skillhelper.repository.helpers.insertSkill
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.SkillRepository

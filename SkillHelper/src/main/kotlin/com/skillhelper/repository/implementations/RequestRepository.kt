@@ -1,6 +1,6 @@
 package com.skillhelper.repository.implementations
 
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import org.springframework.jdbc.core.simple.JdbcClient

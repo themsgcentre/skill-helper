@@ -1,14 +1,14 @@
 package com.skillhelper.application.interfaces
 
-import com.skillhelper.domain.entities.Skill
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.domain.entities.Visibility
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
+import com.skillhelper.application.entities.Visibility
 
 interface ISkillHandler {
     fun getAllSkills() : List<Skill>;
-    fun getSkillById(id: SkillId) : Skill?;
+    fun getSkillById(id: SkillId) : Skill;
     fun getSkillsBySearch(searchString: String) : List<Skill>;
     fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel) : List<Skill>;
     fun addSkill(skill: Skill): SkillId;

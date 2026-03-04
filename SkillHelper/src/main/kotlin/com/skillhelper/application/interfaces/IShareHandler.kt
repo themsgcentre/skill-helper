@@ -1,8 +1,8 @@
 package com.skillhelper.application.interfaces
 
-import com.skillhelper.domain.entities.Share
-import com.skillhelper.domain.entities.ShareId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Share
+import com.skillhelper.application.entities.ShareId
+import com.skillhelper.application.entities.Username
 
 interface IShareHandler {
     fun addShare(share: Share);

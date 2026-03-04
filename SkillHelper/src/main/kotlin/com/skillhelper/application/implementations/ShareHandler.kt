@@ -1,17 +1,12 @@
 package com.skillhelper.application.implementations
 
-import com.skillhelper.domain.entities.ShareId
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.ShareId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.interfaces.IShareHandler
-import com.skillhelper.api.mappers.toDomain
-import com.skillhelper.api.mappers.toDto
-import com.skillhelper.application.models.ShareCreationDto
-import com.skillhelper.application.models.ShareDto
 import com.skillhelper.application.throwables.ShareNotFoundException
 import com.skillhelper.application.throwables.SkillNotFoundException
 import com.skillhelper.application.throwables.UserNotFoundException
-import com.skillhelper.domain.entities.Share
+import com.skillhelper.application.entities.Share
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository

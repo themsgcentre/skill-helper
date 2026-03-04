@@ -1,4 +1,4 @@
-package com.skillhelper.application.models
+package com.skillhelper.api.models
 
 data class VisibilityDto(
     val id: Long,

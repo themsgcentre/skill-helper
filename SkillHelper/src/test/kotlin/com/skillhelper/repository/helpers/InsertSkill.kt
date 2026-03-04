@@ -1,7 +1,7 @@
 package com.skillhelper.repository.helpers
 
-import com.skillhelper.domain.entities.Skill
-import com.skillhelper.domain.entities.SkillId
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
 import org.springframework.jdbc.core.simple.JdbcClient
 
 fun insertSkill(

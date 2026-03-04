@@ -1,7 +1,7 @@
 package com.skillhelper.repository.implementations
 
-import com.skillhelper.domain.entities.User
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import com.skillhelper.repository.mappers.toDomain

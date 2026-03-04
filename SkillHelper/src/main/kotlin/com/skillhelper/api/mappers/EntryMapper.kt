@@ -1,10 +1,10 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.domain.entities.Entry
-import com.skillhelper.domain.entities.EntryId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.application.models.EntryDto
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
+import com.skillhelper.api.models.EntryDto
 
 fun Entry.toDto(): EntryDto =
     EntryDto(

@@ -1,10 +1,9 @@
 package com.skillhelper.repository.implementations
 
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
-import com.skillhelper.repository.models.UserDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
 

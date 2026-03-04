@@ -1,9 +1,9 @@
 package com.skillhelper.repository.mappers
 
-import com.skillhelper.domain.entities.Entry
-import com.skillhelper.domain.entities.EntryId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.models.EntryDbo
 
 fun EntryDbo.toDomain(): Entry =

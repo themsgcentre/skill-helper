@@ -1,11 +1,11 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.domain.entities.Skill
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.domain.entities.Visibility
-import com.skillhelper.application.models.SkillDto
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
+import com.skillhelper.application.entities.Visibility
+import com.skillhelper.api.models.SkillDto
 
 fun Skill.toDto(): SkillDto =
     SkillDto(

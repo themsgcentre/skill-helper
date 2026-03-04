@@ -1,10 +1,10 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.domain.entities.Share
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.application.models.ShareCreationDto
-import com.skillhelper.application.models.ShareDto
+import com.skillhelper.application.entities.Share
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
+import com.skillhelper.api.models.ShareCreationDto
+import com.skillhelper.api.models.ShareDto
 
 fun ShareCreationDto.toDomain(): Share =
     Share(

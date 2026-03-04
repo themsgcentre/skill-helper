@@ -1,18 +1,15 @@
 package com.skillhelper.application.implementations
 
-import com.skillhelper.domain.entities.EntryId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.interfaces.IEntryHandler
-import com.skillhelper.api.mappers.toDomain
-import com.skillhelper.api.mappers.toDto
-import com.skillhelper.application.models.EntryDto
 import com.skillhelper.application.throwables.EntryNotFoundException
 import com.skillhelper.application.throwables.InvalidEntryOperationException
 import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
-import com.skillhelper.domain.entities.Entry
+import com.skillhelper.application.entities.Entry
 
 @Service
 class EntryHandler(

@@ -1,9 +1,9 @@
 package com.skillhelper.application.implementations
 
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.domain.entities.Visibility
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
+import com.skillhelper.application.entities.Visibility
 import com.skillhelper.application.interfaces.ISkillHandler
 import com.skillhelper.application.throwables.AuthorNotFoundException
 import com.skillhelper.application.throwables.SkillNotFoundException
@@ -12,7 +12,7 @@ import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
-import com.skillhelper.domain.entities.Skill
+import com.skillhelper.application.entities.Skill
 
 @Service
 class SkillHandler(

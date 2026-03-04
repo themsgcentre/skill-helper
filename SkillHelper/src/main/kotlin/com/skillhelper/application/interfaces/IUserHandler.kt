@@ -1,10 +1,10 @@
 package com.skillhelper.application.interfaces
 
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.domain.entities.Profile
+import com.skillhelper.application.entities.Username
+import com.skillhelper.application.entities.Profile
 
 interface IUserHandler {
-    fun getProfileByName(username: Username): Profile?;
+    fun getProfileByName(username: Username): Profile;
     fun createUser(username: Username, rawPassword: String, profile: Profile);
     fun deleteUser(username: Username);
     fun updateBio(username: Username, bio: String);
@@ -12,5 +12,4 @@ interface IUserHandler {
     fun updateUsername(oldName: Username, newName: Username);
     fun updatePassword(username: Username, oldPassword: String, newPassword: String);
     fun userExists(username: Username): Boolean;
-    fun login(username: Username, password: String): Boolean;
 }

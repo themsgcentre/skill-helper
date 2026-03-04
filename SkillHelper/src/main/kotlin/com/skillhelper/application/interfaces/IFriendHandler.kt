@@ -1,7 +1,7 @@
 package com.skillhelper.application.interfaces
 
-import com.skillhelper.domain.entities.Profile
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.Username
 
 interface IFriendHandler {
     fun acceptRequest(username: Username, requestFrom: Username);

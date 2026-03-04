@@ -1,4 +1,4 @@
-package com.skillhelper.domain.entities
+package com.skillhelper.application.entities
 
 @JvmInline value class SkillId(val value: Long)
 

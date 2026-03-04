@@ -2,7 +2,7 @@ package com.skillhelper.application.entryhandler
 
 import com.skillhelper.application.implementations.EntryHandler
 import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.application.models.EntryDto
+import com.skillhelper.api.models.EntryDto
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.Called

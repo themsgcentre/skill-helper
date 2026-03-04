@@ -1,7 +1,7 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.domain.entities.Visibility
-import com.skillhelper.application.models.VisibilityDto
+import com.skillhelper.application.entities.Visibility
+import com.skillhelper.api.models.VisibilityDto
 
 fun Visibility.toDto(): VisibilityDto =
     VisibilityDto(

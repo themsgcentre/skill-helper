@@ -1,7 +1,7 @@
 package com.skillhelper.application.friendhandler
 
 import com.skillhelper.application.implementations.FriendHandler
-import com.skillhelper.application.models.FriendDto
+import com.skillhelper.api.models.FriendDto
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository

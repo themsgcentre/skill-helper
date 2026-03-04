@@ -1,4 +1,4 @@
-package com.skillhelper.domain.entities
+package com.skillhelper.application.entities
 
 enum class Visibility(val id: Long, val label: String) {
     PRIVATE(1, "Private"),

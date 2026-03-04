@@ -1,7 +1,6 @@
-package com.skillhelper.application.models
+package com.skillhelper.api.models
 
 data class ProfileDto(
-    val username: String,
     val profileImage: String?,
     val bio: String
 )

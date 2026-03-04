@@ -1,13 +1,9 @@
 package com.skillhelper.application.implementations
 
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.interfaces.IFriendHandler
-import com.skillhelper.api.mappers.toFriendDto
-import com.skillhelper.api.mappers.toRequestDto
-import com.skillhelper.application.models.FriendDto
-import com.skillhelper.application.models.RequestDto
 import com.skillhelper.application.throwables.UserNotFoundException
-import com.skillhelper.domain.entities.Profile
+import com.skillhelper.application.entities.Profile
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository

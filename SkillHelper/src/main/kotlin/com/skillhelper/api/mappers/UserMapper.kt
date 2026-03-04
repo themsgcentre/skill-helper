@@ -1,10 +1,10 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.domain.entities.Profile
-import com.skillhelper.domain.entities.User
-import com.skillhelper.domain.entities.Username
-import com.skillhelper.application.models.ProfileDto
-import com.skillhelper.application.models.UserDto
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
+import com.skillhelper.api.models.ProfileDto
+import com.skillhelper.api.models.UserDto
 
 fun UserDto.toDomain(encodedPassword: String): User =
     User(
@@ -16,9 +16,7 @@ fun UserDto.toDomain(encodedPassword: String): User =
         )
     )
 
-fun User.toProfileDto(): ProfileDto =
-    ProfileDto(
-        username = this.username.value,
-        bio = this.profile.bio,
-        profileImage = this.profile.profileImage
-    )
+fun Profile.toDto(): ProfileDto = ProfileDto(
+    bio = this.bio,
+    profileImage = this.profileImage
+)

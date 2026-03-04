@@ -4,8 +4,8 @@ import com.skillhelper.api.helpers.FavoriteHelper
 import com.skillhelper.api.helpers.SearchStringHelper
 import com.skillhelper.api.helpers.StressLevelHelper
 import com.skillhelper.application.interfaces.ISkillHandler
-import com.skillhelper.application.models.SkillDto
-import com.skillhelper.application.models.VisibilityDto
+import com.skillhelper.api.models.SkillDto
+import com.skillhelper.api.models.VisibilityDto
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

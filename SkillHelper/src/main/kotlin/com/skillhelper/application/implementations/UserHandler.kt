@@ -1,15 +1,13 @@
 package com.skillhelper.application.implementations
 
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.interfaces.IUserHandler
-import com.skillhelper.api.mappers.toProfileDto
-import com.skillhelper.application.models.ProfileDto
 import com.skillhelper.application.throwables.PasswordNotSetException
 import com.skillhelper.application.throwables.PasswordMatchException
 import com.skillhelper.application.throwables.UsernameTakenException
 import com.skillhelper.application.throwables.UserNotFoundException
-import com.skillhelper.domain.entities.Profile
-import com.skillhelper.domain.entities.User
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -69,10 +67,5 @@ class UserHandler(
 
     override fun userExists(username: Username): Boolean {
         return userRepository.userExists(username)
-    }
-
-    override fun login(username: Username, password: String): Boolean {
-        val storedHash = userRepository.getPassword(username) ?: return false
-        return passwordEncoder.matches(password, storedHash)
     }
 }

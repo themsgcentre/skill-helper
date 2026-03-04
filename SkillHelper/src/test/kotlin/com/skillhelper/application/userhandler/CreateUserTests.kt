@@ -2,7 +2,7 @@ package com.skillhelper.application.userhandler
 
 import com.skillhelper.application.implementations.UserHandler
 import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.application.models.UserDto
+import com.skillhelper.api.models.UserDto
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk

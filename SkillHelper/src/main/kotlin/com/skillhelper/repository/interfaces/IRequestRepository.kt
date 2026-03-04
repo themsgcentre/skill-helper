@@ -1,6 +1,6 @@
 package com.skillhelper.repository.interfaces
 
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Username
 
 interface IRequestRepository {
     fun addRequest(username: Username, request: Username);

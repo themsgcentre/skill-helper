@@ -2,7 +2,7 @@ package com.skillhelper.application.sharehandler
 
 import com.skillhelper.application.implementations.ShareHandler
 import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.application.models.ShareCreationDto
+import com.skillhelper.api.models.ShareCreationDto
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository

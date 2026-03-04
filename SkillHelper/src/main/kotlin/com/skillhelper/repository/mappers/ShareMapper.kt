@@ -1,9 +1,9 @@
 package com.skillhelper.repository.mappers
 
-import com.skillhelper.domain.entities.Share
-import com.skillhelper.domain.entities.ShareId
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Share
+import com.skillhelper.application.entities.ShareId
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.models.ShareDbo
 
 fun ShareDbo.toDomain(): Share =

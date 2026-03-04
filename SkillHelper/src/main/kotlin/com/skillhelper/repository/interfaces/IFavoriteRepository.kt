@@ -1,7 +1,7 @@
 package com.skillhelper.repository.interfaces
 
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 
 interface IFavoriteRepository {
     fun addFavorite(username: Username, skillId: SkillId)

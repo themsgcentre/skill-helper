@@ -1,11 +1,11 @@
 package com.skillhelper.repository.implementations
 
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.mappers.toDomain
-import com.skillhelper.domain.entities.Entry
-import com.skillhelper.domain.entities.EntryId
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
 import com.skillhelper.repository.models.EntryDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service

@@ -1,8 +1,8 @@
 package com.skillhelper.repository.interfaces
 
-import com.skillhelper.domain.entities.Entry
-import com.skillhelper.domain.entities.EntryId
-import com.skillhelper.domain.entities.Username
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.Username
 
 interface IEntryRepository {
     fun getEntries(username: Username): List<Entry>

@@ -6,10 +6,10 @@ import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.SkillDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
-import com.skillhelper.domain.entities.Skill
-import com.skillhelper.domain.entities.SkillId
-import com.skillhelper.domain.entities.StressLevel
-import com.skillhelper.domain.entities.Visibility
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Visibility
 
 @Service
 class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(jdbcClient, "[Skill]") {

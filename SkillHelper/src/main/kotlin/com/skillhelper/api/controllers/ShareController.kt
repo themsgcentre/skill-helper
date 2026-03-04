@@ -1,8 +1,8 @@
 package com.skillhelper.api.controllers
 
 import com.skillhelper.application.interfaces.IShareHandler
-import com.skillhelper.application.models.ShareCreationDto
-import com.skillhelper.application.models.ShareDto
+import com.skillhelper.api.models.ShareCreationDto
+import com.skillhelper.api.models.ShareDto
 import org.springframework.web.bind.annotation.*
 
 @RestController
