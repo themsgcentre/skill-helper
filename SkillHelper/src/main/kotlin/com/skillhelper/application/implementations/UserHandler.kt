@@ -34,14 +34,17 @@ class UserHandler(
     }
 
     override fun updateBio(username: Username, bio: String) {
+        if(!userRepository.userExists(username)) throw UserNotFoundException();
         userRepository.updateBio(username, bio);
     }
 
     override fun updateProfilePicture(username: Username, imageSrc: String?) {
+        if(!userRepository.userExists(username)) throw UserNotFoundException();
         userRepository.updateProfilePicture(username, imageSrc);
     }
 
     override fun updateUsername(oldName: Username, newName: Username) {
+        if(!userRepository.userExists(oldName)) throw UserNotFoundException();
         if(userRepository.userExists(newName)) throw UsernameTakenException();
         if(oldName == newName) return;
         userRepository.updateUsername(oldName, newName)

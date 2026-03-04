@@ -5,14 +5,14 @@ import com.skillhelper.domain.entities.StressLevel
 import com.skillhelper.domain.entities.Username
 import com.skillhelper.domain.entities.Visibility
 import com.skillhelper.application.interfaces.ISkillHandler
-import com.skillhelper.api.mappers.toDomain
-import com.skillhelper.api.mappers.toDto
-import com.skillhelper.application.models.SkillDto
-import com.skillhelper.application.models.VisibilityDto
+import com.skillhelper.application.throwables.AuthorNotFoundException
+import com.skillhelper.application.throwables.SkillNotFoundException
+import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
+import com.skillhelper.domain.entities.Skill
 
 @Service
 class SkillHandler(
@@ -20,42 +20,41 @@ class SkillHandler(
     val favoriteRepository: IFavoriteRepository,
     val userRepository: IUserRepository,
 ): ISkillHandler {
-    override fun getAllSkills(): List<SkillDto> {
-        return skillRepository
-            .getAllSkills()
-            .map { it.toDto() }
+    override fun getAllSkills(): List<Skill> {
+        return skillRepository.getAllSkills()
     }
 
-    override fun getSkillById(id: SkillId): SkillDto? {
-        return skillRepository.getSkillById(id)?.toDto()
+    override fun getSkillById(id: SkillId): Skill? {
+        return skillRepository.getSkillById(id)
     }
 
-    override fun getSkillsBySearch(searchString: String): List<SkillDto> {
-        return skillRepository.getSkillsBySearch(searchString).map { it.toDto() }
+    override fun getSkillsBySearch(searchString: String): List<Skill> {
+        return skillRepository.getSkillsBySearch(searchString)
     }
 
-    override fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel): List<SkillDto> {
-        return skillRepository.getSkillsByStressLevel(minLevel, maxLevel).map { it.toDto() }
+    override fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel): List<Skill> {
+        return skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
     }
 
-    override fun addSkill(skill: SkillDto): SkillId {
-        if(skill.author != null && !userRepository.userExists(Username(skill.author))) return SkillId(-1) ;
-        if(skill.stressLevel !in 0..100) return SkillId(-1);
-        return skillRepository.addSkill(skill.toDomain())
+    override fun addSkill(skill: Skill): SkillId {
+        if(skill.author != null && !userRepository.userExists(skill.author)) throw AuthorNotFoundException();
+        return skillRepository.addSkill(skill)
     }
 
-    override fun updateSkill(skill: SkillDto) {
-        if(skill.author != null && !userRepository.userExists(Username(skill.author))) return;
-        if(skill.stressLevel !in 0..100) return;
-        skillRepository.updateSkill(skill.toDomain())
+    override fun updateSkill(skill: Skill) {
+        if(!skillRepository.skillExists(skill.id!!)) throw SkillNotFoundException();
+        if(skill.author != null && !userRepository.userExists(skill.author)) throw AuthorNotFoundException();
+        skillRepository.updateSkill(skill)
     }
 
     override fun deleteSkill(skillId: SkillId) {
+        if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         skillRepository.deleteSkill(skillId)
     }
 
     override fun addFavorite(username: Username, skillId: SkillId) {
-        if(!userRepository.userExists(username) || !skillRepository.skillExists(skillId)) return;
+        if(!userRepository.userExists(username)) throw UserNotFoundException();
+        if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         favoriteRepository.addFavorite(username, skillId)
     }
 
@@ -67,7 +66,7 @@ class SkillHandler(
         skillRepository.changeVisibility(skillId, visibility)
     }
 
-    override fun getVisibilities(): List<VisibilityDto> {
-        return Visibility.entries.map { it.toDto() }
+    override fun getVisibilities(): List<Visibility> {
+        return Visibility.entries.toList();
     }
 }
