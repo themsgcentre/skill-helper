@@ -8,6 +8,10 @@ import com.skillhelper.api.mappers.toDomain
 import com.skillhelper.api.mappers.toDto
 import com.skillhelper.application.models.ShareCreationDto
 import com.skillhelper.application.models.ShareDto
+import com.skillhelper.application.throwables.ShareNotFoundException
+import com.skillhelper.application.throwables.SkillNotFoundException
+import com.skillhelper.application.throwables.UserNotFoundException
+import com.skillhelper.domain.entities.Share
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -19,31 +23,30 @@ class ShareHandler(
     val skillRepository: ISkillRepository,
     val userRepository: IUserRepository,
 ): IShareHandler {
-    override fun addShare(share: ShareCreationDto) {
-        if(!skillRepository.skillExists(SkillId(share.skillId))
-            || !userRepository.userExists(Username(share.to))
-            || !userRepository.userExists(Username(share.from))) return;
-        shareRepository.addShare(share.toDomain());
+    override fun addShare(share: Share) {
+        if(!skillRepository.skillExists(share.skill)) throw SkillNotFoundException();
+        if(!userRepository.userExists(share.forUser)) throw UserNotFoundException("User to share to not found");
+        if(!userRepository.userExists(share.fromUser)) throw UserNotFoundException("User who shared not found");
+        shareRepository.addShare(share);
     }
 
     override fun readShare(shareId: ShareId) {
+        if(!shareRepository.shareExists(shareId)) throw ShareNotFoundException()
         shareRepository.readShare(shareId);
     }
 
     override fun deleteAllForUser(username: Username) {
+        if(!userRepository.userExists(username)) throw UserNotFoundException();
         shareRepository.deleteAllForUser(username);
     }
 
     override fun deleteShare(shareId: ShareId) {
+        if(!shareRepository.shareExists(shareId)) throw ShareNotFoundException()
         shareRepository.deleteShare(shareId);
     }
 
-    override fun getAll(username: Username): List<ShareDto> {
-        return shareRepository.getAllForUser(username).map{ dbo ->
-            val profileImg = userRepository.getUserByName(dbo.fromUser)?.profile?.profileImage;
-            val shareImg = skillRepository.getSkillById(dbo.skill)?.imageSrc
-
-            dbo.toDto(profileImg, shareImg)
-        }
+    override fun getAll(username: Username): List<Share> {
+        if(!userRepository.userExists(username)) throw UserNotFoundException()
+        return shareRepository.getAllForUser(username);
     }
 }

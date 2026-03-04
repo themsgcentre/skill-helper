@@ -10,4 +10,5 @@ interface IEntryRepository {
     fun addEntry(entry: Entry): EntryId
     fun updateEntry(entry: Entry)
     fun deleteEntry(id: EntryId)
+    fun entryExists(id: EntryId): Boolean
 }

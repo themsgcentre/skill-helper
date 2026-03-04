@@ -20,15 +20,19 @@ class SkillHandler(
     val favoriteRepository: IFavoriteRepository,
     val userRepository: IUserRepository,
 ): ISkillHandler {
+    //TODO: add get favorites for user
     override fun getAllSkills(): List<Skill> {
+        //TODO: check visibilities for specific user
         return skillRepository.getAllSkills()
     }
 
     override fun getSkillById(id: SkillId): Skill? {
+        //TODO: return null if user is not allowed to see skill
         return skillRepository.getSkillById(id)
     }
 
     override fun getSkillsBySearch(searchString: String): List<Skill> {
+        //TODO: check visibilities for specific user
         return skillRepository.getSkillsBySearch(searchString)
     }
 
@@ -63,6 +67,7 @@ class SkillHandler(
     }
 
     override fun changeVisibility(skillId: SkillId, visibility: Visibility) {
+        if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         skillRepository.changeVisibility(skillId, visibility)
     }
 

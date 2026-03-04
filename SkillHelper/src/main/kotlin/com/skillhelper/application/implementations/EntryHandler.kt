@@ -6,35 +6,41 @@ import com.skillhelper.application.interfaces.IEntryHandler
 import com.skillhelper.api.mappers.toDomain
 import com.skillhelper.api.mappers.toDto
 import com.skillhelper.application.models.EntryDto
+import com.skillhelper.application.throwables.EntryNotFoundException
+import com.skillhelper.application.throwables.InvalidEntryOperationException
+import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
+import com.skillhelper.domain.entities.Entry
 
 @Service
 class EntryHandler(
     val entryRepository: IEntryRepository,
     val userRepository: IUserRepository,
 ): IEntryHandler {
-    override fun getEntries(username: Username): List<EntryDto> {
-        return entryRepository.getEntries(username).map { it.toDto() }
+    override fun getEntries(username: Username): List<Entry> {
+        if(!userRepository.userExists(username)) throw UserNotFoundException()
+        return entryRepository.getEntries(username)
     }
 
-    override fun getEntryById(id: EntryId): EntryDto? {
-        return entryRepository.getEntryById(id)?.toDto()
+    override fun getEntryById(id: EntryId): Entry? {
+        return entryRepository.getEntryById(id)
     }
 
-    override fun addEntry(entryDto: EntryDto): EntryId {
-        if(!userRepository.userExists(Username(entryDto.username))) return EntryId( -1);
-        return entryRepository.addEntry(entryDto.toDomain())
+    override fun addEntry(entry: Entry): EntryId {
+        if(!userRepository.userExists(entry.user)) throw UserNotFoundException()
+        return entryRepository.addEntry(entry)
     }
 
-    override fun updateEntry(entryDto: EntryDto) {
-        val entry = entryRepository.getEntryById(EntryId(entryDto.id));
-        if(entry != null && entry.user != Username(entryDto.username)) return;
-        entryRepository.updateEntry(entryDto.toDomain())
+    override fun updateEntry(entry: Entry) {
+        val originalEntry = entryRepository.getEntryById(entry.id!!) ?: throw EntryNotFoundException();
+        if(entry.user != originalEntry.user) throw InvalidEntryOperationException()
+        entryRepository.updateEntry(entry)
     }
 
     override fun deleteEntry(id: EntryId) {
+        if(!entryRepository.entryExists(id)) throw EntryNotFoundException()
         entryRepository.deleteEntry(id)
     }
 }

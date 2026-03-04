@@ -95,4 +95,23 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
 
         return query<ShareDbo>(sql, params).map { it.toDomain() };
     }
+
+    override fun shareExists(shareId: ShareId): Boolean {
+        val sql = """
+        SELECT CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM dbo.$tableName
+                WHERE Id = :shareId
+            )
+            THEN 1 ELSE 0
+        END
+        """.trimIndent()
+
+        val params = mapOf(
+            "shareId" to shareId.value
+        )
+
+        return query<Int>(sql, params).first() == 1;
+    }
 }

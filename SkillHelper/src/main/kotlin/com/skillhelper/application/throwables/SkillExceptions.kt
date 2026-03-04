@@ -1,7 +1,7 @@
 package com.skillhelper.application.throwables
 
 class AuthorNotFoundException :
-    DomainException("Author does not exist")
+    DomainException("Author not found.")
 
 class SkillNotFoundException :
-    DomainException("Skill does not exist")
+    DomainException("Skill not found,")

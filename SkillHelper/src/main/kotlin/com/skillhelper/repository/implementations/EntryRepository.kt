@@ -99,4 +99,23 @@ class EntryRepository(jdbc: JdbcClient): IEntryRepository, BaseRepository(jdbc, 
 
         execute(sql, params);
     }
+
+    override fun entryExists(id: EntryId): Boolean {
+        val sql = """
+        SELECT CASE
+            WHEN EXISTS (
+                SELECT 1
+                FROM dbo.$tableName
+                WHERE Id = :entryId
+            )
+            THEN 1 ELSE 0
+        END
+        """.trimIndent()
+
+        val params = mapOf(
+            "entryId" to id.value
+        )
+
+        return query<Int>(sql, params).first() == 1;
+    }
 }

@@ -1,13 +1,13 @@
 package com.skillhelper.application.interfaces
 
+import com.skillhelper.domain.entities.Entry
 import com.skillhelper.domain.entities.EntryId
 import com.skillhelper.domain.entities.Username
-import com.skillhelper.application.models.EntryDto
 
 interface IEntryHandler {
-    fun getEntries(username: Username): List<EntryDto>
-    fun getEntryById(id: EntryId): EntryDto?
-    fun addEntry(entryDto: EntryDto): EntryId
-    fun updateEntry(entryDto: EntryDto)
+    fun getEntries(username: Username): List<Entry>
+    fun getEntryById(id: EntryId): Entry?
+    fun addEntry(entry: Entry): EntryId
+    fun updateEntry(entry: Entry)
     fun deleteEntry(id: EntryId)
 }
