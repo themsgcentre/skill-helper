@@ -1,9 +1,11 @@
 package com.skillhelper.application.implementations
 
+import com.skillhelper.application.entities.Friend
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.interfaces.IFriendHandler
 import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.Request
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -62,21 +64,21 @@ class FriendHandler(
         requestRepository.removeRequest(username, requestFrom);
     }
 
-    override fun getFriends(username: Username): List<Profile> {
+    override fun getFriends(username: Username): List<Friend> {
         if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         val friendNames = friendRepository.getFriends(username);
 
-        return friendNames.mapNotNull { friendUsername ->
-            userRepository.getUserByName(friendUsername)?.profile;
+        return friendNames.map { friendUsername ->
+            Friend(friendUsername,  userRepository.getUserByName(friendUsername)?.profile?.profileImage)
         }
     }
 
-    override fun getRequests(username: Username): List<Profile> {
+    override fun getRequests(username: Username): List<Request> {
         if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         val requestNames = requestRepository.getRequests(username)
 
-        return requestNames.mapNotNull { requestUsername ->
-            userRepository.getUserByName(requestUsername)?.profile;
+        return requestNames.map { requestUsername ->
+            Request(requestUsername,  userRepository.getUserByName(requestUsername)?.profile?.profileImage)
         }
     }
 

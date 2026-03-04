@@ -2,9 +2,13 @@ package com.skillhelper.api.controllers
 
 import com.skillhelper.api.helpers.FriendHelper
 import com.skillhelper.api.helpers.RequestHelper
+import com.skillhelper.api.helpers.toUsername
+import com.skillhelper.api.mappers.toDto
 import com.skillhelper.application.interfaces.IFriendHandler
 import com.skillhelper.api.models.FriendDto
 import com.skillhelper.api.models.RequestDto
+import com.skillhelper.application.entities.Username
+import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,33 +20,39 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/friend")
 class FriendController(val friendHandler: IFriendHandler) {
     @GetMapping("/getFriends")
-    fun getFriends(@RequestBody helper: UsernameHelper): List<FriendDto> {
-        return friendHandler.getFriends(helper.username);
+    fun getFriends(auth: Authentication): List<FriendDto> {
+        val username = auth.toUsername()
+        return friendHandler.getFriends(username).map { it.toDto() };
     }
 
     @GetMapping("/getRequests")
-    fun getRequests(@RequestBody helper: UsernameHelper): List<RequestDto> {
-        return friendHandler.getRequests(helper.username);
+    fun getRequests(auth: Authentication): List<RequestDto> {
+        val username = auth.toUsername()
+        return friendHandler.getRequests(username).map { it.toDto() };
     }
 
     @DeleteMapping("/removeFriend")
-    fun removeFriend(@RequestBody helper: FriendHelper) {
-        friendHandler.removeFriend(helper.username, helper.friend)
+    fun removeFriend(auth: Authentication, @RequestBody helper: FriendHelper) {
+        val username = auth.toUsername()
+        friendHandler.removeFriend(username, Username(helper.friend))
     }
 
 
     @PostMapping("/sendRequest")
-    fun addRequest(@RequestBody helper: RequestHelper) {
-        friendHandler.addRequest(helper.username, helper.request)
+    fun addRequest(auth: Authentication, @RequestBody helper: RequestHelper) {
+        val username = auth.toUsername()
+        friendHandler.addRequest(Username(helper.request), username)
     }
 
     @PostMapping("/acceptRequest")
-    fun acceptRequest(@RequestBody helper: RequestHelper) {
-        friendHandler.acceptRequest(helper.username, helper.request)
+    fun acceptRequest(auth: Authentication, @RequestBody helper: RequestHelper) {
+        val username = auth.toUsername()
+        friendHandler.acceptRequest(username, Username(helper.request))
     }
 
     @DeleteMapping("/denyRequest")
-    fun denyRequest(@RequestBody helper: RequestHelper) {
-        friendHandler.removeRequest(helper.username, helper.request)
+    fun denyRequest(auth: Authentication, @RequestBody helper: RequestHelper) {
+        val username = auth.toUsername()
+        friendHandler.removeRequest(username, Username(helper.request))
     }
 }

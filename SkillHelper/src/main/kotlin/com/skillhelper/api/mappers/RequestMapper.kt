@@ -1,10 +1,9 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.application.entities.Username
 import com.skillhelper.api.models.RequestDto
+import com.skillhelper.application.entities.Request
 
-fun Username.toRequestDto(imageSrc: String?): RequestDto =
-    RequestDto(
-        username = this.value,
-        profileImage = imageSrc
-    )
+fun Request.toDto(): RequestDto = RequestDto(
+    username = this.username.value,
+    profileImage = this.image,
+)

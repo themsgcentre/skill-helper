@@ -1,10 +1,9 @@
 package com.skillhelper.api.mappers
 
-import com.skillhelper.application.entities.Username
 import com.skillhelper.api.models.FriendDto
+import com.skillhelper.application.entities.Friend
 
-fun Username.toFriendDto(imageSrc: String?): FriendDto =
-    FriendDto(
-        username = this.value,
-        profileImage = imageSrc
-    )
+fun Friend.toDto(): FriendDto = FriendDto(
+    username = this.username.value,
+    profileImage = this.image,
+)
