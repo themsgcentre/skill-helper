@@ -37,6 +37,7 @@ class SkillHandler(
     }
 
     override fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel): List<Skill> {
+        //TODO: check visibilities for specific user
         return skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
     }
 
@@ -52,12 +53,11 @@ class SkillHandler(
     }
 
     override fun deleteSkill(skillId: SkillId) {
-        if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         skillRepository.deleteSkill(skillId)
     }
 
     override fun addFavorite(username: Username, skillId: SkillId) {
-        if(!userRepository.userExists(username)) throw UserNotFoundException();
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         favoriteRepository.addFavorite(username, skillId)
     }

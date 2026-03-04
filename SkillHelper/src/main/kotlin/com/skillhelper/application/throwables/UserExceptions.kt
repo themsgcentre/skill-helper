@@ -1,11 +1,13 @@
 package com.skillhelper.application.throwables
 
-class UsernameTakenException :
-    DomainException("Username already taken.")
+class UsernameTakenException(
+    username: String
+) :
+    DomainException("Username $username already taken.")
 
 class UserNotFoundException(
-    message: String = "User not found."
-) : DomainException(message)
+    username: String
+) : DomainException("User $username not found.")
 
 
 class PasswordNotSetException :

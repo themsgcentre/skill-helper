@@ -20,16 +20,16 @@ class EntryHandler(
     val userRepository: IUserRepository,
 ): IEntryHandler {
     override fun getEntries(username: Username): List<Entry> {
-        if(!userRepository.userExists(username)) throw UserNotFoundException()
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         return entryRepository.getEntries(username)
     }
 
-    override fun getEntryById(id: EntryId): Entry? {
-        return entryRepository.getEntryById(id)
+    override fun getEntryById(id: EntryId): Entry {
+        return entryRepository.getEntryById(id) ?: throw EntryNotFoundException()
     }
 
     override fun addEntry(entry: Entry): EntryId {
-        if(!userRepository.userExists(entry.user)) throw UserNotFoundException()
+        if(!userRepository.userExists(entry.user)) throw UserNotFoundException(entry.user.value);
         return entryRepository.addEntry(entry)
     }
 
@@ -40,7 +40,6 @@ class EntryHandler(
     }
 
     override fun deleteEntry(id: EntryId) {
-        if(!entryRepository.entryExists(id)) throw EntryNotFoundException()
         entryRepository.deleteEntry(id)
     }
 }

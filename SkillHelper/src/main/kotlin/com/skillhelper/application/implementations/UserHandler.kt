@@ -19,12 +19,12 @@ class UserHandler(
     val userRepository: IUserRepository,
     private val passwordEncoder: PasswordEncoder
 ): IUserHandler {
-    override fun getProfileByName(username: Username): Profile? {
-        return userRepository.getUserByName(username)?.profile;
+    override fun getProfileByName(username: Username): Profile {
+        return userRepository.getUserByName(username)?.profile ?: throw UserNotFoundException(username.value);
     }
 
     override fun createUser(username: Username, rawPassword: String, profile: Profile) {
-        if(userRepository.userExists(username)) throw UsernameTakenException();
+        if(userRepository.userExists(username)) throw UsernameTakenException(username.value);
         val hashed = passwordEncoder.encode(rawPassword)
         userRepository.createUser(User(username, hashed, profile))
     }
@@ -34,18 +34,18 @@ class UserHandler(
     }
 
     override fun updateBio(username: Username, bio: String) {
-        if(!userRepository.userExists(username)) throw UserNotFoundException();
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         userRepository.updateBio(username, bio);
     }
 
     override fun updateProfilePicture(username: Username, imageSrc: String?) {
-        if(!userRepository.userExists(username)) throw UserNotFoundException();
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         userRepository.updateProfilePicture(username, imageSrc);
     }
 
     override fun updateUsername(oldName: Username, newName: Username) {
-        if(!userRepository.userExists(oldName)) throw UserNotFoundException();
-        if(userRepository.userExists(newName)) throw UsernameTakenException();
+        if(!userRepository.userExists(oldName)) throw UserNotFoundException(oldName.value);
+        if(userRepository.userExists(newName)) throw UsernameTakenException(newName.value);
         if(oldName == newName) return;
         userRepository.updateUsername(oldName, newName)
     }
@@ -56,7 +56,7 @@ class UserHandler(
         newPassword: String
     ) {
         if (oldPassword == newPassword) return;
-        if(!userRepository.userExists(username)) throw UserNotFoundException();
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
 
         val storedHash = userRepository.getPassword(username) ?: throw PasswordNotSetException();
         if (passwordEncoder.matches(oldPassword, storedHash)) {

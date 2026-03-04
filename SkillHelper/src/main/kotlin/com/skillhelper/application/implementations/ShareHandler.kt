@@ -25,8 +25,8 @@ class ShareHandler(
 ): IShareHandler {
     override fun addShare(share: Share) {
         if(!skillRepository.skillExists(share.skill)) throw SkillNotFoundException();
-        if(!userRepository.userExists(share.forUser)) throw UserNotFoundException("User to share to not found");
-        if(!userRepository.userExists(share.fromUser)) throw UserNotFoundException("User who shared not found");
+        if(!userRepository.userExists(share.forUser)) throw UserNotFoundException("User ${share.forUser.value} to not found.");
+        if(!userRepository.userExists(share.fromUser)) throw UserNotFoundException("User ${share.fromUser.value} not found.");
         shareRepository.addShare(share);
     }
 
@@ -36,17 +36,16 @@ class ShareHandler(
     }
 
     override fun deleteAllForUser(username: Username) {
-        if(!userRepository.userExists(username)) throw UserNotFoundException();
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         shareRepository.deleteAllForUser(username);
     }
 
     override fun deleteShare(shareId: ShareId) {
-        if(!shareRepository.shareExists(shareId)) throw ShareNotFoundException()
         shareRepository.deleteShare(shareId);
     }
 
     override fun getAll(username: Username): List<Share> {
-        if(!userRepository.userExists(username)) throw UserNotFoundException()
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         return shareRepository.getAllForUser(username);
     }
 }

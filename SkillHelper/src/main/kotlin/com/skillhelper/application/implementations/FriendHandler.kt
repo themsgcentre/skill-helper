@@ -6,6 +6,8 @@ import com.skillhelper.api.mappers.toFriendDto
 import com.skillhelper.api.mappers.toRequestDto
 import com.skillhelper.application.models.FriendDto
 import com.skillhelper.application.models.RequestDto
+import com.skillhelper.application.throwables.UserNotFoundException
+import com.skillhelper.domain.entities.Profile
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -18,7 +20,9 @@ class FriendHandler(
     val userRepository: IUserRepository,
 ): IFriendHandler {
     override fun acceptRequest(username: Username, requestFrom: Username) {
-        if(!userRepository.userExists(username) || !userRepository.userExists(requestFrom) || username == requestFrom) return;
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value)
+        if(!userRepository.userExists(requestFrom)) throw UserNotFoundException(requestFrom.value)
+        if(username == requestFrom) return;
 
         val friendsOfReceiver = friendRepository.getFriends(username);
         val friendsOfRequester = friendRepository.getFriends(requestFrom);
@@ -41,7 +45,10 @@ class FriendHandler(
     }
 
     override fun addRequest(username: Username, requestFrom: Username) {
-        if(!userRepository.userExists(username) || !userRepository.userExists(requestFrom) || username == requestFrom) return;
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
+        if(!userRepository.userExists(requestFrom)) throw UserNotFoundException(username.value);
+        if(username == requestFrom) return;
+
         if(friendRepository.getFriends(username).contains(requestFrom) || friendRepository.getFriends(requestFrom).contains(username)) return;
 
         if(requestRepository.getRequests(username).contains(requestFrom)) return;
@@ -59,21 +66,21 @@ class FriendHandler(
         requestRepository.removeRequest(username, requestFrom);
     }
 
-    override fun getFriends(username: Username): List<FriendDto> {
+    override fun getFriends(username: Username): List<Profile> {
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         val friendNames = friendRepository.getFriends(username);
 
-        return friendNames.map { friendUsername ->
-            val user = userRepository.getUserByName(friendUsername);
-            friendUsername.toFriendDto(user?.profile?.profileImage);
+        return friendNames.mapNotNull { friendUsername ->
+            userRepository.getUserByName(friendUsername)?.profile;
         }
     }
 
-    override fun getRequests(username: Username): List<RequestDto> {
+    override fun getRequests(username: Username): List<Profile> {
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         val requestNames = requestRepository.getRequests(username)
 
-        return requestNames.map { requestUsername ->
-            val user = userRepository.getUserByName(requestUsername);
-            requestUsername.toRequestDto(user?.profile?.profileImage);
+        return requestNames.mapNotNull { requestUsername ->
+            userRepository.getUserByName(requestUsername)?.profile;
         }
     }
 
