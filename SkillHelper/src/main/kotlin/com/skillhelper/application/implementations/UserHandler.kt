@@ -6,6 +6,10 @@ import com.skillhelper.application.mappers.toDomain
 import com.skillhelper.application.mappers.toProfileDto
 import com.skillhelper.application.models.ProfileDto
 import com.skillhelper.application.models.UserDto
+import com.skillhelper.application.throwables.PasswordNotSetException
+import com.skillhelper.application.throwables.PasswordMatchException
+import com.skillhelper.application.throwables.UsernameTakenException
+import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -20,7 +24,7 @@ class UserHandler(
     }
 
     override fun createUser(user: UserDto) {
-        if(userRepository.userExists(Username(user.username))) return;
+        if(userRepository.userExists(Username(user.username))) throw UsernameTakenException();
         val hashed = passwordEncoder.encode(user.password)
         userRepository.createUser(user.toDomain(hashed))
     }
@@ -38,7 +42,8 @@ class UserHandler(
     }
 
     override fun updateUsername(oldName: Username, newName: Username) {
-        if(userRepository.userExists(newName) || oldName == newName) return;
+        if(userRepository.userExists(newName)) throw UsernameTakenException();
+        if(oldName == newName) return;
         userRepository.updateUsername(oldName, newName)
     }
 
@@ -47,12 +52,16 @@ class UserHandler(
         oldPassword: String,
         newPassword: String
     ) {
-        if (oldPassword == newPassword || !userRepository.userExists(username)) return;
-        val storedHash = userRepository.getPassword(username) ?: return
+        if (oldPassword == newPassword) return;
+        if(!userRepository.userExists(username)) throw UserNotFoundException();
+
+        val storedHash = userRepository.getPassword(username) ?: throw PasswordNotSetException();
         if (passwordEncoder.matches(oldPassword, storedHash)) {
             val newHash = passwordEncoder.encode(newPassword)
             userRepository.updatePassword(username, newHash)
         }
+
+        else throw PasswordMatchException()
     }
 
     override fun userExists(username: Username): Boolean {
@@ -60,8 +69,7 @@ class UserHandler(
     }
 
     override fun login(username: Username, password: String): Boolean {
-        val hashed = passwordEncoder.encode(password)
-        val storedHash = userRepository.getPassword(username)
-        return hashed == storedHash
+        val storedHash = userRepository.getPassword(username) ?: return false
+        return passwordEncoder.matches(password, storedHash)
     }
 }
