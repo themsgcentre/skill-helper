@@ -6,8 +6,8 @@ import com.skillhelper.application.entities.Username
 
 interface IShareHandler {
     fun addShare(share: Share);
-    fun readShare(shareId: ShareId);
+    fun readShare(username: Username, shareId: ShareId);
     fun deleteAllForUser(username: Username);
-    fun deleteShare(shareId: ShareId);
+    fun deleteShare(username: Username, shareId: ShareId);
     fun getAll(username: Username): List<Share>;
 }

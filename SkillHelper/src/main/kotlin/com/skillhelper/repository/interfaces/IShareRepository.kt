@@ -11,4 +11,5 @@ interface IShareRepository {
     fun readShare(shareId: ShareId);
     fun getAllForUser(username: Username): List<Share>;
     fun shareExists(shareId: ShareId): Boolean;
+    fun getShareById(shareId: ShareId): Share?;
 }

@@ -7,6 +7,7 @@ import com.skillhelper.repository.database.BaseRepository
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.ShareDbo
+import com.skillhelper.repository.models.SkillDbo
 import org.springframework.jdbc.core.simple.JdbcClient
 import org.springframework.stereotype.Service
 
@@ -112,5 +113,18 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
         )
 
         return query<Int>(sql, params).first() == 1;
+    }
+
+    override fun getShareById(shareId: ShareId): Share? {
+        val sql = """
+        SELECT * from dbo.$tableName
+        WHERE Id = :id;
+        """.trimIndent();
+
+        val params = mapOf(
+            "id" to shareId.value,
+        );
+
+        return query<ShareDbo>(sql, params).firstOrNull()?.toDomain();
     }
 }

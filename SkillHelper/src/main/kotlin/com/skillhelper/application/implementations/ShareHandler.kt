@@ -7,6 +7,7 @@ import com.skillhelper.application.throwables.ShareNotFoundException
 import com.skillhelper.application.throwables.SkillNotFoundException
 import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.application.entities.Share
+import com.skillhelper.application.throwables.ShareAccessDeniedException
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -25,8 +26,9 @@ class ShareHandler(
         shareRepository.addShare(share);
     }
 
-    override fun readShare(shareId: ShareId) {
-        if(!shareRepository.shareExists(shareId)) throw ShareNotFoundException()
+    override fun readShare(username: Username, shareId: ShareId) {
+        val share = shareRepository.getShareById(shareId) ?: throw ShareNotFoundException();
+        if(share.forUser != username) throw ShareAccessDeniedException();
         shareRepository.readShare(shareId);
     }
 
@@ -35,7 +37,9 @@ class ShareHandler(
         shareRepository.deleteAllForUser(username);
     }
 
-    override fun deleteShare(shareId: ShareId) {
+    override fun deleteShare(username: Username, shareId: ShareId) {
+        val share = shareRepository.getShareById(shareId) ?: throw ShareNotFoundException();
+        if(share.forUser != username && share.fromUser != username) throw ShareAccessDeniedException();
         shareRepository.deleteShare(shareId);
     }
 

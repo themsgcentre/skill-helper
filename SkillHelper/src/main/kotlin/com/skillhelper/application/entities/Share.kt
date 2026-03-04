@@ -12,8 +12,5 @@ data class Share(
     val dateShared: Date,
     private val read: Boolean = false
 ) {
-    fun markAsRead(): Share =
-        if (read) this else copy(read = true)
-
     fun isRead(): Boolean = read
 }

@@ -16,12 +16,10 @@ fun ShareCreationDto.toDomain(): Share =
         read = false
     )
 
-fun Share.toDto(profileImg: String?, skillImg: String?): ShareDto =
+fun Share.toDto(): ShareDto =
     ShareDto(
         id = this.id?.value ?: 0L,
         from = this.fromUser.value,
         skillId = this.skill.value,
         dateShared = this.dateShared,
-        fromProfileImg = profileImg,
-        skillImg = skillImg
     )
