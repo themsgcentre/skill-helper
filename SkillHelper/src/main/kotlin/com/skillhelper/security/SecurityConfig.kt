@@ -22,7 +22,18 @@ class SecurityConfig {
         http
             .csrf { it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) }
             .authorizeHttpRequests {
+                it.requestMatchers("/api/skill/getVisibilities").permitAll()
+                it.requestMatchers("/api/user/create").permitAll()
+                it.requestMatchers("/api/auth/**").permitAll() // falls du den hast
+
+                it.requestMatchers("/api/entry/**").authenticated()
+                it.requestMatchers("/api/friend/**").authenticated()
+                it.requestMatchers("/api/share/**").authenticated()
+                it.requestMatchers("/api/skill/**").authenticated()
+                it.requestMatchers("/api/user/**").authenticated()
+
                 it.requestMatchers("/api/**").permitAll()
+                
                 it.anyRequest().authenticated()
             }
         return http.build()
