@@ -7,15 +7,16 @@ import com.skillhelper.application.entities.Username
 import com.skillhelper.application.entities.Visibility
 
 interface ISkillHandler {
-    fun getAllSkills() : List<Skill>;
-    fun getSkillById(id: SkillId) : Skill;
-    fun getSkillsBySearch(searchString: String) : List<Skill>;
-    fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel) : List<Skill>;
+    fun getAllSkills(username: Username) : List<Skill>;
+    fun getSkillById(username: Username, id: SkillId) : Skill;
+    fun getSkillsBySearch(username: Username, searchString: String) : List<Skill>;
+    fun getSkillsByStressLevel(username: Username, minLevel: StressLevel, maxLevel: StressLevel) : List<Skill>;
     fun addSkill(skill: Skill): SkillId;
     fun updateSkill(skill: Skill);
-    fun deleteSkill(skillId: SkillId);
+    fun deleteSkill(username: Username, skillId: SkillId);
     fun addFavorite(username: Username, skillId: SkillId);
     fun removeFavorite(username: Username, skillId: SkillId);
-    fun changeVisibility(skillId: SkillId, visibility: Visibility);
+    fun getFavorites(username: Username) : List<Skill>;
+    fun changeVisibility(username: Username, skillId: SkillId, visibility: Visibility);
     fun getVisibilities() : List<Visibility>;
 }

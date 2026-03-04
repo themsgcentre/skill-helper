@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[Skill] (
     [Name] [nvarchar](200) NOT NULL,
     [Description] nvarchar(max) NOT NULL,
     [StressLevel] [int] NOT NULL,
-    [Author] [nvarchar](16) NULL,
+    [Author] [nvarchar](16) NOT NULL,
     [Visibility] [bigint] NOT NULL,
     [ImageSrc] [nvarchar](max) NULL,
     CONSTRAINT [SKILL_FK_AUTHOR] FOREIGN KEY ([Author]) REFERENCES [User]([Username]),

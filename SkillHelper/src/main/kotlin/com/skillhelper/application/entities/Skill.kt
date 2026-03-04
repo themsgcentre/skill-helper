@@ -13,6 +13,6 @@ data class Skill(
     val description: String,
     val stressLevel: StressLevel,
     val imageSrc: String?,
-    val author: Username?,
+    val author: Username,
     val visibility: Visibility
 )

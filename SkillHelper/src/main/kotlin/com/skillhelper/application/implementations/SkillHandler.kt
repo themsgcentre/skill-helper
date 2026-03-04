@@ -13,46 +13,55 @@ import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.throwables.SkillAccessDeniedException
+import com.skillhelper.repository.interfaces.IFriendRepository
 
 @Service
 class SkillHandler(
     val skillRepository: ISkillRepository,
     val favoriteRepository: IFavoriteRepository,
     val userRepository: IUserRepository,
+    val friendRepository: IFriendRepository,
 ): ISkillHandler {
-    //TODO: add get favorites for user
-    override fun getAllSkills(): List<Skill> {
-        //TODO: check visibilities for specific user
-        return skillRepository.getAllSkills()
+    override fun getAllSkills(username: Username): List<Skill> {
+        return skillRepository
+            .getAllSkills()
+            .filter { skillAvailable(username, it) }
     }
 
-    override fun getSkillById(id: SkillId): Skill? {
-        //TODO: return null if user is not allowed to see skill
-        return skillRepository.getSkillById(id)
+    override fun getSkillById(username: Username, id: SkillId): Skill {
+        val skill = skillRepository.getSkillById(id) ?: throw SkillNotFoundException();
+        if(skillAvailable(username, skill)) {
+            return skill;
+        }
+        throw SkillAccessDeniedException()
     }
 
-    override fun getSkillsBySearch(searchString: String): List<Skill> {
-        //TODO: check visibilities for specific user
+    override fun getSkillsBySearch(username: Username, searchString: String): List<Skill> {
         return skillRepository.getSkillsBySearch(searchString)
+            .filter { skillAvailable(username, it) }
     }
 
-    override fun getSkillsByStressLevel(minLevel: StressLevel, maxLevel: StressLevel): List<Skill> {
-        //TODO: check visibilities for specific user
+    override fun getSkillsByStressLevel(username: Username, minLevel: StressLevel, maxLevel: StressLevel): List<Skill> {
         return skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
+            .filter { skillAvailable(username, it) }
     }
 
     override fun addSkill(skill: Skill): SkillId {
-        if(skill.author != null && !userRepository.userExists(skill.author)) throw AuthorNotFoundException();
+        if(!userRepository.userExists(skill.author)) throw AuthorNotFoundException();
         return skillRepository.addSkill(skill)
     }
 
     override fun updateSkill(skill: Skill) {
-        if(!skillRepository.skillExists(skill.id!!)) throw SkillNotFoundException();
-        if(skill.author != null && !userRepository.userExists(skill.author)) throw AuthorNotFoundException();
+        val originalSkill = skillRepository.getSkillById(skill.id!!) ?: throw SkillNotFoundException();
+        if(originalSkill.author != skill.author) throw SkillAccessDeniedException();
+        if(!userRepository.userExists(skill.author)) throw AuthorNotFoundException();
         skillRepository.updateSkill(skill)
     }
 
-    override fun deleteSkill(skillId: SkillId) {
+    override fun deleteSkill(username: Username, skillId: SkillId) {
+        val originalSkill = skillRepository.getSkillById(skillId) ?: throw SkillNotFoundException();
+        if(originalSkill.author != username) throw SkillAccessDeniedException();
         skillRepository.deleteSkill(skillId)
     }
 
@@ -66,12 +75,36 @@ class SkillHandler(
         favoriteRepository.removeFavorite(username, skillId)
     }
 
-    override fun changeVisibility(skillId: SkillId, visibility: Visibility) {
+    override fun getFavorites(username: Username): List<Skill> {
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
+        return favoriteRepository.getFavorites(username)
+            .mapNotNull { skillRepository.getSkillById(it) }
+            .filter { skillAvailable(username, it) }
+    }
+
+    override fun changeVisibility(username: Username, skillId: SkillId, visibility: Visibility) {
+        val originalSkill = skillRepository.getSkillById(skillId) ?: throw SkillNotFoundException();
+        if(originalSkill.author != username) throw SkillAccessDeniedException();
         if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         skillRepository.changeVisibility(skillId, visibility)
     }
 
     override fun getVisibilities(): List<Visibility> {
         return Visibility.entries.toList();
+    }
+
+    private fun skillAvailable(username: Username, skill: Skill): Boolean {
+        when (skill.visibility) {
+            Visibility.FRIENDS_ONLY -> {
+                val friends = friendRepository.getFriends(skill.author)
+                return friends.contains(username) || skill.author == username
+            }
+            Visibility.PRIVATE -> {
+                return skill.author == username
+            }
+            else -> {
+                return true;
+            }
+        }
     }
 }
