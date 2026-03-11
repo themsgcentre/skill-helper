@@ -1,9 +1,14 @@
 package com.skillhelper.repository
 
+import com.skillhelper.application.entities.Share
+import com.skillhelper.application.entities.ShareId
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.helpers.insertShare
 import com.skillhelper.repository.helpers.insertSkillDummy
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.ShareRepository
+import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.ShareDbo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -46,7 +51,7 @@ class ShareRepositoryTests {
 
     @Test
     fun getAllForUser_UserDoesNotExist_ReturnsEmptyList() {
-        val actual = repository.getAllForUser("missingUser")
+        val actual = repository.getAllForUser(Username("missingUser"))
         assertThat(actual).isEmpty()
     }
 
@@ -84,11 +89,11 @@ class ShareRepositoryTests {
         val id2 = insertShare(jdbc, share2)
 
         val expected = listOf(
-            share1.copy(id = id1),
-            share2.copy(id = id2)
+            share1.copy(id = id1).toDomain(),
+            share2.copy(id = id2).toDomain()
         )
 
-        val actual = repository.getAllForUser(forUser)
+        val actual = repository.getAllForUser(Username(forUser))
 
         assertWithDate(actual, expected)
     }
@@ -101,12 +106,12 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
             skill = skillId,
             dateShared = Date.from(Instant.now()),
             read = false
@@ -116,7 +121,7 @@ class ShareRepositoryTests {
 
         val expected = listOf(share.copy(id = newId))
 
-        val actual = repository.getAllForUser(forUser)
+        val actual = repository.getAllForUser(Username(forUser))
 
         assertWithDate(actual, expected)
     }
@@ -129,11 +134,11 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
-            skill = 9999L,
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
+            skill = SkillId(9999L),
             dateShared = Date.from(Instant.now()),
             read = false
         )
@@ -149,12 +154,12 @@ class ShareRepositoryTests {
 
         insertUser(jdbc, forUser)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
             skill = skillId,
             dateShared = Date.from(Instant.now()),
             read = false
@@ -171,12 +176,12 @@ class ShareRepositoryTests {
 
         insertUser(jdbc, fromUser)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
             skill = skillId,
             dateShared = Date.from(Instant.now()),
             read = false
@@ -194,12 +199,12 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
             skill = skillId,
             dateShared = Date.from(Instant.now()),
             read = false
@@ -209,7 +214,7 @@ class ShareRepositoryTests {
 
         repository.deleteShare(id)
 
-        val actual = repository.getAllForUser(forUser)
+        val actual = repository.getAllForUser(Username(forUser))
         assertThat(actual).isEmpty()
     }
 
@@ -221,12 +226,12 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
             skill = skillId,
             dateShared = Date.from(Instant.now()),
             read = false
@@ -234,9 +239,9 @@ class ShareRepositoryTests {
 
         val id = repository.addShare(share)
 
-        repository.deleteShare(9999L)
+        repository.deleteShare(ShareId(9999L))
 
-        val actual = repository.getAllForUser(forUser)
+        val actual = repository.getAllForUser(Username(forUser))
         val expected = listOf(share.copy(id = id))
 
         assertWithDate(actual, expected)
@@ -252,31 +257,31 @@ class ShareRepositoryTests {
         insertUser(jdbc, user2)
         insertUser(jdbc, fromUser)
 
-        val skill1 = insertSkillDummy(jdbc, "first")
-        val skill2 = insertSkillDummy(jdbc, "second")
+        val skill1 = SkillId(insertSkillDummy(jdbc, "first"))
+        val skill2 = SkillId(insertSkillDummy(jdbc, "second"))
 
-        val share1 = ShareDbo(
-            id = 0L,
-            forUser = user1,
-            fromUser = fromUser,
+        val share1 = Share(
+            id = null,
+            forUser = Username(user1),
+            fromUser = Username(fromUser),
             skill = skill1,
             dateShared = Date.from(Instant.now()),
             read = false
         )
 
-        val share2 = ShareDbo(
-            id = 0L,
-            forUser = user1,
-            fromUser = fromUser,
+        val share2 = Share(
+            id = null,
+            forUser = Username(user1),
+            fromUser = Username(fromUser),
             skill = skill2,
             dateShared = Date.from(Instant.now()),
             read = true
         )
 
-        val otherShare = ShareDbo(
-            id = 0L,
-            forUser = user2,
-            fromUser = fromUser,
+        val otherShare = Share(
+            id = null,
+            forUser = Username(user2),
+            fromUser = Username(fromUser),
             skill = skill1,
             dateShared = Date.from(Instant.now()),
             read = false
@@ -286,10 +291,10 @@ class ShareRepositoryTests {
         repository.addShare(share2)
         repository.addShare(otherShare)
 
-        repository.deleteAllForUser(user1)
+        repository.deleteAllForUser(Username(user1))
 
-        val user1Shares = repository.getAllForUser(user1)
-        val user2Shares = repository.getAllForUser(user2)
+        val user1Shares = repository.getAllForUser(Username(user1))
+        val user2Shares = repository.getAllForUser(Username(user2))
 
         assertThat(user1Shares).isEmpty()
 
@@ -298,7 +303,35 @@ class ShareRepositoryTests {
             .hasSize(1)
     }
 
-    private fun assertWithDate(actual: List<ShareDbo>, expected: List<ShareDbo>) {
+    @Test
+    fun readShare_ExistingShare_SetsReadToTrue() {
+        val forUser = "user1"
+        val fromUser = "user2"
+
+        insertUser(jdbc, forUser)
+        insertUser(jdbc, fromUser)
+
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+
+        val share = Share(
+            id = null,
+            forUser = Username(forUser),
+            fromUser = Username(fromUser),
+            skill = skillId,
+            dateShared = Date.from(Instant.now()),
+            read = false
+        )
+
+        val id = repository.addShare(share)
+
+        repository.readShare(id)
+
+        val actual = repository.getAllForUser(Username(forUser)).first()
+
+        assertThat(actual.isRead()).isTrue()
+    }
+
+    private fun assertWithDate(actual: List<Share>, expected: List<Share>) {
         assertThat(actual)
             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("dateShared")
             .containsExactlyInAnyOrderElementsOf(expected)
@@ -316,33 +349,5 @@ class ShareRepositoryTests {
 
             assertThat(actualDate).isEqualTo(expectedDate)
         }
-    }
-
-    @Test
-    fun readShare_ExistingShare_SetsReadToTrue() {
-        val forUser = "user1"
-        val fromUser = "user2"
-
-        insertUser(jdbc, forUser)
-        insertUser(jdbc, fromUser)
-
-        val skillId = insertSkillDummy(jdbc, "first")
-
-        val share = ShareDbo(
-            id = 0L,
-            forUser = forUser,
-            fromUser = fromUser,
-            skill = skillId,
-            dateShared = Date.from(Instant.now()),
-            read = false
-        )
-
-        val id = repository.addShare(share)
-
-        repository.readShare(id)
-
-        val actual = repository.getAllForUser(forUser).first()
-
-        assertThat(actual.read).isTrue()
     }
 }

@@ -65,7 +65,7 @@ class SkillRepositoryTests {
             name = "skill 2",
             description = "desc 2",
             stressLevel = StressLevel(3),
-            author = null,
+            author = Username(author),
             visibility = Visibility.PUBLIC,
             imageSrc = null
         )
@@ -140,7 +140,7 @@ class SkillRepositoryTests {
             name = "second",
             description = "similar to first",
             stressLevel = StressLevel(2),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )

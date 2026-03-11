@@ -1,5 +1,7 @@
 package com.skillhelper.repository
 
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.helpers.insertSkillDummy
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.FavoriteRepository
@@ -41,7 +43,7 @@ class FavoriteRepositoryTests {
 
     @Test
     fun getFavorites_UserDoesNotExist_ReturnsEmptyList() {
-        val actual = repository.getFavorites("does-not-exist")
+        val actual = repository.getFavorites(Username("does-not-exist"))
 
         assertThat(actual).isEmpty()
     }
@@ -50,7 +52,7 @@ class FavoriteRepositoryTests {
     fun getFavorites_UserHasNoFavorites_ReturnsEmptyList() {
         insertUser(jdbc, "user1")
 
-        val actual = repository.getFavorites("user1")
+        val actual = repository.getFavorites(Username("user1"))
 
         assertThat(actual).isEmpty()
     }
@@ -60,8 +62,8 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skill1 = insertSkillDummy(jdbc, "first")
-        val skill2 = insertSkillDummy(jdbc, "second")
+        val skill1 = SkillId(insertSkillDummy(jdbc, "first"))
+        val skill2 = SkillId(insertSkillDummy(jdbc, "second"))
 
         jdbc.sql("""
             INSERT INTO dbo.[Favorite] ([User], Skill)
@@ -79,7 +81,7 @@ class FavoriteRepositoryTests {
             .param("s", skill2)
             .update()
 
-        val actual = repository.getFavorites(username)
+        val actual = repository.getFavorites(Username(username))
 
         assertThat(actual).containsExactlyInAnyOrder(skill1, skill2)
     }
@@ -89,21 +91,21 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        repository.addFavorite(username, skillId)
+        repository.addFavorite(Username(username), skillId)
 
-        val actual = repository.getFavorites(username)
+        val actual = repository.getFavorites(Username(username))
 
         assertThat(actual).containsExactly(skillId)
     }
 
     @Test
     fun addFavorite_UserDoesNotExist_ThrowsForeignKeyException() {
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
         assertThatThrownBy {
-            repository.addFavorite("missingUser", skillId)
+            repository.addFavorite(Username("missingUser"), skillId)
         }.isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
@@ -113,7 +115,7 @@ class FavoriteRepositoryTests {
         insertUser(jdbc, username)
 
         assertThatThrownBy {
-            repository.addFavorite(username, 9999L)
+            repository.addFavorite(Username(username), SkillId(9999L))
         }.isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
@@ -122,13 +124,13 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        repository.addFavorite(username, skillId)
+        repository.addFavorite(Username(username), skillId)
 
-        repository.removeFavorite(username, skillId)
+        repository.removeFavorite(Username(username), skillId)
 
-        val actual = repository.getFavorites(username)
+        val actual = repository.getFavorites(Username(username))
         assertThat(actual).isEmpty()
     }
 
@@ -137,13 +139,13 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = insertSkillDummy(jdbc, "first")
+        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
 
-        repository.addFavorite(username, skillId)
+        repository.addFavorite(Username(username), skillId)
 
-        repository.removeFavorite(username, 9999L)
+        repository.removeFavorite(Username(username), SkillId(9999L))
 
-        val actual = repository.getFavorites(username)
+        val actual = repository.getFavorites(Username(username))
         assertThat(actual).containsExactly(skillId)
     }
 }

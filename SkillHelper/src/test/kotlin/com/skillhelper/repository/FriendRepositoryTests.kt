@@ -1,5 +1,6 @@
 package com.skillhelper.repository
 
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.FriendRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -39,7 +40,7 @@ class FriendRepositoryTests {
 
     @Test
     fun getFriends_UserDoesNotExist_ReturnsEmptyList() {
-        val actual = repository.getFriends("does-not-exist")
+        val actual = repository.getFriends(Username("does-not-exist"))
         assertThat(actual).isEmpty()
     }
 
@@ -47,6 +48,7 @@ class FriendRepositoryTests {
     fun getFriends_UserHasFriends_ReturnsFriendUsernames() {
         val username = "username"
         val friends = listOf("friend1", "friend2", "friend3")
+        val expected = friends.map { Username(it) }
 
         insertUser(jdbc, username)
         friends.forEach { insertUser(jdbc, it) }
@@ -63,9 +65,9 @@ class FriendRepositoryTests {
                 .update()
         }
 
-        val actual = repository.getFriends(username)
+        val actual = repository.getFriends(Username(username))
 
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(friends)
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected)
     }
 
     @Test
@@ -76,10 +78,10 @@ class FriendRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc,friend)
 
-        repository.addFriend(username, friend)
+        repository.addFriend(Username(username), Username(friend))
 
-        val actual = repository.getFriends(username)
-        assertThat(actual).containsExactly(friend)
+        val actual = repository.getFriends(Username(username))
+        assertThat(actual).containsExactly(Username(friend))
     }
 
     @Test
@@ -90,9 +92,9 @@ class FriendRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, friend)
 
-        repository.addFriend(username, friend)
+        repository.addFriend(Username(username), Username(friend))
 
-        assertThatThrownBy { repository.addFriend(username, friend) }
+        assertThatThrownBy { repository.addFriend(Username(username), Username(friend)) }
             .isInstanceOf(DuplicateKeyException::class.java)
     }
 
@@ -104,7 +106,7 @@ class FriendRepositoryTests {
         insertUser(jdbc, friend)
 
         assertThatThrownBy {
-            repository.addFriend(username, friend)
+            repository.addFriend(Username(username), Username(friend))
         }.isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
@@ -116,7 +118,7 @@ class FriendRepositoryTests {
         insertUser(jdbc, username)
 
         assertThatThrownBy {
-            repository.addFriend(username, friend)
+            repository.addFriend(Username(username), Username(friend))
         }.isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
@@ -128,11 +130,11 @@ class FriendRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, friend)
 
-        repository.addFriend(username, friend)
+        repository.addFriend(Username(username), Username(friend))
 
-        repository.removeFriend(username, friend)
+        repository.removeFriend(Username(username), Username(friend))
 
-        val actual = repository.getFriends(username)
+        val actual = repository.getFriends(Username(username))
         assertThat(actual).isEmpty()
     }
 
@@ -144,9 +146,9 @@ class FriendRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, friend)
 
-        repository.removeFriend(username, friend)
+        repository.removeFriend(Username(username), Username(friend))
 
-        val actual = repository.getFriends(username)
+        val actual = repository.getFriends(Username(username))
         assertThat(actual).isEmpty()
     }
 

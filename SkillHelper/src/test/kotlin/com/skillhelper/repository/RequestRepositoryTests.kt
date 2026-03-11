@@ -1,5 +1,6 @@
 package com.skillhelper.repository
 
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.RequestRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -40,7 +41,7 @@ class RequestRepositoryTests {
 
     @Test
     fun getRequests_UserDoesNotExist_ReturnsEmptyList() {
-        val actual = repository.getRequests("does-not-exist")
+        val actual = repository.getRequests(Username("does-not-exist"))
         assertThat(actual).isEmpty()
     }
 
@@ -48,6 +49,7 @@ class RequestRepositoryTests {
     fun getRequests_UserHasRequests_ReturnsRequestUsernames() {
         val username = "username"
         val requests = listOf("req1", "req2", "req3")
+        val expected = requests.map { Username(it) }
 
         insertUser(jdbc, username)
         requests.forEach { insertUser(jdbc, it) }
@@ -64,9 +66,9 @@ class RequestRepositoryTests {
                 .update()
         }
 
-        val actual = repository.getRequests(username)
+        val actual = repository.getRequests(Username(username))
 
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(requests)
+        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected)
     }
 
     @Test
@@ -77,10 +79,10 @@ class RequestRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, request)
 
-        repository.addRequest(username, request)
+        repository.addRequest(Username(username), Username(request))
 
-        val actual = repository.getRequests(username)
-        assertThat(actual).containsExactly(request)
+        val actual = repository.getRequests(Username(username))
+        assertThat(actual).containsExactly(Username(request))
     }
 
     @Test
@@ -91,9 +93,9 @@ class RequestRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, request)
 
-        repository.addRequest(username, request)
+        repository.addRequest(Username(username), Username(request))
 
-        assertThatThrownBy { repository.addRequest(username, request) }
+        assertThatThrownBy { repository.addRequest(Username(username), Username(request)) }
             .isInstanceOf(DuplicateKeyException::class.java)
     }
 
@@ -105,7 +107,7 @@ class RequestRepositoryTests {
         insertUser(jdbc, request)
 
         assertThatThrownBy {
-            repository.addRequest(username, request)
+            repository.addRequest(Username(username), Username(request))
         }.isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
@@ -117,7 +119,7 @@ class RequestRepositoryTests {
         insertUser(jdbc, username)
 
         assertThatThrownBy {
-            repository.addRequest(username, request)
+            repository.addRequest(Username(username), Username(request))
         }.isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
@@ -129,11 +131,11 @@ class RequestRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, request)
 
-        repository.addRequest(username, request)
+        repository.addRequest(Username(username), Username(request))
 
-        repository.removeRequest(username, request)
+        repository.removeRequest(Username(username), Username(request))
 
-        val actual = repository.getRequests(username)
+        val actual = repository.getRequests(Username(username))
         assertThat(actual).isEmpty()
     }
 
@@ -145,9 +147,9 @@ class RequestRepositoryTests {
         insertUser(jdbc, username)
         insertUser(jdbc, request)
 
-        repository.removeRequest(username, request)
+        repository.removeRequest(Username(username), Username(request))
 
-        val actual = repository.getRequests(username)
+        val actual = repository.getRequests(Username(username))
         assertThat(actual).isEmpty()
     }
 
