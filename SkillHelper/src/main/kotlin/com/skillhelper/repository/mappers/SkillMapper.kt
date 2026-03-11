@@ -3,6 +3,7 @@ package com.skillhelper.repository.mappers
 import com.skillhelper.application.entities.Skill
 import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.entities.Visibility
 import com.skillhelper.repository.models.SkillDbo
@@ -14,6 +15,6 @@ fun SkillDbo.toDomain(): Skill =
         description = this.description,
         stressLevel = StressLevel(this.stressLevel),
         imageSrc = this.imageSrc,
-        author = this.author?.let { Username(it) },
+        author = Username(this.author),
         visibility = Visibility.fromId(this.visibility)
     )

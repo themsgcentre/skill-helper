@@ -1,8 +1,13 @@
 package com.skillhelper.repository
 
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.helpers.insertEntry
 import com.skillhelper.repository.helpers.insertUser
 import com.skillhelper.repository.implementations.EntryRepository
+import com.skillhelper.repository.mappers.toDomain
 import com.skillhelper.repository.models.EntryDbo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
@@ -42,7 +47,7 @@ class EntryRepositoryTests {
 
     @Test
     fun getEntries_UserDoesNotExist_ReturnsEmptyList() {
-        val actual = repository.getEntries("missingUser")
+        val actual = repository.getEntries(Username("missingUser"))
         assertThat(actual).isEmpty()
     }
 
@@ -73,18 +78,18 @@ class EntryRepositoryTests {
         val id2 = insertEntry(jdbc, e2)
 
         val expected = listOf(
-            e1.copy(id = id1),
-            e2.copy(id = id2)
+            e1.copy(id = id1).toDomain(),
+            e2.copy(id = id2).toDomain()
         )
 
-        val actual = repository.getEntries(username)
+        val actual = repository.getEntries(Username(username))
 
         assertWithTime(actual, expected)
     }
 
     @Test
     fun getEntryById_IdDoesNotExist_ReturnsNull() {
-        val actual = repository.getEntryById(9999L)
+        val actual = repository.getEntryById(EntryId(9999L))
 
         assertThat(actual).isNull()
     }
@@ -106,9 +111,9 @@ class EntryRepositoryTests {
 
         val id = insertEntry(jdbc, entry)
 
-        val actual = repository.getEntryById(id)
+        val actual = repository.getEntryById(EntryId(id))
 
-        assertWithTime(listOf(actual!!), listOf(entry.copy(id = id)))
+        assertWithTime(listOf(actual!!), listOf(entry.copy(id = id).toDomain()))
     }
 
     @Test
@@ -116,11 +121,11 @@ class EntryRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val entry = EntryDbo(
-            id = 0L,
-            username = username,
+        val entry = Entry(
+            id = null,
+            user = Username(username),
             text = "first",
-            stressLevel = 10,
+            stressLevel = StressLevel(10),
             time = LocalDateTime.of(2026, 2, 11, 12, 0, 0)
         )
 
@@ -134,45 +139,11 @@ class EntryRepositoryTests {
 
     @Test
     fun addEntry_UserDoesNotExist_ThrowsForeignKeyException() {
-        val entry = EntryDbo(
-            id = 0L,
-            username = "missingUser",
+        val entry = Entry(
+            id = null,
+            user = Username("missingUser"),
             text = "first",
-            stressLevel = 10,
-            time = LocalDateTime.of(2026, 2, 11, 12, 0, 0)
-        )
-
-        assertThatThrownBy { repository.addEntry(entry) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun addEntry_StressLevelBelowZero_ThrowsException() {
-        val username = "user1"
-        insertUser(jdbc, username)
-
-        val entry = EntryDbo(
-            id = 0L,
-            username = username,
-            text = "first",
-            stressLevel = -1,
-            time = LocalDateTime.of(2026, 2, 11, 12, 0, 0)
-        )
-
-        assertThatThrownBy { repository.addEntry(entry) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun addEntry_StressLevelAboveHundred_ThrowsException() {
-        val username = "user1"
-        insertUser(jdbc, username)
-
-        val entry = EntryDbo(
-            id = 0L,
-            username = username,
-            text = "first",
-            stressLevel = 101,
+            stressLevel = StressLevel(10),
             time = LocalDateTime.of(2026, 2, 11, 12, 0, 0)
         )
 
@@ -193,13 +164,13 @@ class EntryRepositoryTests {
             time = LocalDateTime.of(2026, 2, 11, 10, 0, 0)
         )
 
-        val id = insertEntry(jdbc, original)
+        val id = EntryId(insertEntry(jdbc, original))
 
-        val updated = EntryDbo(
+        val updated = Entry(
             id = id,
-            username = username,
+            user = Username(username),
             text = "updated",
-            stressLevel = 55,
+            stressLevel = StressLevel(55),
             time = LocalDateTime.of(2026, 2, 11, 18, 30, 0)
         )
 
@@ -208,54 +179,6 @@ class EntryRepositoryTests {
         val actual = repository.getEntryById(id)
 
         assertWithTimeSingle(actual, updated)
-    }
-
-    @Test
-    fun updateEntry_StressLevelBelowZero_ThrowsException() {
-        val username = "user1"
-        insertUser(jdbc, username)
-
-        val original = EntryDbo(
-            id = 0L,
-            username = username,
-            text = "first",
-            stressLevel = 10,
-            time = LocalDateTime.of(2026, 2, 11, 10, 0, 0)
-        )
-
-        val id = insertEntry(jdbc, original)
-
-        val invalid = original.copy(
-            id = id,
-            stressLevel = -1
-        )
-
-        assertThatThrownBy { repository.updateEntry(invalid) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun updateEntry_StressLevelAboveHundred_ThrowsException() {
-        val username = "user1"
-        insertUser(jdbc, username)
-
-        val original = EntryDbo(
-            id = 0L,
-            username = username,
-            text = "first",
-            stressLevel = 10,
-            time = LocalDateTime.of(2026, 2, 11, 10, 0, 0)
-        )
-
-        val id = insertEntry(jdbc, original)
-
-        val invalid = original.copy(
-            id = id,
-            stressLevel = 101
-        )
-
-        assertThatThrownBy { repository.updateEntry(invalid) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
     }
 
     @Test
@@ -271,7 +194,7 @@ class EntryRepositoryTests {
             time = LocalDateTime.of(2026, 2, 11, 10, 0, 0)
         )
 
-        val id = insertEntry(jdbc, entry)
+        val id = EntryId(insertEntry(jdbc, entry))
 
         repository.deleteEntry(id)
 
@@ -295,14 +218,14 @@ class EntryRepositoryTests {
 
         val id = insertEntry(jdbc, entry)
 
-        repository.deleteEntry(9999L)
+        repository.deleteEntry(EntryId(9999L))
 
-        val actual = repository.getEntryById(id)
+        val actual = repository.getEntryById(EntryId(id))
 
-        assertWithTimeSingle(actual, entry.copy(id = id))
+        assertWithTimeSingle(actual, entry.copy(id = id).toDomain())
     }
 
-    private fun assertWithTimeSingle(actual: EntryDbo?, expected: EntryDbo) {
+    private fun assertWithTimeSingle(actual: Entry?, expected: Entry) {
         assertThat(actual).isNotNull
 
         val a = actual!!
@@ -316,7 +239,7 @@ class EntryRepositoryTests {
             .isEqualTo(expected.time.truncatedTo(ChronoUnit.SECONDS))
     }
 
-    private fun assertWithTime(actual: List<EntryDbo>, expected: List<EntryDbo>) {
+    private fun assertWithTime(actual: List<Entry>, expected: List<Entry>) {
         assertThat(actual)
             .usingRecursiveFieldByFieldElementComparatorIgnoringFields("time")
             .containsExactlyInAnyOrderElementsOf(expected)

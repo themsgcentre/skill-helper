@@ -18,7 +18,7 @@ fun insertSkill(
         .param("n", skill.name)
         .param("d", skill.description)
         .param("s", skill.stressLevel.value)
-        .param("a", skill.author?.value)
+        .param("a", skill.author.value)
         .param("v", skill.visibility.id)
         .param("i", skill.imageSrc)
         .query(Long::class.java)

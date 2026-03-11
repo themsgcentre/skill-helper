@@ -13,7 +13,7 @@ fun Skill.toDto(): SkillDto =
         name = this.name,
         description = this.description,
         stressLevel = this.stressLevel.value,
-        author = this.author?.value,
+        author = this.author.value,
         visibility = this.visibility.id,
         imageSrc = this.imageSrc
     )
@@ -24,7 +24,7 @@ fun SkillDto.toDomain(): Skill =
         name = this.name,
         description = this.description,
         stressLevel = StressLevel(this.stressLevel),
-        author = this.author?.let { Username(it) },
+        author = Username(this.author),
         visibility = Visibility.fromId(this.visibility),
         imageSrc = this.imageSrc
     )
