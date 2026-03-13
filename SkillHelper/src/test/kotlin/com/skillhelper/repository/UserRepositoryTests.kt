@@ -146,7 +146,7 @@ class UserRepositoryTests {
         repository.updateBio(user.username, "new bio")
 
         val actual = repository.getUserByName(user.username)
-        assertThat(actual).isNotNull
+        assertThat(actual).isNotNull()
         assertThat(actual!!.profile.bio).isEqualTo("new bio")
     }
 
