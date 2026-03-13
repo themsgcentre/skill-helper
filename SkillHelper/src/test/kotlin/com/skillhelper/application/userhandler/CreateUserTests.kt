@@ -1,8 +1,9 @@
 package com.skillhelper.application.userhandler
 
 import com.skillhelper.application.implementations.UserHandler
-import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.api.models.UserDto
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk
@@ -15,8 +16,8 @@ class CreateUserTests {
     private lateinit var repository: IUserRepository
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
-    private lateinit var dto: UserDto;
-    private lateinit var username: String;
+    private lateinit var user: User;
+    private var username: Username = Username("test username");
 
     @BeforeEach
     fun setUp() {
@@ -24,14 +25,14 @@ class CreateUserTests {
         encoder = mockk(relaxed = true)
         handler = UserHandler(repository, encoder)
 
-        dto = UserDto(
-            username = "test username",
+        user = User(
+            username = username,
             password = "test password",
-            bio = "test bio",
-            profileImage = "test image"
+            Profile(
+                bio = "test bio",
+                profileImage = "test image"
+            )
         )
-
-        username = "test username"
     }
 
     @Test
@@ -40,7 +41,7 @@ class CreateUserTests {
             repository.userExists(username)
         } returns true
 
-        handler.createUser(dto);
+        handler.createUser(username, "password", Profile("bio", "img"));
 
         verify(exactly = 0) { repository.createUser(any()) }
     }
@@ -54,12 +55,12 @@ class CreateUserTests {
         val encodedPassword = "encoded password"
 
         every {
-            encoder.encode(dto.password)
+            encoder.encode(user.password)
         } returns encodedPassword
 
-        val expected = dto.toDbo(encodedPassword)
+        val expected = user.copy(password = encoder.encode(user.password))
 
-        handler.createUser(dto);
+        handler.createUser(username, user.password, user.profile);
 
         verify(exactly = 1) { repository.createUser(expected) }
     }

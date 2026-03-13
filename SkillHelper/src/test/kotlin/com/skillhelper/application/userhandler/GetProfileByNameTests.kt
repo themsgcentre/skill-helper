@@ -1,9 +1,10 @@
 package com.skillhelper.application.userhandler
 
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
-import com.skillhelper.application.implementations.toProfileDto
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.models.UserDbo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -17,8 +18,9 @@ class GetProfileByNameTests {
     private lateinit var repository: IUserRepository
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
-    private lateinit var dbo: UserDbo;
-    private lateinit var username: String;
+    private lateinit var user: User;
+    private lateinit var profile: Profile;
+    private var username: Username = Username("test username");
 
     @BeforeEach
     fun setUp() {
@@ -26,23 +28,22 @@ class GetProfileByNameTests {
         encoder = mockk(relaxed = true)
         handler = UserHandler(repository, encoder)
 
-        dbo = UserDbo(
-            username = "test username",
-            password = "test password",
-            bio = "test bio",
-            profileImage = "test image"
-        )
+        profile = Profile("test bio", "test image")
 
-        username = "test username"
+        user = User(
+            username = username,
+            password = "test password",
+            profile = profile,
+        )
     }
 
     @Test
     fun getProfileByName_RepositoryReturnsValue_ReturnsCorrectValue() {
-        val expected = dbo.toProfileDto()
+        val expected = profile
 
         every {
             repository.getUserByName(username)
-        } returns dbo
+        } returns user
 
         val actual = handler.getProfileByName(username)
 

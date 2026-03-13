@@ -4,7 +4,6 @@ import com.skillhelper.application.entities.Profile
 import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.implementations.UserRepository
-import com.skillhelper.repository.models.UserDbo
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterAll

@@ -1,5 +1,6 @@
 package com.skillhelper.application.userhandler
 
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
@@ -13,17 +14,14 @@ class UpdateUsernameTests {
     private lateinit var repository: IUserRepository
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
-    private lateinit var oldName: String;
-    private lateinit var newName: String;
+    private var oldName: Username = Username("old username");
+    private var newName: Username = Username("new username");
 
     @BeforeEach
     fun setUp() {
         repository = mockk(relaxed = true)
         encoder = mockk(relaxed = true)
         handler = UserHandler(repository, encoder)
-
-        oldName = "old username"
-        newName = "new username"
 
         every {
             repository.userExists(newName)

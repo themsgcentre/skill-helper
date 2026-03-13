@@ -1,5 +1,6 @@
 package com.skillhelper.application.userhandler
 
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.mockk
@@ -12,15 +13,13 @@ class UpdateBioTests {
     private lateinit var repository: IUserRepository
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
-    private lateinit var username: String;
+    private var username: Username = Username("test username");
 
     @BeforeEach
     fun setUp() {
         repository = mockk(relaxed = true)
         encoder = mockk(relaxed = true)
         handler = UserHandler(repository, encoder)
-
-        username = "test username"
     }
 
     @Test
