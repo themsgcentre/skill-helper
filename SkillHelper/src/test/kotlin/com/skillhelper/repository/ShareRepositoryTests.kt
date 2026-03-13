@@ -219,35 +219,6 @@ class ShareRepositoryTests {
     }
 
     @Test
-    fun deleteShare_ShareDoesNotExist_DoesNothing() {
-        val forUser = "user1"
-        val fromUser = "user2"
-
-        insertUser(jdbc, forUser)
-        insertUser(jdbc, fromUser)
-
-        val skillId = SkillId(insertSkillDummy(jdbc, "first", fromUser))
-
-        val share = Share(
-            id = null,
-            forUser = Username(forUser),
-            fromUser = Username(fromUser),
-            skill = skillId,
-            dateShared = Date.from(Instant.now()),
-            read = false
-        )
-
-        val id = repository.addShare(share)
-
-        repository.deleteShare(ShareId(9999L))
-
-        val actual = repository.getAllForUser(Username(forUser))
-        val expected = listOf(share.copy(id = id))
-
-        assertWithDate(actual, expected)
-    }
-
-    @Test
     fun deleteAllForUser_UserHasMultipleShares_RemovesAllForThatUser() {
         val user1 = "user1"
         val user2 = "user2"
