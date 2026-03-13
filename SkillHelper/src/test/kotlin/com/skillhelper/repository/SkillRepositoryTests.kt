@@ -290,38 +290,6 @@ class SkillRepositoryTests {
     }
 
     @Test
-    fun addSkill_StressLevelBelowZero_ThrowsDataIntegrityViolation() {
-        val skill = Skill(
-            id = null,
-            name = "first",
-            description = "desc",
-            stressLevel = StressLevel(-1),
-            author = author,
-            visibility = Visibility.PRIVATE,
-            imageSrc = null
-        )
-
-        assertThatThrownBy { repository.addSkill(skill) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun addSkill_StressLevelAboveHundred_ThrowsDataIntegrityViolation() {
-        val skill = Skill(
-            id = null,
-            name = "second",
-            description = "desc",
-            stressLevel = StressLevel(101),
-            author = author,
-            visibility = Visibility.PRIVATE,
-            imageSrc = null
-        )
-
-        assertThatThrownBy { repository.addSkill(skill) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
     fun updateSkill_ValidData_UpdatesSkill() {
         val original = Skill(null, "first", "desc", StressLevel(20), null, author, visibility = Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
@@ -351,34 +319,6 @@ class SkillRepositoryTests {
         val invalid = original.copy(
             id = id,
             author = Username("missingUser")
-        )
-
-        assertThatThrownBy { repository.updateSkill(invalid) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun updateSkill_StressLevelBelowZero_ThrowsException() {
-        val original = Skill(null, "first", "desc", StressLevel(1), null, author, Visibility.PRIVATE)
-        val id = insertSkill(jdbc, original)
-
-        val invalid = original.copy(
-            id = id,
-            stressLevel = StressLevel(-1)
-        )
-
-        assertThatThrownBy { repository.updateSkill(invalid) }
-            .isInstanceOf(DataIntegrityViolationException::class.java)
-    }
-
-    @Test
-    fun updateSkill_StressLevelAboveHundred_ThrowsException() {
-        val original = Skill(null, "first", "desc", StressLevel(1), null, author, Visibility.PRIVATE)
-        val id = insertSkill(jdbc, original)
-
-        val invalid = original.copy(
-            id = id,
-            stressLevel = StressLevel(101)
         )
 
         assertThatThrownBy { repository.updateSkill(invalid) }

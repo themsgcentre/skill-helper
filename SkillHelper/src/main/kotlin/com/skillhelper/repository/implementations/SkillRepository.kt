@@ -151,7 +151,7 @@ class SkillRepository(jdbcClient: JdbcClient): ISkillRepository, BaseRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "skillId" to skillId,
+            "skillId" to skillId.value,
             "visibility" to visibility.id,
         );
 
