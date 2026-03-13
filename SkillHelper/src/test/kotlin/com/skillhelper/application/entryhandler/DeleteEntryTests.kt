@@ -1,5 +1,7 @@
 package com.skillhelper.application.entryhandler
 
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.EntryHandler
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -23,8 +25,9 @@ class DeleteEntryTests {
 
     @Test
     fun deleteEntry_CallsRepository() {
-        val id = 1L;
-        handler.deleteEntry(id)
+        val id = EntryId(1L);
+        val username = Username("test")
+        handler.deleteEntry(username, id)
         verify(exactly = 1) { 
             entryRepository.deleteEntry(id)
         }

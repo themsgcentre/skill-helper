@@ -1,8 +1,10 @@
 package com.skillhelper.application.entryhandler
 
 import com.skillhelper.application.implementations.EntryHandler
-import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.api.models.EntryDto
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
@@ -17,8 +19,8 @@ class GetEntriesTests {
     private lateinit var entryRepository: IEntryRepository;
     private lateinit var userRepository: IUserRepository;
     private lateinit var handler: EntryHandler;
-    private lateinit var testUser: String;
-    private lateinit var testEntry: EntryDto;
+    private var testUser: Username = Username("test");
+    private lateinit var testEntry: Entry;
 
     @BeforeEach
     fun setUp() {
@@ -27,8 +29,7 @@ class GetEntriesTests {
 
         handler = EntryHandler(entryRepository, userRepository);
 
-        testUser = "test"
-        testEntry = EntryDto(0, testUser, LocalDateTime.now(), "test", 2);
+        testEntry = Entry(EntryId(0), testUser, LocalDateTime.now(), "test", StressLevel(2));
     }
 
     @Test
@@ -37,7 +38,7 @@ class GetEntriesTests {
 
         every {
             entryRepository.getEntries(testUser)
-        } returns listOf(testEntry.toDbo())
+        } returns listOf(testEntry)
 
         val actual = handler.getEntries(testUser);
 

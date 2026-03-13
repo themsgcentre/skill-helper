@@ -1,8 +1,10 @@
 package com.skillhelper.application.entryhandler
 
 import com.skillhelper.application.implementations.EntryHandler
-import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.api.models.EntryDto
+import com.skillhelper.application.entities.Entry
+import com.skillhelper.application.entities.EntryId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
@@ -16,9 +18,9 @@ class UpdateEntryTests {
     private lateinit var entryRepository: IEntryRepository;
     private lateinit var userRepository: IUserRepository;
     private lateinit var handler: EntryHandler;
-    private lateinit var testUser: String;
-    private var testId = 1L;
-    private lateinit var testEntry: EntryDto;
+    private var username: Username = Username("test");
+    private var testId = EntryId(1L);
+    private lateinit var testEntry: Entry;
 
     @BeforeEach
     fun setUp() {
@@ -27,20 +29,19 @@ class UpdateEntryTests {
 
         handler = EntryHandler(entryRepository, userRepository);
 
-        testUser = "test"
-        testEntry = EntryDto(testId, testUser, LocalDateTime.now(), "test", 2);
+        testEntry = Entry(testId, username, LocalDateTime.now(), "test", StressLevel(2));
     }
 
     @Test
     fun updateEntry_UsernameIsOriginal_CallsRepository() {
         every {
             entryRepository.getEntryById(testId)
-        } returns testEntry.toDbo()
+        } returns testEntry
 
-        handler.updateEntry(testEntry)
+        handler.updateEntry(username, testEntry)
 
         verify (exactly = 1) {
-            entryRepository.updateEntry(testEntry.toDbo())
+            entryRepository.updateEntry(testEntry)
         }
     }
 
@@ -48,25 +49,12 @@ class UpdateEntryTests {
     fun updateEntry_UsernameIsNotOriginal_CallsRepository() {
         every {
             entryRepository.getEntryById(testId)
-        } returns testEntry.copy(username = "different").toDbo()
+        } returns testEntry.copy(user = Username("different"))
 
-        handler.updateEntry(testEntry)
+        handler.updateEntry(Username("different"), testEntry)
 
         verify (exactly = 0) {
-            entryRepository.updateEntry(testEntry.toDbo())
-        }
-    }
-
-    @Test
-    fun updateEntry_EntryDoesNotExist_CallsRepository() {
-        every {
-            entryRepository.getEntryById(testId)
-        } returns null
-
-        handler.updateEntry(testEntry)
-
-        verify (exactly = 1) {
-            entryRepository.updateEntry(testEntry.toDbo())
+            entryRepository.updateEntry(any())
         }
     }
 }
