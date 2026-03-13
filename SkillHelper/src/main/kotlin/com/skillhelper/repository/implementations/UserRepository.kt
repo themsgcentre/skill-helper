@@ -20,7 +20,7 @@ class UserRepository(
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
         return query<UserDbo>(sql, params).firstOrNull()?.toDomain();

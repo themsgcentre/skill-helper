@@ -50,7 +50,7 @@ class UserRepositoryTests {
         INSERT INTO dbo.[User] (Username, Password, ProfileImage, Bio)
         VALUES (:u, :p, :img, :bio)
         """.trimIndent())
-            .param("u", user.username)
+            .param("u", user.username.value)
             .param("p", user.password)
             .param("img", user.profile.profileImage)
             .param("bio", user.profile.bio)
@@ -158,7 +158,7 @@ class UserRepositoryTests {
         repository.updateProfilePicture(user.username, "new img")
 
         val actual = repository.getUserByName(user.username)
-        assertThat(actual).isNotNull
+        assertThat(actual).isNotNull()
         assertThat(actual!!.profile.profileImage).isEqualTo("new img")
     }
 
@@ -173,7 +173,7 @@ class UserRepositoryTests {
         val newUser = repository.getUserByName(Username("new-name"))
 
         assertThat(oldUser).isNull()
-        assertThat(newUser).isNotNull
-        assertThat(newUser!!.username).isEqualTo("new-name")
+        assertThat(newUser).isNotNull()
+        assertThat(newUser!!.username.value).isEqualTo("new-name")
     }
 }
