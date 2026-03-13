@@ -70,7 +70,7 @@ class FavoriteRepositoryTests {
             VALUES (:u, :s);
         """)
             .param("u", username)
-            .param("s", skill1)
+            .param("s", skill1.value)
             .update()
 
         jdbc.sql("""
@@ -78,7 +78,7 @@ class FavoriteRepositoryTests {
             VALUES (:u, :s);
         """)
             .param("u", username)
-            .param("s", skill2)
+            .param("s", skill2.value)
             .update()
 
         val actual = repository.getFavorites(Username(username))
