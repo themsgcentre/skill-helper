@@ -90,7 +90,7 @@ class ShareRepository(jdbc: JdbcClient): IShareRepository, BaseRepository(jdbc, 
         """.trimIndent();
 
         val params = mapOf(
-            "username" to username,
+            "username" to username.value,
         );
 
         return query<ShareDbo>(sql, params).map { it.toDomain() };

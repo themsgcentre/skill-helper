@@ -62,8 +62,8 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skill1 = SkillId(insertSkillDummy(jdbc, "first"))
-        val skill2 = SkillId(insertSkillDummy(jdbc, "second"))
+        val skill1 = SkillId(insertSkillDummy(jdbc, "first", username))
+        val skill2 = SkillId(insertSkillDummy(jdbc, "second", username))
 
         jdbc.sql("""
             INSERT INTO dbo.[Favorite] ([User], Skill)
@@ -91,7 +91,7 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", username))
 
         repository.addFavorite(Username(username), skillId)
 
@@ -102,7 +102,9 @@ class FavoriteRepositoryTests {
 
     @Test
     fun addFavorite_UserDoesNotExist_ThrowsForeignKeyException() {
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val username = "user1"
+        insertUser(jdbc, username)
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", username))
 
         assertThatThrownBy {
             repository.addFavorite(Username("missingUser"), skillId)
@@ -124,7 +126,7 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", username))
 
         repository.addFavorite(Username(username), skillId)
 
@@ -139,7 +141,7 @@ class FavoriteRepositoryTests {
         val username = "user1"
         insertUser(jdbc, username)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", username))
 
         repository.addFavorite(Username(username), skillId)
 

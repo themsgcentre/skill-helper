@@ -65,8 +65,8 @@ class ShareRepositoryTests {
         insertUser(jdbc, fromUser1)
         insertUser(jdbc, fromUser2)
 
-        val skill1 = insertSkillDummy(jdbc, "first")
-        val skill2 = insertSkillDummy(jdbc, "second")
+        val skill1 = insertSkillDummy(jdbc, "first", fromUser1)
+        val skill2 = insertSkillDummy(jdbc, "second", fromUser2)
 
         val share1 = ShareDbo(
             id = 0L,
@@ -106,7 +106,7 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", fromUser))
 
         val share = Share(
             id = null,
@@ -154,7 +154,7 @@ class ShareRepositoryTests {
 
         insertUser(jdbc, forUser)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", forUser))
 
         val share = Share(
             id = null,
@@ -176,7 +176,7 @@ class ShareRepositoryTests {
 
         insertUser(jdbc, fromUser)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", fromUser))
 
         val share = Share(
             id = null,
@@ -199,7 +199,7 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", fromUser))
 
         val share = Share(
             id = null,
@@ -226,7 +226,7 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", fromUser))
 
         val share = Share(
             id = null,
@@ -257,8 +257,8 @@ class ShareRepositoryTests {
         insertUser(jdbc, user2)
         insertUser(jdbc, fromUser)
 
-        val skill1 = SkillId(insertSkillDummy(jdbc, "first"))
-        val skill2 = SkillId(insertSkillDummy(jdbc, "second"))
+        val skill1 = SkillId(insertSkillDummy(jdbc, "first", user1))
+        val skill2 = SkillId(insertSkillDummy(jdbc, "second", user1))
 
         val share1 = Share(
             id = null,
@@ -311,7 +311,7 @@ class ShareRepositoryTests {
         insertUser(jdbc, forUser)
         insertUser(jdbc, fromUser)
 
-        val skillId = SkillId(insertSkillDummy(jdbc, "first"))
+        val skillId = SkillId(insertSkillDummy(jdbc, "first", fromUser))
 
         val share = Share(
             id = null,
