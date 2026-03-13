@@ -1,10 +1,14 @@
 package com.skillhelper.application.skillhandler
 
 import com.skillhelper.application.implementations.SkillHandler
-import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.api.models.SkillDto
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.StressLevel
+import com.skillhelper.application.entities.Username
+import com.skillhelper.application.entities.Visibility
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
+import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.Called
 import io.mockk.every
@@ -17,25 +21,26 @@ class UpdateSkillTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
-    private lateinit var visibilityRepository: IVisibilityRepository;
+    private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
-    private lateinit var mockSkill: SkillDto;
+    private lateinit var mockSkill: Skill;
+    private var username: Username = Username("test");
 
     @BeforeEach
     fun setUp() {
         userRepository = mockk(relaxed = true)
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
-        visibilityRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
+        friendRepository = mockk(relaxed = true)
+        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
 
-        mockSkill = SkillDto(1, "skill 1", "description 1", 1, "test", 2, "src")
+        mockSkill = Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), "test", Username("test 1"), Visibility.FRIENDS_ONLY)
     }
 
     @Test
     fun updateSkill_AuthorDoesNotExist_DoesNotCallUpdateSkillOnRepository() {
         every {
-            userRepository.userExists("test")
+            userRepository.userExists(username)
         } returns false
 
         handler.updateSkill(mockSkill)
@@ -46,42 +51,11 @@ class UpdateSkillTests {
     @Test
     fun updateSkill_AuthorExists_CallsUpdateSkillOnRepository() {
         every {
-            userRepository.userExists("test")
+            userRepository.userExists(username)
         } returns true
 
         handler.updateSkill(mockSkill)
 
-        verify(exactly = 1) { skillRepository.updateSkill(mockSkill.toDbo()) }
-    }
-
-    @Test
-    fun updateSkill_AuthorIsNull_CallsUpdateSkillOnRepository() {
-        mockSkill = mockSkill.copy(author = null)
-
-        handler.updateSkill(mockSkill)
-
-        verify(exactly = 1) { skillRepository.updateSkill(mockSkill.toDbo()) }
-    }
-
-    @Test
-    fun addSkill_SkillBelowRange_DoesNotCallAddSkillOnRepository() {
-        every {
-            userRepository.userExists("test")
-        } returns true
-
-        handler.updateSkill(mockSkill.copy(stressLevel = -2))
-
-        verify { skillRepository wasNot Called }
-    }
-
-    @Test
-    fun addSkill_SkillAboveRange_DoesNotCallAddSkillOnRepository() {
-        every {
-            userRepository.userExists("test")
-        } returns true
-
-        handler.updateSkill(mockSkill.copy(stressLevel = 102))
-
-        verify { skillRepository wasNot Called }
+        verify(exactly = 1) { skillRepository.updateSkill(mockSkill) }
     }
 }

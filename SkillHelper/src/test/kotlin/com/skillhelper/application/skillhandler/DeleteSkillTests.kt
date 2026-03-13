@@ -1,8 +1,11 @@
 package com.skillhelper.application.skillhandler
 
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
+import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.mockk
 import io.mockk.verify
@@ -13,22 +16,24 @@ class DeleteSkillTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
-    private lateinit var visibilityRepository: IVisibilityRepository;
+    private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
+    private var username: Username = Username("test")
 
     @BeforeEach
     fun setUp() {
         userRepository = mockk(relaxed = true)
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
-        visibilityRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
+        friendRepository = mockk(relaxed = true)
+        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
     }
 
     @Test
     fun deleteSkill_CallsDeleteSkillOnRepository() {
-        handler.deleteSkill(1);
+        val skillId = SkillId(1L)
+        handler.deleteSkill(username, skillId);
 
-        verify(exactly = 1) { skillRepository.deleteSkill(1) }
+        verify(exactly = 1) { skillRepository.deleteSkill(skillId) }
     }
 }

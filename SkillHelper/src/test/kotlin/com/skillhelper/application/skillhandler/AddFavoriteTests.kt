@@ -1,8 +1,11 @@
 package com.skillhelper.application.skillhandler
 
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
+import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.Called
 import io.mockk.every
@@ -15,7 +18,7 @@ class AddFavoriteTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
-    private lateinit var visibilityRepository: IVisibilityRepository;
+    private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
 
     @BeforeEach
@@ -23,8 +26,7 @@ class AddFavoriteTests {
         userRepository = mockk(relaxed = true)
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
-        visibilityRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, visibilityRepository)
+        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
 
         every {
             userRepository.userExists(any())
@@ -37,8 +39,8 @@ class AddFavoriteTests {
 
     @Test
     fun addFavorite_ValidUserAndSkillId_CallsAddFavoriteOnRepository() {
-        val username = "test"
-        val skillId = 1L;
+        val username = Username("test")
+        val skillId = SkillId(1L);
 
         handler.addFavorite(username, skillId)
 
@@ -49,7 +51,7 @@ class AddFavoriteTests {
     fun addFavorite_UserDoesNotExist_DoesNotCallAddFavoriteOnRepository() {
         every { userRepository.userExists(any()) } returns false
 
-        handler.addFavorite("test", 1)
+        handler.addFavorite(Username("test"), SkillId(1))
 
         verify { favoriteRepository wasNot Called }
     }
@@ -58,7 +60,7 @@ class AddFavoriteTests {
     fun addFavorite_SkillDoesNotExist_DoesNotCallAddFavoriteOnRepository() {
         every { skillRepository.skillExists(any()) } returns false
 
-        handler.addFavorite("test", 1)
+        handler.addFavorite(Username("test"), SkillId(1))
 
         verify { favoriteRepository wasNot Called }
     }
