@@ -30,10 +30,14 @@ class SkillRepositoryTests {
     @Autowired
     lateinit var jdbc: JdbcClient
 
+     val author = Username("author1")
+
     @BeforeEach
     fun setUp() {
         jdbc.sql("""DELETE FROM dbo.[Skill];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
+
+        insertUser(jdbc, author.value)
     }
 
     @AfterAll
@@ -50,13 +54,11 @@ class SkillRepositoryTests {
 
     @Test
     fun getAllSkills_HasSkills_ReturnsCorrectList() {
-        val author = "author1"
-        insertUser(jdbc, author)
         val skill1 = Skill(
             name = "skill 1",
             description = "desc 1",
             stressLevel = StressLevel(1),
-            author = Username(author),
+            author = author,
             visibility = Visibility.PUBLIC,
             imageSrc = "src1"
         )
@@ -65,7 +67,7 @@ class SkillRepositoryTests {
             name = "skill 2",
             description = "desc 2",
             stressLevel = StressLevel(3),
-            author = Username(author),
+            author = author,
             visibility = Visibility.PUBLIC,
             imageSrc = null
         )
@@ -92,14 +94,11 @@ class SkillRepositoryTests {
 
     @Test
     fun getSkillById_IdExists_ReturnsSkill() {
-        val author = "author1"
-        insertUser(jdbc, author)
-
         val skill = Skill(
             name = "skill 1",
             description = "desc 1",
             stressLevel = StressLevel(2),
-            author = Username(author),
+            author = author,
             visibility = Visibility.PUBLIC,
             imageSrc = "img1"
         )
@@ -122,9 +121,6 @@ class SkillRepositoryTests {
 
     @Test
     fun getSkillsBySearch_PartialMatch_ReturnsMatchingSkills() {
-        val author = Username("author1")
-        insertUser(jdbc, author.value)
-
         val s1 = Skill(
             id = null,
             name = "first",
@@ -150,7 +146,7 @@ class SkillRepositoryTests {
             name = "third",
             description = "nothing to see here",
             stressLevel = StressLevel(3),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -176,7 +172,7 @@ class SkillRepositoryTests {
             name = "test",
             description = "test",
             stressLevel = StressLevel(1),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -195,7 +191,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(0),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -205,7 +201,7 @@ class SkillRepositoryTests {
             name = "second",
             description = "desc",
             stressLevel = StressLevel(30),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -215,7 +211,7 @@ class SkillRepositoryTests {
             name = "third",
             description = "desc",
             stressLevel = StressLevel(50),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -244,7 +240,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(50),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -260,38 +256,13 @@ class SkillRepositoryTests {
     }
 
     @Test
-    fun addSkill_AuthorNull_InsertsSkill() {
-        val skill = Skill(
-            id = null,
-            name = "first",
-            description = "desc",
-            stressLevel = StressLevel(1),
-            author = null,
-            visibility = Visibility.PRIVATE,
-            imageSrc = "src"
-        )
-
-        val newId = repository.addSkill(skill)
-
-        val actual = repository.getAllSkills()
-
-        assertThat(actual).contains(
-            skill.copy(id = newId)
-        )
-    }
-
-    @Test
     fun addSkill_AuthorExists_InsertsSkill() {
-        val author = "author1"
-        insertUser(jdbc, author)
-
-
         val skill = Skill(
             id = null,
             name = "second",
             description = "desc",
             stressLevel = StressLevel(1),
-            author = Username(author),
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -325,7 +296,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(-1),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -341,7 +312,7 @@ class SkillRepositoryTests {
             name = "second",
             description = "desc",
             stressLevel = StressLevel(101),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -352,10 +323,7 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_ValidData_UpdatesSkill() {
-        val author = "author1"
-        insertUser(jdbc, author)
-
-        val original = Skill(null, "first", "desc", StressLevel(20), null, Username(author), visibility = Visibility.PRIVATE)
+        val original = Skill(null, "first", "desc", StressLevel(20), null, author, visibility = Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val updated = Skill(
@@ -363,7 +331,7 @@ class SkillRepositoryTests {
             name = "updated",
             description = "new desc",
             stressLevel = StressLevel(50),
-            author = Username(author),
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = "img"
         )
@@ -377,7 +345,7 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_AuthorDoesNotExist_ThrowsForeignKeyException() {
-        val original = Skill(null, "first", "desc", StressLevel(1), null, null, Visibility.PRIVATE)
+        val original = Skill(null, "first", "desc", StressLevel(1), null, author, Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val invalid = original.copy(
@@ -391,7 +359,7 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_StressLevelBelowZero_ThrowsException() {
-        val original = Skill(null, "first", "desc", StressLevel(1), null, null, Visibility.PRIVATE)
+        val original = Skill(null, "first", "desc", StressLevel(1), null, author, Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val invalid = original.copy(
@@ -405,7 +373,7 @@ class SkillRepositoryTests {
 
     @Test
     fun updateSkill_StressLevelAboveHundred_ThrowsException() {
-        val original = Skill(null, "first", "desc", StressLevel(1), null, null, Visibility.PRIVATE)
+        val original = Skill(null, "first", "desc", StressLevel(1), null, author, Visibility.PRIVATE)
         val id = insertSkill(jdbc, original)
 
         val invalid = original.copy(
@@ -424,7 +392,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(1),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -445,7 +413,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(1),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -466,7 +434,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(1),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )
@@ -487,7 +455,7 @@ class SkillRepositoryTests {
             name = "first",
             description = "desc",
             stressLevel = StressLevel(50),
-            author = null,
+            author = author,
             visibility = Visibility.PRIVATE,
             imageSrc = null
         )

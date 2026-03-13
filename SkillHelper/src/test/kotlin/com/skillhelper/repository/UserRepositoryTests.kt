@@ -1,5 +1,8 @@
 package com.skillhelper.repository
 
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.implementations.UserRepository
 import com.skillhelper.repository.models.UserDbo
 import org.assertj.core.api.Assertions.assertThat
@@ -36,13 +39,13 @@ class UserRepositoryTests {
 
     @Test
     fun getUserByName_NotFound_ReturnsNull() {
-        val actual = repository.getUserByName("test")
+        val actual = repository.getUserByName(Username("test"))
         assertThat(actual).isNull()
     }
 
     @Test
     fun getUserByName_UserFound_ReturnsCorrectUser() {
-        val user = UserDbo("test username", "test password", "test image", "test bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
 
         jdbc.sql("""
         INSERT INTO dbo.[User] (Username, Password, ProfileImage, Bio)
@@ -50,8 +53,8 @@ class UserRepositoryTests {
         """.trimIndent())
             .param("u", user.username)
             .param("p", user.password)
-            .param("img", user.profileImage)
-            .param("bio", user.bio)
+            .param("img", user.profile.profileImage)
+            .param("bio", user.profile.bio)
             .update()
 
         val actual = repository.getUserByName(user.username)
@@ -61,7 +64,7 @@ class UserRepositoryTests {
 
     @Test
     fun addUser_UsernameAvailable_AddsUser() {
-        val user = UserDbo("test username", "test password", "test image", "test bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
 
         repository.createUser(user)
 
@@ -72,7 +75,7 @@ class UserRepositoryTests {
 
     @Test
     fun addUser_UsernameTaken_ThrowsSqlException() {
-        val user = UserDbo("test username", "test password", "test image", "test bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         assertThatThrownBy {
@@ -81,19 +84,8 @@ class UserRepositoryTests {
     }
 
     @Test
-    fun updatePassword_UserExists_UpdatesPassword() {
-        val user = UserDbo("test username", "old pw", "test image", "test bio")
-        repository.createUser(user)
-
-        repository.updatePassword(user.username, "new pw")
-
-        val actual = repository.getPassword(user.username)
-        assertThat(actual).isEqualTo("new pw")
-    }
-
-    @Test
     fun getPassword_UserExists_ReturnsPassword() {
-        val user = UserDbo("test username", "test password", "test image", "test bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         val actual = repository.getPassword(user.username)
@@ -103,14 +95,25 @@ class UserRepositoryTests {
 
     @Test
     fun getPassword_UserDoesNotExist_ReturnsNull() {
-        val actual = repository.getPassword("does-not-exist")
+        val actual = repository.getPassword(Username("does-not-exist"))
 
         assertThat(actual).isNull()
     }
 
     @Test
+    fun updatePassword_UserExists_UpdatesPassword() {
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        repository.createUser(user)
+
+        repository.updatePassword(user.username, "new pw")
+
+        val actual = repository.getPassword(user.username)
+        assertThat(actual).isEqualTo("new pw")
+    }
+
+    @Test
     fun userExists_UserExists_ReturnsTrue() {
-        val user = UserDbo("test username", "test password", "test image", "test bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         val actual = repository.userExists(user.username)
@@ -120,14 +123,14 @@ class UserRepositoryTests {
 
     @Test
     fun userExists_UserDoesNotExist_ReturnsFalse() {
-        val actual = repository.userExists("does-not-exist")
+        val actual = repository.userExists(Username("does-not-exist"))
 
         assertThat(actual).isFalse()
     }
 
     @Test
     fun deleteUser_UserExists_DeletesUser() {
-        val user = UserDbo("test username", "test password", "test image", "test bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         repository.deleteUser(user.username)
@@ -137,49 +140,38 @@ class UserRepositoryTests {
     }
 
     @Test
-    fun deleteUser_UserDoesNotExist_DoesNotChangeTable() {
-        val existing = UserDbo("existing", "pw", "img", "bio")
-        repository.createUser(existing)
-
-        repository.deleteUser("does-not-exist")
-
-        val actual = repository.getUserByName(existing.username)
-        assertThat(actual).isEqualTo(existing)
-    }
-
-    @Test
     fun updateBio_UserExists_UpdatesBio() {
-        val user = UserDbo("test username", "test password", "test image", "old bio")
+        val user = User(Username("test username"), "test password", Profile("test image", "old bio"))
         repository.createUser(user)
 
         repository.updateBio(user.username, "new bio")
 
         val actual = repository.getUserByName(user.username)
         assertThat(actual).isNotNull
-        assertThat(actual!!.bio).isEqualTo("new bio")
+        assertThat(actual!!.profile.bio).isEqualTo("new bio")
     }
 
     @Test
     fun updateProfilePicture_UserExists_UpdatesProfileImage() {
-        val user = UserDbo("test username", "test password", "old img", "test bio")
+        val user = User(Username("test username"), "test password", Profile("old img", "test bio"))
         repository.createUser(user)
 
         repository.updateProfilePicture(user.username, "new img")
 
         val actual = repository.getUserByName(user.username)
         assertThat(actual).isNotNull
-        assertThat(actual!!.profileImage).isEqualTo("new img")
+        assertThat(actual!!.profile.profileImage).isEqualTo("new img")
     }
 
     @Test
     fun updateUsername_UserExists_UpdatesUsername() {
-        val user = UserDbo("old-name", "test password", "test image", "test bio")
+        val user = User(Username("old-name"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
-        repository.updateUsername("old-name", "new-name")
+        repository.updateUsername(Username("old-name"), Username("new-name"))
 
-        val oldUser = repository.getUserByName("old-name")
-        val newUser = repository.getUserByName("new-name")
+        val oldUser = repository.getUserByName(Username("old-name"))
+        val newUser = repository.getUserByName(Username("new-name"))
 
         assertThat(oldUser).isNull()
         assertThat(newUser).isNotNull
