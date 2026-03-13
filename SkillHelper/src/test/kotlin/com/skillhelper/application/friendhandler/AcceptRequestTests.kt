@@ -1,5 +1,6 @@
 package com.skillhelper.application.friendhandler
 
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.FriendHandler
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
@@ -16,8 +17,8 @@ class AcceptRequestTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
     private lateinit var handler: FriendHandler;
-    private lateinit var username: String;
-    private lateinit var requestFrom: String;
+    private var username: Username = Username("user 1");
+    private var requestFrom: Username = Username("user 2");
 
 
     @BeforeEach
@@ -26,9 +27,6 @@ class AcceptRequestTests {
         friendRepository = mockk(relaxed = true)
         requestRepository = mockk(relaxed = true)
         handler = FriendHandler(friendRepository, requestRepository, userRepository)
-
-        username = "user 1";
-        requestFrom = "user 2";
 
         every {
             friendRepository.getFriends(username)

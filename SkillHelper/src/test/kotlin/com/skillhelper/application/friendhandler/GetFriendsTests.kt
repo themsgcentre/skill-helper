@@ -2,6 +2,10 @@ package com.skillhelper.application.friendhandler
 
 import com.skillhelper.application.implementations.FriendHandler
 import com.skillhelper.api.models.FriendDto
+import com.skillhelper.application.entities.Friend
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -17,8 +21,8 @@ class GetFriendsTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
     private lateinit var handler: FriendHandler;
-    private lateinit var username: String;
-    private lateinit var mockFriends: List<UserDbo>
+    private var username: Username = Username("test user");
+    private lateinit var mockFriends: List<User>
 
 
     @BeforeEach
@@ -28,13 +32,12 @@ class GetFriendsTests {
         requestRepository = mockk(relaxed = true)
         handler = FriendHandler(friendRepository, requestRepository, userRepository)
 
-        username = "test user";
 
         mockFriends = listOf(
-            UserDbo("friend 1", "", "src 1", ""),
-            UserDbo("friend 2", "", "src 2", ""),
-            UserDbo("friend 3", "", "src 3", ""),
-            UserDbo("friend 4", "", null, ""),
+            User(Username("friend 1"), "", Profile("bio 1", "img1")),
+            User(Username("friend 2"), "", Profile("bio 2", "img2")),
+            User(Username("friend 3"), "", Profile("bio 3", "img3")),
+            User(Username("friend 4"), "", Profile("bio 4", null)),
         )
     }
 
@@ -58,9 +61,9 @@ class GetFriendsTests {
 
         val actual = handler.getFriends(username)
         val expected = mockFriends.map { user ->
-            FriendDto(
+            Friend(
                 username = user.username,
-                profileImage = user.profileImage
+                image = user.profile.profileImage,
             )
         }
 

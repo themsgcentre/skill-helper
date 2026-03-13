@@ -1,11 +1,13 @@
 package com.skillhelper.application.friendhandler
 
 import com.skillhelper.application.implementations.FriendHandler
-import com.skillhelper.api.models.RequestDto
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.Request
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.models.UserDbo
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -17,8 +19,8 @@ class GetRequestsTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
     private lateinit var handler: FriendHandler;
-    private lateinit var username: String;
-    private lateinit var mockRequests: List<UserDbo>
+    private var username: Username = Username("test user");
+    private lateinit var mockRequests: List<User>
 
 
     @BeforeEach
@@ -28,13 +30,11 @@ class GetRequestsTests {
         requestRepository = mockk(relaxed = true)
         handler = FriendHandler(friendRepository, requestRepository, userRepository)
 
-        username = "test user";
-
         mockRequests = listOf(
-            UserDbo("request 1", "", "src 1", ""),
-            UserDbo("request 2", "", "src 2", ""),
-            UserDbo("request 3", "", "src 3", ""),
-            UserDbo("request 4", "", null, ""),
+            User(Username("request 1"), "", Profile("bio 1", "img1")),
+            User(Username("request 2"), "", Profile("bio 2", "img2")),
+            User(Username("request 3"), "", Profile("bio 3", "img3")),
+            User(Username("request 4"), "", Profile("bio 4", null)),
         )
     }
 
@@ -58,9 +58,9 @@ class GetRequestsTests {
 
         val actual = handler.getRequests(username)
         val expected = mockRequests.map { user ->
-            RequestDto(
+            Request(
                 username = user.username,
-                profileImage = user.profileImage
+                image = user.profile.profileImage
             )
         }
 
