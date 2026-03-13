@@ -1,8 +1,9 @@
 package com.skillhelper.application.sharehandler
 
 import com.skillhelper.application.implementations.ShareHandler
-import com.skillhelper.application.implementations.toDbo
-import com.skillhelper.api.models.ShareCreationDto
+import com.skillhelper.application.entities.Share
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -20,10 +21,10 @@ class AddShareTests {
     private lateinit var skillRepository: ISkillRepository
     private lateinit var shareRepository: IShareRepository
     private lateinit var handler: ShareHandler
-    private lateinit var sender: String;
-    private lateinit var receiver: String;
-    private var skillId: Long = 1L;
-    private lateinit var mockShare: ShareCreationDto
+    private var sender: Username = Username("test sender");
+    private var receiver: Username = Username("test receiver");
+    private var skillId: SkillId = SkillId(1L);
+    private lateinit var mockShare: Share
 
     @BeforeEach
     fun setUp() {
@@ -32,14 +33,11 @@ class AddShareTests {
         shareRepository = mockk(relaxed = true)
         handler = ShareHandler(shareRepository, skillRepository, userRepository)
 
-        sender = "test sender"
-        receiver = "test receiver"
-
         every { userRepository.userExists(sender) } returns true
         every { userRepository.userExists(receiver) } returns true
         every { skillRepository.skillExists(skillId) } returns true
 
-        mockShare = ShareCreationDto(
+        mockShare = Share( null,
             sender, receiver, skillId, Date.from(Instant.now()),
         )
     }
@@ -73,10 +71,8 @@ class AddShareTests {
 
     @Test
     fun addShare_ValidShareData_CallsRepository() {
-        val shareDbo = mockShare.toDbo()
-
         handler.addShare(mockShare)
 
-        verify(exactly = 1) { shareRepository.addShare(shareDbo) }
+        verify(exactly = 1) { shareRepository.addShare(mockShare) }
     }
 }

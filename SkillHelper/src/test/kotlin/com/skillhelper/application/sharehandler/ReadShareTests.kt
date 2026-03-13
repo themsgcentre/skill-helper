@@ -1,5 +1,7 @@
 package com.skillhelper.application.sharehandler
 
+import com.skillhelper.application.entities.ShareId
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.ShareHandler
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
@@ -25,8 +27,9 @@ class ReadShareTests {
 
     @Test
     fun readShare_CallsRepository() {
-        val shareId = 1L;
-        handler.readShare(shareId)
+        val shareId = ShareId(1L);
+        val username = Username("test")
+        handler.readShare(username, shareId)
         verify(exactly = 1) { shareRepository.readShare(shareId) }
     }
 }

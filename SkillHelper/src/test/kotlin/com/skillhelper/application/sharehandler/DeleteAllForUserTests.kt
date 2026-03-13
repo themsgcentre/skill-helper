@@ -1,5 +1,6 @@
 package com.skillhelper.application.sharehandler
 
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.ShareHandler
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
@@ -25,7 +26,7 @@ class DeleteAllForUserTests {
 
     @Test
     fun deleteAllForUser_CallsRepository() {
-        val username = "test"
+        val username = Username("test")
         handler.deleteAllForUser(username)
         verify(exactly = 1) { shareRepository.deleteAllForUser(username) }
     }

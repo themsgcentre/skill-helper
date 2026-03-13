@@ -1,11 +1,16 @@
 package com.skillhelper.application.sharehandler
 
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.Share
+import com.skillhelper.application.entities.ShareId
+import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.entities.SkillId
+import com.skillhelper.application.entities.User
+import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.ShareHandler
-import com.skillhelper.application.implementations.toDto
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.models.ShareDbo
 import com.skillhelper.repository.models.SkillDbo
 import com.skillhelper.repository.models.UserDbo
 import io.mockk.every
@@ -23,7 +28,7 @@ class GetAllTests {
     private lateinit var skillRepository: ISkillRepository
     private lateinit var shareRepository: IShareRepository
     private lateinit var handler: ShareHandler
-    private lateinit var mockShares: List<ShareDbo>
+    private lateinit var mockShares: List<Share>
 
     @BeforeEach
     fun setUp() {
@@ -33,19 +38,20 @@ class GetAllTests {
         handler = ShareHandler(shareRepository, skillRepository, userRepository)
 
         mockShares = listOf(
-            ShareDbo(1L, "sender 1", "receiver 1", 1L, Date.from(Instant.now()), false),
-            ShareDbo(2L, "sender 2", "receiver 2", 2L, Date.from(Instant.now()), false)
+            Share(ShareId(1L), Username("sender 1"), Username("receiver 1"),
+                SkillId(1L), Date.from(Instant.now()), false),
+            Share(ShareId(2L), Username("sender 2"), Username("receiver 2"), SkillId(2L), Date.from(Instant.now()), false)
         )
     }
 
     @Test
     fun getAll_ReturnsCorrectListAndCallsRepository() {
-        val username = "test"
+        val username = Username("test")
         every { shareRepository.getAllForUser(username) } returns mockShares
 
         val usersByName = mapOf(
-            "sender 1" to mockk<UserDbo>(relaxed = true) { every { profileImage } returns "p1" },
-            "sender 2" to mockk<UserDbo>(relaxed = true) { every { profileImage } returns "p2" },
+            "sender 1" to mockk<User>(relaxed = true) { every { profile } returns Profile("bio1", "img1") },
+            "sender 2" to mockk<User>(relaxed = true) { every { profile } returns Profile("bio1", "img1") },
         )
 
         every { userRepository.getUserByName(any()) } answers {
@@ -53,19 +59,15 @@ class GetAllTests {
         }
 
         val skillsById = mapOf(
-            1L to mockk<SkillDbo>(relaxed = true) { every { imageSrc } returns "s1" },
-            2L to mockk<SkillDbo>(relaxed = true) { every { imageSrc } returns "s2" },
+            1L to mockk<Skill>(relaxed = true) { every { imageSrc } returns "s1" },
+            2L to mockk<Skill>(relaxed = true) { every { imageSrc } returns "s2" },
         )
 
         every { skillRepository.getSkillById(any()) } answers {
             skillsById[firstArg()]
         }
 
-        val expected = mockShares.map { dbo ->
-            val profileImg = usersByName[dbo.fromUser]?.profileImage
-            val shareImg = skillsById[dbo.skill]?.imageSrc
-            dbo.toDto(profileImg, shareImg)
-        }
+        val expected = mockShares
 
         val actual = handler.getAll(username)
 
