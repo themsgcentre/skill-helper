@@ -1,10 +1,17 @@
 package com.skillhelper.application.userhandler
 
+import com.skillhelper.application.entities.Profile
+import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
+import com.skillhelper.application.throwables.UserNotFoundException
+import com.skillhelper.application.throwables.UsernameTakenException
 import com.skillhelper.repository.interfaces.IUserRepository
+import io.mockk.Called
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -23,10 +30,28 @@ class UpdateBioTests {
     }
 
     @Test
-    fun updateUser_CallsUpdateOnRepository() {
+    fun updateUser_UserExists_CallsUpdateOnRepository() {
         val bio = "test bio"
+        every {
+            repository.userExists(username)
+        } returns true
+
         handler.updateBio(username, bio)
 
-        verify(exactly = 1) { handler.updateBio(username, bio) }
+        verify(exactly = 1) { repository.updateBio(username, bio) }
+    }
+
+    @Test
+    fun updateUser_UserDoesNotExist_DoesNotCallRepositoryAndThrowsException() {
+        val bio = "test bio"
+        every {
+            repository.userExists(username)
+        } returns false
+
+        assertThatThrownBy {
+            handler.updateBio(username, bio)
+        } .isInstanceOf(UserNotFoundException::class.java)
+
+        verify(exactly = 0) { repository.updateBio(any(), any()) }
     }
 }

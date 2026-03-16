@@ -2,10 +2,13 @@ package com.skillhelper.application.userhandler
 
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
+import com.skillhelper.application.throwables.UserNotFoundException
+import com.skillhelper.application.throwables.UsernameTakenException
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -29,25 +32,43 @@ class UpdateUsernameTests {
     }
 
     @Test
-    fun updateUsername_NameAvailableAndNotOldName_CallsUpdateOnRepository() {
+    fun updateUsername_NameAvailableAndUserExistsAndNamesDiffer_CallsUpdateOnRepository() {
+        every { repository.userExists(oldName) } returns true
+        every { repository.userExists(newName) } returns false
+
         handler.updateUsername(oldName, newName)
         verify(exactly = 1) { repository.updateUsername(oldName, newName) }
     }
 
     @Test
-    fun updateUsername_NewNameIsOldName_DoesNotCallRepository() {
+    fun updateUsername_NewNameIsOldName_DoesNotCallRepositoryWithoutException() {
+        every { repository.userExists(oldName) } returns true
         handler.updateUsername(oldName, oldName)
-        verify(exactly = 0) { repository.updateUsername(any(), any()) }
+        verify(exactly = 0) { repository.updateUsername(oldName, oldName) }
     }
 
     @Test
-    fun updateUsername_NameNotAvailable_DoesNotCallRepository() {
-        every {
-            repository.userExists(newName)
-        } returns true
+    fun updateUsername_NameNotAvailable_DoesNotCallRepositoryAndThrowsException() {
+        every { repository.userExists(oldName) } returns true
+        every { repository.userExists(newName) } returns true
 
-        handler.updateUsername(oldName, newName)
+        assertThatThrownBy {
+            handler.updateUsername(oldName, newName)
+        } .isInstanceOf(UsernameTakenException::class.java)
 
-        verify(exactly = 0) { repository.updateUsername(any(), any()) }
+
+        verify(exactly = 0) { repository.updateUsername(oldName, newName) }
+    }
+
+    @Test
+    fun updateUsername_UserDoesNotExist_DoesNotCallRepositoryAndThrowsException() {
+        every { repository.userExists(newName) } returns false
+
+        assertThatThrownBy {
+            handler.updateUsername(oldName, newName)
+        } .isInstanceOf(UserNotFoundException::class.java)
+
+
+        verify(exactly = 0) { repository.updateUsername(oldName, newName) }
     }
 }

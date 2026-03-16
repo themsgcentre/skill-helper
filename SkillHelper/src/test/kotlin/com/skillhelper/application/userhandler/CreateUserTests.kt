@@ -4,12 +4,15 @@ import com.skillhelper.application.implementations.UserHandler
 import com.skillhelper.application.entities.Profile
 import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
+import com.skillhelper.application.throwables.UsernameTakenException
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.password.PasswordEncoder
 
 class CreateUserTests {
@@ -36,18 +39,20 @@ class CreateUserTests {
     }
 
     @Test
-    fun createUser_UserExists_DoesNotCallRepository() {
+    fun createUser_UsernameTaken_DoesNotCallRepositoryAndThrowsException() {
         every {
             repository.userExists(username)
         } returns true
 
-        handler.createUser(username, "password", Profile("bio", "img"));
+        assertThatThrownBy {
+            handler.createUser(username, "password", Profile("bio", "img"));
+        } .isInstanceOf(UsernameTakenException::class.java)
 
         verify(exactly = 0) { repository.createUser(any()) }
     }
 
     @Test
-    fun createUser_UserDoesNotExist_CallsCreateOnRepository() {
+    fun createUser_UsernameAvailable_CallsCreateOnRepository() {
         every {
             repository.userExists(username)
         } returns false

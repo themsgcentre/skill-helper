@@ -43,8 +43,9 @@ class UserHandler(
 
     override fun updateUsername(oldName: Username, newName: Username) {
         if(!userRepository.userExists(oldName)) throw UserNotFoundException(oldName.value);
-        if(userRepository.userExists(newName)) throw UsernameTakenException(newName.value);
         if(oldName == newName) return;
+        if(userRepository.userExists(newName)) throw UsernameTakenException(newName.value);
+
         userRepository.updateUsername(oldName, newName)
     }
 

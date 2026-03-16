@@ -4,11 +4,14 @@ import com.skillhelper.application.entities.Profile
 import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
+import com.skillhelper.application.throwables.UserNotFoundException
+import com.skillhelper.application.throwables.UsernameTakenException
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -38,7 +41,7 @@ class GetProfileByNameTests {
     }
 
     @Test
-    fun getProfileByName_RepositoryReturnsValue_ReturnsCorrectValue() {
+    fun getProfileByName_RepositoryReturnsValue_CallsRepositoryAndReturnsCorrectValue() {
         val expected = profile
 
         every {
@@ -47,28 +50,18 @@ class GetProfileByNameTests {
 
         val actual = handler.getProfileByName(username)
 
+        verify(exactly = 1) { repository.getUserByName(username) }
         assertThat(actual).isEqualTo(expected)
     }
 
     @Test
-    fun getProfileByName_RepositoryReturnsNull_ReturnsNull() {
+    fun getProfileByName_RepositoryReturnsNull_ThrowsUserNotFoundException() {
         every {
             repository.getUserByName(username)
         } returns null
 
-        val actual = handler.getProfileByName(username)
-
-        assertThat(actual).isNull()
-    }
-
-    @Test
-    fun getProfileByName_CallsGetOnRepository() {
-        every {
-            repository.getUserByName(username)
-        } returns null
-
-        handler.getProfileByName(username)
-
-        verify(exactly = 1) { repository.getUserByName(username) }
+        assertThatThrownBy {
+            handler.getProfileByName(username)
+        } .isInstanceOf(UserNotFoundException::class.java)
     }
 }
