@@ -39,6 +39,10 @@ class GetFriendsTests {
             User(Username("friend 3"), "", Profile("bio 3", "img3")),
             User(Username("friend 4"), "", Profile("bio 4", null)),
         )
+
+        every {
+            userRepository.userExists(username)
+        } returns true
     }
 
     @Test
@@ -54,9 +58,10 @@ class GetFriendsTests {
     fun getFriends_HasFriends_ReturnsCorrectList() {
         every { friendRepository.getFriends(username) } returns mockFriends.map{it.username}
         val usersByName = mockFriends.associateBy { it.username }
+        val names = usersByName.keys
 
-        every { userRepository.getUserByName(any()) } answers {
-            usersByName[firstArg()]
+        for (name in names) {
+            every { userRepository.getUserByName(name) } returns usersByName[name]
         }
 
         val actual = handler.getFriends(username)

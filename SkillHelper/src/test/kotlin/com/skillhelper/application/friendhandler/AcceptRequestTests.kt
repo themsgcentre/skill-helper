@@ -2,6 +2,7 @@ package com.skillhelper.application.friendhandler
 
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.FriendHandler
+import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -9,6 +10,7 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -92,28 +94,33 @@ class AcceptRequestTests {
         } returns listOf(requestFrom)
 
         handler.acceptRequest(username, requestFrom);
-        verify(exactly = 0) { friendRepository.addFriend(any(), any()) }
+        verify(exactly = 0) { friendRepository.addFriend(username, requestFrom) }
+        verify(exactly = 0) { friendRepository.addFriend(requestFrom, username) }
     }
 
     @Test
-    fun acceptRequest_ReceiverDoesNotExist_DoesNotCallFriendOrRequestRepository() {
+    fun acceptRequest_ReceiverDoesNotExist_ThrowsExceptionAndDoesNotCallRepositories() {
         every {
             userRepository.userExists(username)
         } returns false
 
-        handler.acceptRequest(username, requestFrom);
+        assertThatThrownBy {
+            handler.acceptRequest(username, requestFrom);
+        } .isInstanceOf(UserNotFoundException::class.java)
 
         verify { friendRepository wasNot Called }
         verify { requestRepository wasNot Called }
     }
 
     @Test
-    fun acceptRequest_RequesterDoesNotExist_DoesNotCallFriendOrRequestRepository() {
+    fun acceptRequest_RequesterDoesNotExist_ThrowsExceptionAndDoesNotCallRepositories() {
         every {
             userRepository.userExists(requestFrom)
         } returns false
 
-        handler.acceptRequest(username, requestFrom);
+        assertThatThrownBy {
+            handler.acceptRequest(username, requestFrom);
+        } .isInstanceOf(UserNotFoundException::class.java)
 
         verify { friendRepository wasNot Called }
         verify { requestRepository wasNot Called }

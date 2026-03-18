@@ -36,6 +36,10 @@ class GetRequestsTests {
             User(Username("request 3"), "", Profile("bio 3", "img3")),
             User(Username("request 4"), "", Profile("bio 4", null)),
         )
+
+        every {
+            userRepository.userExists(username)
+        } returns true
     }
 
     @Test
@@ -51,9 +55,10 @@ class GetRequestsTests {
     fun getRequests_HasRequests_ReturnsCorrectList() {
         every { requestRepository.getRequests(username) } returns mockRequests.map{it.username}
         val usersByName = mockRequests.associateBy { it.username }
+        val names = usersByName.keys
 
-        every { userRepository.getUserByName(any()) } answers {
-            usersByName[firstArg()]
+        for (name in names) {
+            every { userRepository.getUserByName(name) } returns usersByName[name]
         }
 
         val actual = handler.getRequests(username)
