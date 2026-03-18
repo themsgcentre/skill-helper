@@ -8,6 +8,7 @@ import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.ShareHandler
+import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -17,6 +18,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.sql.Date
@@ -45,27 +47,10 @@ class GetAllTests {
     }
 
     @Test
-    fun getAll_ReturnsCorrectListAndCallsRepository() {
+    fun getAll_UserExists_ReturnsCorrectListAndCallsRepository() {
         val username = Username("test")
         every { shareRepository.getAllForUser(username) } returns mockShares
-
-        val usersByName = mapOf(
-            "sender 1" to mockk<User>(relaxed = true) { every { profile } returns Profile("bio1", "img1") },
-            "sender 2" to mockk<User>(relaxed = true) { every { profile } returns Profile("bio1", "img1") },
-        )
-
-        every { userRepository.getUserByName(any()) } answers {
-            usersByName[firstArg()]
-        }
-
-        val skillsById = mapOf(
-            1L to mockk<Skill>(relaxed = true) { every { imageSrc } returns "s1" },
-            2L to mockk<Skill>(relaxed = true) { every { imageSrc } returns "s2" },
-        )
-
-        every { skillRepository.getSkillById(any()) } answers {
-            skillsById[firstArg()]
-        }
+        every { userRepository.userExists(username) } returns true;
 
         val expected = mockShares
 
@@ -74,7 +59,17 @@ class GetAllTests {
         assertThat(actual).isEqualTo(expected)
 
         verify { shareRepository.getAllForUser(username) }
-        verify(exactly = mockShares.size) { userRepository.getUserByName(any()) }
-        verify(exactly = mockShares.size) { skillRepository.getSkillById(any()) }
+    }
+
+    @Test
+    fun getAll_UserDoesNotExist_ThrowsException() {
+        val username = Username("test")
+        every {
+            userRepository.userExists(username)
+        } returns false
+
+        assertThatThrownBy {
+            handler.getAll(username)
+        } .isInstanceOf(UserNotFoundException::class.java)
     }
 }

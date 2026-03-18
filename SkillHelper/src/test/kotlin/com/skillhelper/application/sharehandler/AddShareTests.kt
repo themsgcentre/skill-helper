@@ -4,6 +4,8 @@ import com.skillhelper.application.implementations.ShareHandler
 import com.skillhelper.application.entities.Share
 import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.Username
+import com.skillhelper.application.throwables.SkillNotFoundException
+import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
@@ -11,6 +13,7 @@ import io.mockk.Called
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.sql.Date
@@ -43,28 +46,35 @@ class AddShareTests {
     }
 
     @Test
-    fun addShare_SkillDoesNotExist_DoesNotCallShareRepository() {
+    fun addShare_SkillDoesNotExist_DoesNotCallShareRepositoryAndThrowsException() {
         every { skillRepository.skillExists(skillId) } returns false
 
-        handler.addShare(mockShare)
+        assertThatThrownBy {
+            handler.addShare(mockShare)
+        } .isInstanceOf(SkillNotFoundException::class.java)
 
         verify { shareRepository wasNot Called }
     }
 
     @Test
-    fun addShare_SenderDoesNotExist_DoesNotCallShareRepository() {
+    fun addShare_SenderDoesNotExist_DoesNotCallShareRepositoryAndThrowsException() {
         every { userRepository.userExists(sender) } returns false
 
-        handler.addShare(mockShare)
+        assertThatThrownBy {
+            handler.addShare(mockShare)
+        } .isInstanceOf(UserNotFoundException::class.java)
+
 
         verify { shareRepository wasNot Called }
     }
 
     @Test
-    fun addShare_ReceiverDoesNotExist_DoesNotCallShareRepository() {
+    fun addShare_ReceiverDoesNotExist_DoesNotCallShareRepositoryAndThrowsException() {
         every { userRepository.userExists(receiver) } returns false
 
-        handler.addShare(mockShare)
+        assertThatThrownBy {
+            handler.addShare(mockShare)
+        } .isInstanceOf(UserNotFoundException::class.java)
 
         verify { shareRepository wasNot Called }
     }

@@ -27,6 +27,7 @@ class DeleteEntryTests {
     fun deleteEntry_CallsRepository() {
         val id = EntryId(1L);
         val username = Username("test")
+
         handler.deleteEntry(username, id)
         verify(exactly = 1) { 
             entryRepository.deleteEntry(id)
