@@ -26,7 +26,7 @@ class DeleteShareTests {
     private lateinit var shareRepository: IShareRepository
     private lateinit var handler: ShareHandler
     private lateinit var mockShare: Share;
-    private var shareId = ShareId(1);
+    private val shareId = ShareId(1);
     private val forUser = Username("test receiver")
     private val fromUser = Username("test sender")
     private val skillId = SkillId(1);

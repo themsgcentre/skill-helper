@@ -13,7 +13,7 @@ class DeleteUserTests {
     private lateinit var repository: IUserRepository
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
-    private var username: Username = Username("test username");
+    private val username: Username = Username("test username");
 
     @BeforeEach
     fun setUp() {
