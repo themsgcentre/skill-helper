@@ -20,22 +20,28 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
-            .csrf { it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()) }
+            .csrf { it.disable() }
             .authorizeHttpRequests {
-                it.requestMatchers("/api/skill/getVisibilities").permitAll()
-                it.requestMatchers("/api/user/create").permitAll()
-                it.requestMatchers("/api/auth/**").permitAll() // falls du den hast
+                it
+                    .requestMatchers(
+                        "/swagger-ui.html",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**"
+                    ).permitAll()
 
-                it.requestMatchers("/api/entry/**").authenticated()
-                it.requestMatchers("/api/friend/**").authenticated()
-                it.requestMatchers("/api/share/**").authenticated()
-                it.requestMatchers("/api/skill/**").authenticated()
-                it.requestMatchers("/api/user/**").authenticated()
+                    .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/api/user/create").permitAll()
+                    .requestMatchers("/api/skill/getVisibilities").permitAll()
 
-                it.requestMatchers("/api/**").permitAll()
-                
-                it.anyRequest().permitAll()
+                    .requestMatchers("/api/entry/**").authenticated()
+                    .requestMatchers("/api/friend/**").authenticated()
+                    .requestMatchers("/api/share/**").authenticated()
+                    .requestMatchers("/api/skill/**").authenticated()
+                    .requestMatchers("/api/user/**").authenticated()
+
+                    .anyRequest().permitAll()
             }
+
         return http.build()
     }
 }
