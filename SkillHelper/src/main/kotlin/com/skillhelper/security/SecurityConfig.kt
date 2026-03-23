@@ -34,7 +34,7 @@ class SecurityConfig {
 
                 it.requestMatchers("/api/**").permitAll()
                 
-                it.anyRequest().authenticated()
+                it.anyRequest().permitAll()
             }
         return http.build()
     }
