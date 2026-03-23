@@ -20,3 +20,4 @@ Sollte das Setup nicht funktionieren, bitte Mail an hannahmoog01@gmail.com
 # Api Doc
 - zum aktuellen Stand ist kein Frontend implementiert
 - API Swagger: http://localhost:8080/swagger-ui/index.html
+- Vorgegebene (public) Skills sind in der Migration zum Testen

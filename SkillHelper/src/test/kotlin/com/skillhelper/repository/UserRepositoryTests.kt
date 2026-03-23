@@ -28,11 +28,13 @@ class UserRepositoryTests {
 
     @BeforeEach
     fun setUp() {
+        jdbc.sql("""DELETE FROM dbo.[Skill];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
 
     @AfterAll
     fun tearDown() {
+        jdbc.sql("""DELETE FROM dbo.[Skill];""").update()
         jdbc.sql("""DELETE FROM dbo.[User];""").update()
     }
 
