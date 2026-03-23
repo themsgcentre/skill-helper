@@ -5,12 +5,15 @@ import com.skillhelper.application.entities.Entry
 import com.skillhelper.application.entities.EntryId
 import com.skillhelper.application.entities.StressLevel
 import com.skillhelper.application.entities.Username
+import com.skillhelper.application.throwables.EntryAccessDeniedException
+import com.skillhelper.application.throwables.EntryNotFoundException
 import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
@@ -19,9 +22,9 @@ class GetEntryByIdTests {
     private lateinit var entryRepository: IEntryRepository;
     private lateinit var userRepository: IUserRepository;
     private lateinit var handler: EntryHandler;
-    private var username: Username = Username("test");
+    private val username: Username = Username("test");
     private lateinit var testEntry: Entry;
-    private var testId = EntryId(1L);
+    private val testId = EntryId(1L);
 
     @BeforeEach
     fun setUp() {
@@ -34,27 +37,25 @@ class GetEntryByIdTests {
     }
 
     @Test
-    fun getEntryById_EntryDoesNotExist_ReturnsNull() {
+    fun getEntryById_EntryDoesNotExist_ThrowsNotFoundException() {
         every {
             entryRepository.getEntryById(testId)
         } returns null
 
-        val actual = handler.getEntryById(username, testId)
-
-        assertThat(actual).isNull()
+        assertThatThrownBy {
+            handler.getEntryById(username, testId)
+        } .isInstanceOf(EntryNotFoundException::class.java)
     }
 
     @Test
-    fun getEntryById_EntryDoesNotExist_CallsRepository() {
+    fun getEntryById_UserHasNoAccess_ThrowsAccessDeniedException() {
         every {
             entryRepository.getEntryById(testId)
-        } returns null
+        } returns testEntry
 
-        handler.getEntryById(username, testId)
-
-        verify (exactly = 1) {
-            entryRepository.getEntryById(testId)
-        }
+        assertThatThrownBy {
+            handler.getEntryById(Username("other"), testId)
+        } .isInstanceOf(EntryAccessDeniedException::class.java)
     }
 
     @Test

@@ -35,7 +35,7 @@ class EntryHandler(
 
     override fun updateEntry(username: Username, entry: Entry) {
         val originalEntry = entryRepository.getEntryById(entry.id!!) ?: throw EntryNotFoundException();
-        if(entry.user != username) throw EntryAccessDeniedException();
+        if(originalEntry.user != username) throw EntryAccessDeniedException();
         if(entry.user != originalEntry.user) throw InvalidEntryOperationException()
         entryRepository.updateEntry(entry)
     }
