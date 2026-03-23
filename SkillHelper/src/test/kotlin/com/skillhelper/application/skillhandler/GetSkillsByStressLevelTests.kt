@@ -17,13 +17,17 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetSkillsByStressLevelTests {
-    // TODO: add tests for visibility and more for level range
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
     private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
-    private lateinit var mockSkills: List<Skill>
+    private val username1: Username = Username("test1");
+    private val username2: Username = Username("test2");
+    private lateinit var skill1: Skill;
+    private lateinit var skill2: Skill;
+    private val maxLevel = StressLevel(20);
+    private val minLevel = StressLevel(0);
 
     @BeforeEach
     fun setUp() {
@@ -33,31 +37,84 @@ class GetSkillsByStressLevelTests {
         friendRepository = mockk(relaxed = true)
         handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
 
-        mockSkills = listOf(
-            Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, Username("test 1"), Visibility.FRIENDS_ONLY),
-            Skill(SkillId(2), "skill 2", "description 2", StressLevel(2), "test", Username("test 2"), Visibility.FRIENDS_ONLY),
-        )
+        skill1 = Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, username1, Visibility.PUBLIC)
+        skill2 = Skill(SkillId(2), "skill 2", "description 2", StressLevel(1), "test", username2, Visibility.PUBLIC)
     }
 
     @Test
     fun getSkillsByStressLevel_NoSkills_ReturnsEmptyList() {
         every {
-            skillRepository.getSkillsByStressLevel(any(), any())
+            skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
         } returns emptyList()
 
-        val actual = handler.getSkillsByStressLevel(Username("test"), StressLevel(0), StressLevel(100))
+        val actual = handler.getSkillsByStressLevel(username1, minLevel, maxLevel)
 
         assertThat(actual).isEmpty()
     }
 
     @Test
-    fun getSkillsByStressLevel_HasSkills_ReturnsCorrectList() {
+    fun getSkillsByStressLevel_HasSkills_AllPublic_ReturnsCorrectList() {
+        val expected = listOf(skill1, skill2);
         every {
-            skillRepository.getSkillsByStressLevel(any(), any())
-        } returns mockSkills
+            skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
+        } returns expected
 
-        val actual = handler.getSkillsByStressLevel(Username("test"), StressLevel(0), StressLevel(100))
+        val actual = handler.getSkillsByStressLevel(username1, minLevel, maxLevel)
 
-        assertThat(actual).isEqualTo(mockSkills)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsByStressLevel_HasSkills_PartlyFriendsOnly_NotFriendsWithAuthor_ReturnsCorrectList() {
+        every {
+            skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
+        } returns listOf(skill1, skill2.copy(visibility = Visibility.FRIENDS_ONLY));
+
+        every { friendRepository.getFriends(username1) } returns emptyList()
+
+        val actual = handler.getSkillsByStressLevel(username1, minLevel, maxLevel)
+        val expected = listOf(skill1);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsByStressLevel_HasSkills_PartlyFriendsOnly_FriendsWithAuthor_ReturnsCorrectList() {
+        val skill2Modified = skill2.copy(visibility = Visibility.FRIENDS_ONLY);
+        every {
+            skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
+        } returns listOf(skill1, skill2Modified);
+
+        every { friendRepository.getFriends(username1) } returns listOf(username2);
+
+        val actual = handler.getSkillsByStressLevel(username1, minLevel, maxLevel)
+        val expected = listOf(skill1, skill2Modified);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsByStressLevel_HasSkills_PartlyPrivate_UserNotAuthor_ReturnsCorrectList() {
+        every {
+            skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
+        } returns listOf(skill1, skill2.copy(visibility = Visibility.PRIVATE));
+
+        val actual = handler.getSkillsByStressLevel(username1, minLevel, maxLevel)
+        val expected = listOf(skill1);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsByStressLevel_HasSkills_PartlyPrivate_UserIsAuthor_ReturnsCorrectList() {
+        val skill2Modified = skill2.copy(visibility = Visibility.PRIVATE)
+        every {
+            skillRepository.getSkillsByStressLevel(minLevel, maxLevel)
+        } returns listOf(skill1, skill2Modified);
+
+        val actual = handler.getSkillsByStressLevel(username2, minLevel, maxLevel)
+        val expected = listOf(skill1, skill2Modified);
+
+        assertThat(actual).isEqualTo(expected)
     }
 }

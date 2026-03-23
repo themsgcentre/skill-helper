@@ -48,6 +48,6 @@ class UpdateBioTests {
             handler.updateBio(username, bio)
         } .isInstanceOf(UserNotFoundException::class.java)
 
-        verify(exactly = 0) { repository.updateBio(any(), any()) }
+        verify(exactly = 0) { repository.updateBio(username, any()) }
     }
 }

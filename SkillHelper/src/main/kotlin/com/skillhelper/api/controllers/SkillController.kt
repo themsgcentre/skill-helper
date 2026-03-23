@@ -51,13 +51,15 @@ class SkillController(val skillHandler: ISkillHandler) {
     }
 
     @PostMapping("/add")
-    fun addSkill(@RequestBody skillDto: SkillDto) {
-        skillHandler.addSkill(skillDto.toDomain());
+    fun addSkill(auth: Authentication, @RequestBody skillDto: SkillDto) {
+        val username = auth.toUsername();
+        skillHandler.addSkill(username, skillDto.toDomain());
     }
 
     @PutMapping("/edit")
-    fun updateSkill(@RequestBody skillDto: SkillDto) {
-        skillHandler.updateSkill(skillDto.toDomain());
+    fun updateSkill(auth: Authentication, @RequestBody skillDto: SkillDto) {
+        val username = auth.toUsername();
+        skillHandler.updateSkill(username, skillDto.toDomain());
     }
 
     @DeleteMapping("/delete/{id}")

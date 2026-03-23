@@ -8,3 +8,6 @@ class SkillNotFoundException :
 
 class SkillAccessDeniedException :
     DomainException("Access to skill denied.")
+
+class InvalidSkillOperationException :
+        DomainException("Invalid skill operation.")

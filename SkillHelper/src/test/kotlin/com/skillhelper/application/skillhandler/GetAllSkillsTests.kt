@@ -17,14 +17,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class GetAllSkillsTests {
-    // TODO: add tests for visibility
     private lateinit var userRepository: IUserRepository;
     private lateinit var skillRepository: SkillRepository;
     private lateinit var favoriteRepository: IFavoriteRepository;
     private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
-    private lateinit var mockSkills: List<Skill>
-    private var username: Username = Username("test");
+    private val username1: Username = Username("test1");
+    private val username2: Username = Username("test2");
+    private lateinit var skill1: Skill;
+    private lateinit var skill2: Skill;
 
     @BeforeEach
     fun setUp() {
@@ -34,10 +35,8 @@ class GetAllSkillsTests {
         friendRepository = mockk(relaxed = true)
         handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
 
-        mockSkills = listOf(
-            Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, username, Visibility.FRIENDS_ONLY),
-            Skill(SkillId(2), "skill 2", "description 2", StressLevel(1), "test", Username("other"), Visibility.FRIENDS_ONLY),
-        )
+        skill1 = Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, username1, Visibility.PUBLIC)
+        skill2 = Skill(SkillId(2), "skill 2", "description 2", StressLevel(1), "test", username2, Visibility.PUBLIC)
     }
 
     @Test
@@ -46,19 +45,73 @@ class GetAllSkillsTests {
             skillRepository.getAllSkills()
         } returns emptyList()
 
-        val actual = handler.getAllSkills(username)
+        val actual = handler.getAllSkills(username1)
 
         assertThat(actual).isEmpty()
     }
 
     @Test
-    fun getAllSkills_HasSkills_ReturnsCorrectList() {
+    fun getAllSkills_HasSkills_AllPublic_ReturnsCorrectList() {
+        val expected = listOf(skill1, skill2);
         every {
             skillRepository.getAllSkills()
-        } returns mockSkills
+        } returns expected
 
-        val actual = handler.getAllSkills(username)
-        val expected = mockSkills
+        val actual = handler.getAllSkills(username1)
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getAllSkills_HasSkills_PartlyFriendsOnly_NotFriendsWithAuthor_ReturnsCorrectList() {
+        every {
+            skillRepository.getAllSkills()
+        } returns listOf(skill1, skill2.copy(visibility = Visibility.FRIENDS_ONLY));
+
+        every { friendRepository.getFriends(username1) } returns emptyList()
+
+        val actual = handler.getAllSkills(username1)
+        val expected = listOf(skill1);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getAllSkills_HasSkills_PartlyFriendsOnly_FriendsWithAuthor_ReturnsCorrectList() {
+        val skill2Modified = skill2.copy(visibility = Visibility.FRIENDS_ONLY);
+        every {
+            skillRepository.getAllSkills()
+        } returns listOf(skill1, skill2Modified);
+
+        every { friendRepository.getFriends(username1) } returns listOf(username2);
+
+        val actual = handler.getAllSkills(username1)
+        val expected = listOf(skill1, skill2Modified);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getAllSkills_HasSkills_PartlyPrivate_UserNotAuthor_ReturnsCorrectList() {
+        every {
+            skillRepository.getAllSkills()
+        } returns listOf(skill1, skill2.copy(visibility = Visibility.PRIVATE));
+
+        val actual = handler.getAllSkills(username1)
+        val expected = listOf(skill1);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getAllSkills_HasSkills_PartlyPrivate_UserIsAuthor_ReturnsCorrectList() {
+        val skill2Modified = skill2.copy(visibility = Visibility.PRIVATE)
+        every {
+            skillRepository.getAllSkills()
+        } returns listOf(skill1, skill2Modified);
+
+        val actual = handler.getAllSkills(username2)
+        val expected = listOf(skill1, skill2Modified);
 
         assertThat(actual).isEqualTo(expected)
     }

@@ -13,6 +13,7 @@ import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import org.springframework.stereotype.Service
 import com.skillhelper.application.entities.Skill
+import com.skillhelper.application.throwables.InvalidSkillOperationException
 import com.skillhelper.application.throwables.SkillAccessDeniedException
 import com.skillhelper.repository.interfaces.IFriendRepository
 
@@ -47,15 +48,17 @@ class SkillHandler(
             .filter { skillAvailable(username, it) }
     }
 
-    override fun addSkill(skill: Skill): SkillId {
+    override fun addSkill(username: Username, skill: Skill): SkillId {
         if(!userRepository.userExists(skill.author)) throw AuthorNotFoundException();
+        if(skill.author != username) throw InvalidSkillOperationException();
         return skillRepository.addSkill(skill)
     }
 
-    override fun updateSkill(skill: Skill) {
+    override fun updateSkill(username: Username, skill: Skill) {
+        if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         val originalSkill = skillRepository.getSkillById(skill.id!!) ?: throw SkillNotFoundException();
-        if(originalSkill.author != skill.author) throw SkillAccessDeniedException();
-        if(!userRepository.userExists(skill.author)) throw AuthorNotFoundException();
+        if(username != originalSkill.author) throw SkillAccessDeniedException();
+        if(originalSkill.author != skill.author) throw InvalidSkillOperationException();
         skillRepository.updateSkill(skill)
     }
 
@@ -88,7 +91,6 @@ class SkillHandler(
     override fun changeVisibility(username: Username, skillId: SkillId, visibility: Visibility) {
         val originalSkill = skillRepository.getSkillById(skillId) ?: throw SkillNotFoundException();
         if(originalSkill.author != username) throw SkillAccessDeniedException();
-        if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
         skillRepository.changeVisibility(skillId, visibility)
     }
 
@@ -99,8 +101,7 @@ class SkillHandler(
     private fun skillAvailable(username: Username, skill: Skill): Boolean {
         when (skill.visibility) {
             Visibility.FRIENDS_ONLY -> {
-                val friends = friendRepository.getFriends(skill.author)
-                return friends.contains(username) || skill.author == username
+                return friendRepository.getFriends(skill.author).contains(username) || friendRepository.getFriends(username).contains(skill.author) || skill.author == username
             }
             Visibility.PRIVATE -> {
                 return skill.author == username

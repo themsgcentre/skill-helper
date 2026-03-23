@@ -22,42 +22,98 @@ class GetSkillsBySearchTests {
     private lateinit var favoriteRepository: IFavoriteRepository;
     private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
-    private lateinit var mockSkills: List<Skill>
+    private val username1: Username = Username("test1");
+    private val username2: Username = Username("test2");
+    private lateinit var skill1: Skill;
+    private lateinit var skill2: Skill;
+    private val searchString = "test";
 
     @BeforeEach
     fun setUp() {
-        // TODO: add tests for visibility
         userRepository = mockk(relaxed = true)
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
         friendRepository = mockk(relaxed = true)
         handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
 
-        mockSkills = listOf(
-            Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, Username("test"), Visibility.FRIENDS_ONLY),
-            Skill(SkillId(2), "skill 2", "description 2", StressLevel(1), "test", Username("test 2"), Visibility.FRIENDS_ONLY),
-        )
+        skill1 = Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, username1, Visibility.PUBLIC)
+        skill2 = Skill(SkillId(2), "skill 2", "description 2", StressLevel(1), "test", username2, Visibility.PUBLIC)
     }
 
     @Test
     fun getSkillsBySearch_NoSkills_ReturnsEmptyList() {
         every {
-            skillRepository.getSkillsBySearch(any())
+            skillRepository.getSkillsBySearch(searchString)
         } returns emptyList()
 
-        val actual = handler.getSkillsBySearch(Username("test"), "test")
+        val actual = handler.getSkillsBySearch(username1, searchString)
 
         assertThat(actual).isEmpty()
     }
 
     @Test
-    fun getAllSkillsBySearch_HasSkills_ReturnsCorrectList() {
+    fun getSkillsBySearch_HasSkills_AllPublic_ReturnsCorrectList() {
+        val expected = listOf(skill1, skill2);
         every {
-            skillRepository.getSkillsBySearch(any())
-        } returns mockSkills
+            skillRepository.getSkillsBySearch(searchString)
+        } returns expected
 
-        val actual = handler.getSkillsBySearch(Username("test"), "test")
+        val actual = handler.getSkillsBySearch(username1, searchString)
 
-        assertThat(actual).isEqualTo(mockSkills)
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsBySearch_HasSkills_PartlyFriendsOnly_NotFriendsWithAuthor_ReturnsCorrectList() {
+        every {
+            skillRepository.getSkillsBySearch(searchString)
+        } returns listOf(skill1, skill2.copy(visibility = Visibility.FRIENDS_ONLY));
+
+        every { friendRepository.getFriends(username1) } returns emptyList()
+
+        val actual = handler.getSkillsBySearch(username1, searchString)
+        val expected = listOf(skill1);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsBySearch_HasSkills_PartlyFriendsOnly_FriendsWithAuthor_ReturnsCorrectList() {
+        val skill2Modified = skill2.copy(visibility = Visibility.FRIENDS_ONLY);
+        every {
+            skillRepository.getSkillsBySearch(searchString)
+        } returns listOf(skill1, skill2Modified);
+
+        every { friendRepository.getFriends(username1) } returns listOf(username2);
+
+        val actual = handler.getSkillsBySearch(username1, searchString)
+        val expected = listOf(skill1, skill2Modified);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsBySearch_HasSkills_PartlyPrivate_UserNotAuthor_ReturnsCorrectList() {
+        every {
+            skillRepository.getSkillsBySearch(searchString)
+        } returns listOf(skill1, skill2.copy(visibility = Visibility.PRIVATE));
+
+        val actual = handler.getSkillsBySearch(username1, searchString)
+        val expected = listOf(skill1);
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun getSkillsBySearch_HasSkills_PartlyPrivate_UserIsAuthor_ReturnsCorrectList() {
+        val skill2Modified = skill2.copy(visibility = Visibility.PRIVATE)
+        every {
+            skillRepository.getSkillsBySearch(searchString)
+        } returns listOf(skill1, skill2Modified);
+
+        val actual = handler.getSkillsBySearch(username2, searchString)
+        val expected = listOf(skill1, skill2Modified);
+
+        assertThat(actual).isEqualTo(expected)
     }
 }

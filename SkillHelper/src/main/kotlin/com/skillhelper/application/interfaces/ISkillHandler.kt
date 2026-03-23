@@ -11,8 +11,8 @@ interface ISkillHandler {
     fun getSkillById(username: Username, id: SkillId) : Skill;
     fun getSkillsBySearch(username: Username, searchString: String) : List<Skill>;
     fun getSkillsByStressLevel(username: Username, minLevel: StressLevel, maxLevel: StressLevel) : List<Skill>;
-    fun addSkill(skill: Skill): SkillId;
-    fun updateSkill(skill: Skill);
+    fun addSkill(username: Username, skill: Skill): SkillId;
+    fun updateSkill(username: Username, skill: Skill);
     fun deleteSkill(username: Username, skillId: SkillId);
     fun addFavorite(username: Username, skillId: SkillId);
     fun removeFavorite(username: Username, skillId: SkillId);

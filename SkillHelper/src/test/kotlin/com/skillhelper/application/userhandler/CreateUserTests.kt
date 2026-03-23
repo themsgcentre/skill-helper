@@ -47,7 +47,7 @@ class CreateUserTests {
             handler.createUser(username, "password", Profile("bio", "img"));
         } .isInstanceOf(UsernameTakenException::class.java)
 
-        verify(exactly = 0) { repository.createUser(any()) }
+        verify(exactly = 0) { repository.createUser(user) }
     }
 
     @Test

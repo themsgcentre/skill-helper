@@ -6,6 +6,8 @@ import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.StressLevel
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.entities.Visibility
+import com.skillhelper.application.throwables.AuthorNotFoundException
+import com.skillhelper.application.throwables.InvalidSkillOperationException
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
 import com.skillhelper.repository.interfaces.IFriendRepository
@@ -15,6 +17,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -25,7 +28,8 @@ class AddSkillTests {
     private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
     private lateinit var mockSkill: Skill;
-    private var username: Username = Username("test");
+    private val username: Username = Username("test");
+    private val skillId = SkillId(1L);
 
     @BeforeEach
     fun setUp() {
@@ -36,35 +40,40 @@ class AddSkillTests {
         handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
 
         mockSkill = Skill(
-            SkillId(1),
+            skillId,
             "skill 1",
             "description 1",
             StressLevel(1),
-            "test", username, Visibility.PUBLIC
+            "test",
+            username,
+            Visibility.PUBLIC
         )
     }
 
     @Test
-    fun addSkill_AuthorDoesNotExist_DoesNotCallAddSkillOnRepository() {
+    fun addSkill_AuthorDoesNotExist_ThrowsAuthorNotFoundAndDoesNotCallAddSkillOnRepository() {
         every {
             userRepository.userExists(username)
         } returns false
 
-        handler.addSkill(mockSkill)
+        assertThatThrownBy {
+            handler.addSkill(username, mockSkill)
+        } .isInstanceOf(AuthorNotFoundException::class.java)
 
         verify { skillRepository wasNot Called }
     }
 
     @Test
-    fun addSkill_AuthorDoesNotExist_ReturnsNegativeOne() {
-        val expected = -1L
+    fun addSkill_AuthorDiffersFromSender_ThrowsInvalidOperationAndDoesNotCallAddSkillOnRepository() {
         every {
             userRepository.userExists(username)
-        } returns false
+        } returns true
 
-        val actual = handler.addSkill(mockSkill)
+        assertThatThrownBy {
+            handler.addSkill(Username("different"), mockSkill)
+        } .isInstanceOf(InvalidSkillOperationException::class.java)
 
-        assertThat(actual).isEqualTo(expected)
+        verify { skillRepository wasNot Called }
     }
 
     @Test
@@ -73,14 +82,14 @@ class AddSkillTests {
             userRepository.userExists(username)
         } returns true
 
-        handler.addSkill(mockSkill)
+        handler.addSkill(username, mockSkill)
 
         verify(exactly = 1) { skillRepository.addSkill(mockSkill) }
     }
 
     @Test
     fun addSkill_AuthorExists_ReturnsRepositoryId() {
-        val expected = SkillId(1L)
+        val expected = skillId
         every {
             userRepository.userExists(username)
         } returns true
@@ -89,7 +98,7 @@ class AddSkillTests {
             skillRepository.addSkill(mockSkill)
         } returns expected
 
-        val actual = handler.addSkill(mockSkill)
+        val actual = handler.addSkill(username, mockSkill)
 
         assertThat(actual).isEqualTo(expected)
     }

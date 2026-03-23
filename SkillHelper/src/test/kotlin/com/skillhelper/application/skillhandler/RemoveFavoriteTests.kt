@@ -30,8 +30,10 @@ class RemoveFavoriteTests {
 
     @Test
     fun removeFavorite_CallsRemoveFavoriteOnRepository() {
-        handler.removeFavorite(Username("test"), SkillId(1))
+        val username = Username("test")
+        val skillId = SkillId(1L)
+        handler.removeFavorite(username, skillId)
 
-        verify(exactly = 1) { favoriteRepository.removeFavorite(Username("test"), SkillId(1))}
+        verify(exactly = 1) { favoriteRepository.removeFavorite(username, skillId)}
     }
 }
