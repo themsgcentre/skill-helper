@@ -3,7 +3,6 @@ package com.skillhelper.application.entryhandler
 import com.skillhelper.application.entities.Entry
 import com.skillhelper.application.entities.EntryId
 import com.skillhelper.application.entities.StressLevel
-import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.EntryHandler
 import com.skillhelper.application.throwables.EntryAccessDeniedException
@@ -16,7 +15,6 @@ import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.Instant
 import java.time.LocalDateTime
 
 class DeleteEntryTests {

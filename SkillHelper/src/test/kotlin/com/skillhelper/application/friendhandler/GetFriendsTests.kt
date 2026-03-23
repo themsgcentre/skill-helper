@@ -1,7 +1,6 @@
 package com.skillhelper.application.friendhandler
 
 import com.skillhelper.application.implementations.FriendHandler
-import com.skillhelper.api.models.FriendDto
 import com.skillhelper.application.entities.Friend
 import com.skillhelper.application.entities.Profile
 import com.skillhelper.application.entities.User
@@ -9,7 +8,6 @@ import com.skillhelper.application.entities.Username
 import com.skillhelper.repository.interfaces.IFriendRepository
 import com.skillhelper.repository.interfaces.IRequestRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.models.UserDbo
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat

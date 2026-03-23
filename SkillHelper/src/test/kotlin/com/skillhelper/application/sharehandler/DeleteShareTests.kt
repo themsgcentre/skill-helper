@@ -2,7 +2,6 @@ package com.skillhelper.application.sharehandler
 
 import com.skillhelper.application.entities.Share
 import com.skillhelper.application.entities.ShareId
-import com.skillhelper.application.entities.Skill
 import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.ShareHandler

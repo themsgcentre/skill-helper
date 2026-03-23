@@ -5,7 +5,6 @@ import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.UserHandler
 import com.skillhelper.application.throwables.UserNotFoundException
-import com.skillhelper.application.throwables.UsernameTakenException
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk

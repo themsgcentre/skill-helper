@@ -68,6 +68,9 @@ class SkillHandler(
     override fun addFavorite(username: Username, skillId: SkillId) {
         if(!userRepository.userExists(username)) throw UserNotFoundException(username.value);
         if(!skillRepository.skillExists(skillId)) throw SkillNotFoundException();
+
+        val favorites = favoriteRepository.getFavorites(username)
+        if(favorites.contains(skillId)) return;
         favoriteRepository.addFavorite(username, skillId)
     }
 

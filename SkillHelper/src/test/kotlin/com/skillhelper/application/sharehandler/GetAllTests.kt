@@ -1,19 +1,14 @@
 package com.skillhelper.application.sharehandler
 
-import com.skillhelper.application.entities.Profile
 import com.skillhelper.application.entities.Share
 import com.skillhelper.application.entities.ShareId
-import com.skillhelper.application.entities.Skill
 import com.skillhelper.application.entities.SkillId
-import com.skillhelper.application.entities.User
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.implementations.ShareHandler
 import com.skillhelper.application.throwables.UserNotFoundException
 import com.skillhelper.repository.interfaces.IShareRepository
 import com.skillhelper.repository.interfaces.ISkillRepository
 import com.skillhelper.repository.interfaces.IUserRepository
-import com.skillhelper.repository.models.SkillDbo
-import com.skillhelper.repository.models.UserDbo
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -23,7 +18,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.sql.Date
 import java.time.Instant
-import kotlin.to
 
 class GetAllTests {
     private lateinit var userRepository: IUserRepository

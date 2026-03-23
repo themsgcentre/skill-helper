@@ -11,7 +11,6 @@ import com.skillhelper.repository.interfaces.IEntryRepository
 import com.skillhelper.repository.interfaces.IUserRepository
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
