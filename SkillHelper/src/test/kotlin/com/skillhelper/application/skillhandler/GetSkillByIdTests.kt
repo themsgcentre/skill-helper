@@ -5,6 +5,7 @@ import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.StressLevel
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.entities.Visibility
+import com.skillhelper.application.implementations.DefaultSkillAccessPolicy
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.application.throwables.SkillAccessDeniedException
 import com.skillhelper.application.throwables.SkillNotFoundException
@@ -36,7 +37,12 @@ class GetSkillByIdTests {
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
         friendRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
+        handler = SkillHandler(
+            skillRepository,
+            favoriteRepository,
+            userRepository,
+            DefaultSkillAccessPolicy(friendRepository),
+        )
 
         skill1 = Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, username1, Visibility.PUBLIC)
     }

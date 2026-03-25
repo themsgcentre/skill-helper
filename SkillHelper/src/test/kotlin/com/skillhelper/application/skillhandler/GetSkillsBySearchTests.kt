@@ -5,6 +5,7 @@ import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.StressLevel
 import com.skillhelper.application.entities.Username
 import com.skillhelper.application.entities.Visibility
+import com.skillhelper.application.implementations.DefaultSkillAccessPolicy
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.repository.implementations.SkillRepository
 import com.skillhelper.repository.interfaces.IFavoriteRepository
@@ -34,7 +35,12 @@ class GetSkillsBySearchTests {
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
         friendRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
+        handler = SkillHandler(
+            skillRepository,
+            favoriteRepository,
+            userRepository,
+            DefaultSkillAccessPolicy(friendRepository),
+        )
 
         skill1 = Skill(SkillId(1), "skill 1", "description 1", StressLevel(1), null, username1, Visibility.PUBLIC)
         skill2 = Skill(SkillId(2), "skill 2", "description 2", StressLevel(1), "test", username2, Visibility.PUBLIC)

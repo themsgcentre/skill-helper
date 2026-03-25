@@ -1,5 +1,6 @@
 package com.skillhelper.application.skillhandler
 
+import com.skillhelper.application.implementations.DefaultSkillAccessPolicy
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.application.entities.Skill
 import com.skillhelper.application.entities.SkillId
@@ -37,7 +38,12 @@ class UpdateSkillTests {
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
         friendRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
+        handler = SkillHandler(
+            skillRepository,
+            favoriteRepository,
+            userRepository,
+            DefaultSkillAccessPolicy(friendRepository),
+        )
 
         mockSkill = Skill(skillId, "skill 1", "description 1", StressLevel(1), "test", username, Visibility.FRIENDS_ONLY)
 

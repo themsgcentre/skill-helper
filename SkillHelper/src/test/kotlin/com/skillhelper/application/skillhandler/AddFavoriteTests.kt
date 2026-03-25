@@ -2,6 +2,7 @@ package com.skillhelper.application.skillhandler
 
 import com.skillhelper.application.entities.SkillId
 import com.skillhelper.application.entities.Username
+import com.skillhelper.application.implementations.DefaultSkillAccessPolicy
 import com.skillhelper.application.implementations.SkillHandler
 import com.skillhelper.application.throwables.SkillNotFoundException
 import com.skillhelper.application.throwables.UserNotFoundException
@@ -31,7 +32,12 @@ class AddFavoriteTests {
         skillRepository = mockk(relaxed = true)
         favoriteRepository = mockk(relaxed = true)
         friendRepository = mockk(relaxed = true)
-        handler = SkillHandler(skillRepository, favoriteRepository, userRepository, friendRepository)
+        handler = SkillHandler(
+            skillRepository,
+            favoriteRepository,
+            userRepository,
+            DefaultSkillAccessPolicy(friendRepository),
+        )
 
         every {
             userRepository.userExists(username)
