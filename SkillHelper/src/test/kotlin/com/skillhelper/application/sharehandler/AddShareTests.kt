@@ -24,8 +24,8 @@ class AddShareTests {
     private lateinit var skillRepository: ISkillRepository
     private lateinit var shareRepository: IShareRepository
     private lateinit var handler: ShareHandler
-    private val sender: Username = Username("test sender");
-    private val receiver: Username = Username("test receiver");
+    private val sender: Username = Username("test_sender");
+    private val receiver: Username = Username("test_receiver");
     private val skillId: SkillId = SkillId(1L);
     private lateinit var mockShare: Share
 

@@ -22,7 +22,7 @@ class GetProfileByNameTests {
     private lateinit var handler: UserHandler
     private lateinit var user: User;
     private lateinit var profile: Profile;
-    private val username: Username = Username("test username");
+    private val username: Username = Username("test_username");
 
     @BeforeEach
     fun setUp() {

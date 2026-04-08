@@ -19,7 +19,7 @@ class GetFriendsTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
     private lateinit var handler: FriendHandler;
-    private val username: Username = Username("test user");
+    private val username: Username = Username("test_user");
     private lateinit var mockFriends: List<User>
 
 
@@ -32,10 +32,10 @@ class GetFriendsTests {
 
 
         mockFriends = listOf(
-            User(Username("friend 1"), "", Profile("bio 1", "img1")),
-            User(Username("friend 2"), "", Profile("bio 2", "img2")),
-            User(Username("friend 3"), "", Profile("bio 3", "img3")),
-            User(Username("friend 4"), "", Profile("bio 4", null)),
+            User(Username("friend1"), "", Profile("bio 1", "img1")),
+            User(Username("friend2"), "", Profile("bio 2", "img2")),
+            User(Username("friend3"), "", Profile("bio 3", "img3")),
+            User(Username("friend4"), "", Profile("bio 4", null)),
         )
 
         every {

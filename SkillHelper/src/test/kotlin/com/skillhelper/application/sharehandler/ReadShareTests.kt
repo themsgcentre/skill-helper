@@ -26,8 +26,8 @@ class ReadShareTests {
     private lateinit var handler: ShareHandler
     private lateinit var mockShare: Share;
     private val shareId = ShareId(1);
-    private val forUser = Username("test receiver")
-    private val fromUser = Username("test sender")
+    private val forUser = Username("test_receiver")
+    private val fromUser = Username("test_sender")
     private val skillId = SkillId(1);
 
     @BeforeEach

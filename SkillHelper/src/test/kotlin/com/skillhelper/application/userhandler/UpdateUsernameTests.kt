@@ -17,8 +17,8 @@ class UpdateUsernameTests {
     private lateinit var repository: IUserRepository
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
-    private val oldName: Username = Username("old username");
-    private val newName: Username = Username("new username");
+    private val oldName: Username = Username("old_username");
+    private val newName: Username = Username("new_username");
 
     @BeforeEach
     fun setUp() {

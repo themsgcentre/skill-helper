@@ -46,7 +46,7 @@ class UserRepositoryTests {
 
     @Test
     fun getUserByName_UserFound_ReturnsCorrectUser() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
 
         jdbc.sql("""
         INSERT INTO dbo.[User] (Username, Password, ProfileImage, Bio)
@@ -65,7 +65,7 @@ class UserRepositoryTests {
 
     @Test
     fun addUser_UsernameAvailable_AddsUser() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
 
         repository.createUser(user)
 
@@ -76,7 +76,7 @@ class UserRepositoryTests {
 
     @Test
     fun addUser_UsernameTaken_ThrowsSqlException() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         assertThatThrownBy {
@@ -86,7 +86,7 @@ class UserRepositoryTests {
 
     @Test
     fun getPassword_UserExists_ReturnsPassword() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         val actual = repository.getPassword(user.username)
@@ -103,7 +103,7 @@ class UserRepositoryTests {
 
     @Test
     fun updatePassword_UserExists_UpdatesPassword() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         repository.updatePassword(user.username, "new pw")
@@ -114,7 +114,7 @@ class UserRepositoryTests {
 
     @Test
     fun userExists_UserExists_ReturnsTrue() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         val actual = repository.userExists(user.username)
@@ -131,7 +131,7 @@ class UserRepositoryTests {
 
     @Test
     fun deleteUser_UserExists_DeletesUser() {
-        val user = User(Username("test username"), "test password", Profile("test image", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "test bio"))
         repository.createUser(user)
 
         repository.deleteUser(user.username)
@@ -142,7 +142,7 @@ class UserRepositoryTests {
 
     @Test
     fun updateBio_UserExists_UpdatesBio() {
-        val user = User(Username("test username"), "test password", Profile("test image", "old bio"))
+        val user = User(Username("test_username"), "test password", Profile("test image", "old bio"))
         repository.createUser(user)
 
         repository.updateBio(user.username, "new bio")
@@ -154,7 +154,7 @@ class UserRepositoryTests {
 
     @Test
     fun updateProfilePicture_UserExists_UpdatesProfileImage() {
-        val user = User(Username("test username"), "test password", Profile("old img", "test bio"))
+        val user = User(Username("test_username"), "test password", Profile("old img", "test bio"))
         repository.createUser(user)
 
         repository.updateProfilePicture(user.username, "new img")

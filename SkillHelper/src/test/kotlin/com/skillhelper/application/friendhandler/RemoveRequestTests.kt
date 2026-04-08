@@ -15,8 +15,8 @@ class RemoveRequestTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
     private lateinit var handler: FriendHandler;
-    private val username: Username = Username("user 1");
-    private val requestFrom: Username = Username("user 2");
+    private val username: Username = Username("user1");
+    private val requestFrom: Username = Username("user2");
 
 
     @BeforeEach

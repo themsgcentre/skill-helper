@@ -23,7 +23,7 @@ class AddFavoriteTests {
     private lateinit var favoriteRepository: IFavoriteRepository;
     private lateinit var friendRepository: IFriendRepository;
     private lateinit var handler: SkillHandler;
-    private val username = Username("test username");
+    private val username = Username("test_username");
     private val skillId = SkillId(1L);
 
     @BeforeEach

@@ -34,9 +34,9 @@ class GetAllTests {
         handler = ShareHandler(shareRepository, skillRepository, userRepository)
 
         mockShares = listOf(
-            Share(ShareId(1L), Username("sender 1"), Username("receiver 1"),
+            Share(ShareId(1L), Username("sender1"), Username("receiver1"),
                 SkillId(1L), Date.from(Instant.now()), false),
-            Share(ShareId(2L), Username("sender 2"), Username("receiver 2"), SkillId(2L), Date.from(Instant.now()), false)
+            Share(ShareId(2L), Username("sender2"), Username("receiver2"), SkillId(2L), Date.from(Instant.now()), false)
         )
     }
 

@@ -19,7 +19,7 @@ class GetRequestsTests {
     private lateinit var userRepository: IUserRepository;
     private lateinit var requestRepository: IRequestRepository;
     private lateinit var handler: FriendHandler;
-    private val username: Username = Username("test user");
+    private val username: Username = Username("test_user");
     private lateinit var mockRequests: List<User>
 
 
@@ -31,10 +31,10 @@ class GetRequestsTests {
         handler = FriendHandler(friendRepository, requestRepository, userRepository)
 
         mockRequests = listOf(
-            User(Username("request 1"), "", Profile("bio 1", "img1")),
-            User(Username("request 2"), "", Profile("bio 2", "img2")),
-            User(Username("request 3"), "", Profile("bio 3", "img3")),
-            User(Username("request 4"), "", Profile("bio 4", null)),
+            User(Username("request1"), "", Profile("bio 1", "img1")),
+            User(Username("request2"), "", Profile("bio 2", "img2")),
+            User(Username("request3"), "", Profile("bio 3", "img3")),
+            User(Username("request4"), "", Profile("bio 4", null)),
         )
 
         every {

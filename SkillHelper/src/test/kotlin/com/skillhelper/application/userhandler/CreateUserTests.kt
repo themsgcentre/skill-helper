@@ -19,7 +19,7 @@ class CreateUserTests {
     private lateinit var encoder: PasswordEncoder
     private lateinit var handler: UserHandler
     private lateinit var user: User;
-    private val username: Username = Username("test username");
+    private val username: Username = Username("test_username");
 
     @BeforeEach
     fun setUp() {
