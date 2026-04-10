@@ -44,7 +44,7 @@ class SkillController(val skillHandler: ISkillHandler) {
         return skillHandler.getSkillsBySearch(username, searchStringHelper.searchString).map { it.toDto() };
     }
 
-    @GetMapping("/getByStressLevel")
+    @PostMapping("/getByStressLevel")
     fun getByStressLevel(auth: Authentication, @RequestBody stressLevelHelper: StressLevelHelper): List<SkillDto> {
         val username = auth.toUsername();
         return skillHandler.getSkillsByStressLevel(username, StressLevel(stressLevelHelper.minLevel), StressLevel(stressLevelHelper.maxLevel)).map { it.toDto() };
