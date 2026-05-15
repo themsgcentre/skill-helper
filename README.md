@@ -1,24 +1,67 @@
 # Projekt Setup
 
-- Microsoft SQL Server ist notwendig -> Installation und Server muss online sein
+## Voraussetzungen
 
-1. MS Server Management Studio installieren
-2. mit 'localhost' verbinden (SQL Server Auth muss aktiv sein, Login geht aber hier auch über Windows)
-3. unter Reiter Security -> Logins: Login hinzufügen mit Name und Passwort aus application.yaml
-4. SkillDb und SkillDb.Test erstellen
+Für das Backend wird ein laufender Microsoft SQL Server benötigt.
 
-Sollte das Setup nicht funktionieren, bitte Mail an hannahmoog01@gmail.com
+Benötigte Software:
 
-# Test Abdeckung
-- Domain Layer und Repository Layer sind vollständig getestet, Komplette Logik kann theoretisch über Unit Tests abgedeckt werden
+- Microsoft SQL Server
+- Microsoft SQL Server Management Studio
+- Java / Gradle
+- IntelliJ IDEA empfohlen
 
-# Ausführen Backend
-- Migrationen funktionieren nur auf einer älteren SpringBoot Version
-- IntelliJ nutzt im Standard Run in der Regel trotz Gradle die neuste
-- Falls 'bootRun' Profil nicht verfügbar: Neue Konfigerstellen mit Command 'bootRun' (dieses Profil bleibt permanent auf 'laden', nach ein paar Sekunden ist das Backend online sofern keine FEhlermeldung kommt)
+## Datenbank einrichten
 
-# Api Doc
-- zum aktuellen Stand ist kein Frontend implementiert
-- API Swagger: http://localhost:8080/swagger-ui/index.html
-- Vorgegebene (public) Skills sind in der Migration zum Testen
-- bitte beachten dass die meisten Endpoints authentfiziert sein müssen, es sollte also zuerst ein User (user controller) erstellt werden und dann ein Login (auth controller) durchgeführt werden
+1. Microsoft SQL Server installieren und starten.
+2. Microsoft SQL Server Management Studio installieren.
+3. Mit `localhost` verbinden.
+   - SQL Server Authentication muss aktiviert sein.
+   - Alternativ ist auch Windows Authentication möglich.
+4. Unter **Security > Logins** einen neuen Login anlegen.
+   - Benutzername und Passwort müssen den Werten aus der `application.yaml` entsprechen.
+5. Zwei Datenbanken erstellen:
+   - `SkillDb`
+   - `SkillDb.Test`
+
+Falls das Setup nicht funktioniert, bitte eine Mail an: hannahmoog01@gmail.com
+
+## Testabdeckung
+
+Der Domain Layer und der Repository Layer sind vollständig getestet.
+
+Die vollständige Kernlogik des Backends kann theoretisch über Unit Tests abgedeckt werden.
+
+## Backend ausführen
+
+Die Migrationen funktionieren aktuell nur mit einer älteren Spring-Boot-Version, da Flyway mit der neusten Version nicht kompatibel ist.
+
+IntelliJ verwendet beim normalen Run teilweise nicht die Gradle-Konfiguration, sondern eine neuere Spring-Boot-Version. Deshalb sollte das Backend über Gradle gestartet werden.
+
+Falls kein `bootRun`-Profil vorhanden ist:
+
+1. Neue Run Configuration erstellen.
+2. Als Gradle Command `bootRun` eintragen.
+3. Die Konfiguration starten.
+
+Hinweis: Das `bootRun`-Profil bleibt dauerhaft auf „running“. Nach einigen Sekunden ist das Backend online, sofern keine Fehlermeldung erscheint.
+
+## API-Dokumentation
+
+Aktuell ist kein Frontend implementiert.
+
+Die API-Dokumentation ist über Swagger erreichbar:
+
+`http://localhost:8080/swagger-ui/index.html`
+
+## Nutzung der API
+
+Vorgegebene öffentliche Skills werden über die Migration eingefügt und können zum Testen verwendet werden.
+
+Bitte beachten: Die meisten Endpoints benötigen Authentifizierung.
+
+Empfohlene Reihenfolge:
+
+1. User über den User Controller erstellen.
+2. Login über den Auth Controller durchführen.
+3. Den erhaltenen Token für authentifizierte Requests verwenden.
