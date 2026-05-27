@@ -59,4 +59,4 @@ Empfohlene Reihenfolge:
 
 1. User über den User Controller erstellen.
 2. Login über den Auth Controller durchführen.
-3. Den erhaltenen Token für authentifizierte Requests verwenden.
+3. Den erhaltenen Token für authentifizierte Requests verwenden (bzw. sobald 1 und 2 durchgeführt wurden, sollten alle anderen Endpoints problemlos funktionieren)
