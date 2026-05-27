@@ -1,0 +1,32 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: skillhelper-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Skill_sql_123!"
+      MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./docker/init-db.sql:/init-db.sql
+
+  sqlserver-init:
+    image: mcr.microsoft.com/mssql-tools
+    depends_on:
+      - sqlserver
+    volumes:
+      - ./docker/init-db.sql:/init-db.sql
+    entrypoint: >
+      /bin/bash -c "
+      sleep 25;
+      /opt/mssql-tools/bin/sqlcmd
+      -S sqlserver
+      -U sa
+      -P 'Skill_sql_123!'
+      -i /init-db.sql
+      "
+
+volumes:
+  sqlserver-data:

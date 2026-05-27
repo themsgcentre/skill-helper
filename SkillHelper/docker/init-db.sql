@@ -1,0 +1,11 @@
+IF DB_ID('SkillDb') IS NULL
+BEGIN
+    CREATE DATABASE SkillDb;
+END;
+GO
+
+IF DB_ID('SkillDb.Test') IS NULL
+BEGIN
+    CREATE DATABASE [SkillDb.Test];
+END;
+GO
