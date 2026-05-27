@@ -1,7 +1,0 @@
-{
-  "name": "skill-bloom",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular-standalone"
-}
