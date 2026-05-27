@@ -13,7 +13,7 @@ Benötigte Software:
 
 Der Microsoft SQL Server wird über Docker bereitgestellt.
 
-Im Projektordner folgenden Befehl ausführen:
+Im Projektordner (SkillHelper) folgenden Befehl ausführen:
 
 ```bash
 docker compose up -d
