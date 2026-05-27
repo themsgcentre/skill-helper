@@ -2,27 +2,22 @@
 
 ## Voraussetzungen
 
-Für das Backend wird ein laufender Microsoft SQL Server benötigt.
-
 Benötigte Software:
 
-- Microsoft SQL Server
-- Microsoft SQL Server Management Studio
+- Docker Desktop
 - Java / Gradle
+- Gradle
 - IntelliJ IDEA empfohlen
 
-## Datenbank einrichten
+## Datenbank starten
 
-1. Microsoft SQL Server installieren und starten.
-2. Microsoft SQL Server Management Studio installieren.
-3. Mit `localhost` verbinden.
-   - SQL Server Authentication muss aktiviert sein.
-   - Alternativ ist auch Windows Authentication möglich.
-4. Unter **Security > Logins** einen neuen Login anlegen.
-   - Benutzername und Passwort müssen den Werten aus der `application.yaml` entsprechen.
-5. Zwei Datenbanken erstellen:
-   - `SkillDb`
-   - `SkillDb.Test`
+Der Microsoft SQL Server wird über Docker bereitgestellt.
+
+Im Projektordner folgenden Befehl ausführen:
+
+```bash
+docker compose up -d
+```
 
 Falls das Setup nicht funktioniert, bitte eine Mail an: hannahmoog01@gmail.com
 
